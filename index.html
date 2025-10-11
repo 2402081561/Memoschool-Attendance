@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memoschool Kuching Attendance System</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: white;
+        }
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .school-logo {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5em;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .school-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .nav {
+            background: #d35400;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .nav button {
+            background: #e67e22;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .nav button:hover {
+            background: #f39c12;
+            transform: translateY(-2px);
+        }
+        .content {
+            padding: 30px;
+            min-height: 500px;
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #e67e22;
+        }
+        .btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #219a52;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: #e67e22;
+        }
+        .btn-secondary:hover {
+            background: #f39c12;
+        }
+        .btn-warning {
+            background: #e74c3c;
+        }
+        .btn-warning:hover {
+            background: #c0392b;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .table th, .table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .table th {
+            background: #d35400;
+            color: white;
+            font-weight: 600;
+        }
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 5px solid #e67e22;
+        }
+        .stat-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #e67e22;
+        }
+        .sync-status {
+            background: #e8f4fd;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+        .sync-status.synced {
+            background: #d4edda;
+            color: #155724;
+        }
+        .sync-status.syncing {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .sync-status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .login-panel {
+            background: #fef5e7;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .user-info {
+            background: #d4edda;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .quick-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .quick-stat {
+            padding: 15px;
+        }
+        .quick-stat .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .quick-stat .label {
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        .welcome-panel {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .welcome-panel h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .welcome-panel p {
+            color: #7f8c8d;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+        .feature-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .feature-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .time-slot-card {
+            background: #fef5e7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #e67e22;
+        }
+        .time-slot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .time-slot-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .student-count {
+            background: #e67e22;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        .time-slot-students {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .student-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .time-slot-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 10px;
+        }
+        .time-slot-tab {
+            padding: 10px 20px;
+            background: #fef5e7;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .time-slot-tab:hover {
+            background: #fde3c4;
+        }
+        .time-slot-tab.active {
+            background: #e67e22;
+            color: white;
+        }
+        .time-slot-content {
+            display: none;
+        }
+        .time-slot-content.active {
+            display: block;
+        }
+        .checkbox-group {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .checkbox-group label {
+            display: block;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .checkbox-group label:hover {
+            background: #ecf0f1;
+        }
+        .semester-info {
+            background: #fef5e7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #e67e22;
+        }
+        .attendance-record {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .attendance-dot {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 10px;
+            cursor: pointer;
+        }
+        .present {
+            background: #27ae60;
+            color: white;
+        }
+        .absent {
+            background: #e74c3c;
+            color: white;
+        }
+        .export-options {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            .nav button {
+                width: 100%;
+                max-width: 250px;
+            }
+            .header h1 {
+                font-size: 1.8em;
+            }
+            .school-logo {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin: 0 auto 15px;
+            }
+            .time-slot-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .student-count {
+                margin-top: 10px;
+            }
+            .time-slot-tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="school-logo" id="schoolLogo">MK</div>
+            <h1>Memoschool Kuching Attendance System</h1>
+            <p>Real-time sync across all devices</p>
+        </div>
+        
+        <!-- Firebase Login Section -->
+        <div id="loginSection">
+            <div class="login-panel">
+                <h2>🔐 Login to Sync Data</h2>
+                <p>Sign in to automatically sync data across all your devices</p>
+                <div class="form-group">
+                    <input type="email" id="email" placeholder="Email address" style="max-width: 300px; margin: 10px auto;">
+                    <input type="password" id="password" placeholder="Password" style="max-width: 300px; margin: 10px auto;">
+                </div>
+                <button class="btn" onclick="login()">Login</button>
+                <button class="btn btn-secondary" onclick="signup()">Sign Up</button>
+                <p style="margin-top: 15px; font-size: 14px; color: #666;">
+                    Don't have an account? Click Sign Up to create one
+                </p>
+            </div>
+        </div>
+
+        <div id="appSection" style="display: none;">
+            <div class="user-info">
+                Welcome, <span id="userEmail"></span> | 
+                <button class="btn btn-warning" onclick="logout()" style="padding: 5px 15px; font-size: 14px;">Logout</button>
+            </div>
+            
+            <div class="nav">
+                <button onclick="showSection('dashboard')">Dashboard</button>
+                <button onclick="showSection('students')">Student Management</button>
+                <button onclick="showSection('attendance')">Record Attendance</button>
+                <button onclick="showSection('records')">Attendance Records</button>
+                <button onclick="showSection('timeslots')">Time Slots</button>
+                <button onclick="showSection('exports')">Data Export</button>
+                <button onclick="showSection('stats')">Statistics</button>
+            </div>
+            
+            <div class="content">
+                <!-- Sync Status Display -->
+                <div class="sync-status" id="syncStatus">
+                    🔄 Connecting to database...
+                </div>
+
+                <!-- Dashboard -->
+                <div id="dashboard" class="section active">
+                    <div class="welcome-panel">
+                        <h2>Welcome to Memoschool Kuching</h2>
+                        <p>Your data is automatically synced across all devices in real-time</p>
+                        
+                        <div class="semester-info">
+                            <h3>Attendance Information</h3>
+                            <p><strong>Time Slots:</strong> 7 | <strong>Recorded Sessions:</strong> <span id="recordedSessionsCount">0</span></p>
+                        </div>
+                        
+                        <div class="quick-stats">
+                            <div class="quick-stat">
+                                <div class="value" id="totalStudents">0</div>
+                                <div class="label">Total Students</div>
+                            </div>
+                            <div class="quick-stat">
+                                <div class="value" id="sessionsRecorded">0</div>
+                                <div class="label">Sessions Recorded</div>
+                            </div>
+                            <div class="quick-stat">
+                                <div class="value" id="avgAttendance">0%</div>
+                                <div class="label">Average Attendance</div>
+                            </div>
+                            <div class="quick-stat">
+                                <div class="value" id="timeSlotsCount">7</div>
+                                <div class="label">Time Slots</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-cards">
+                        <div class="feature-card">
+                            <div>📝</div>
+                            <h3>Record Attendance</h3>
+                            <p>Mark attendance for specific time slots and dates.</p>
+                            <button class="btn" onclick="showSection('attendance')">Record Now</button>
+                        </div>
+                        <div class="feature-card">
+                            <div>👥</div>
+                            <h3>Manage Students</h3>
+                            <p>Add students with name, age, gender and assign to time slots.</p>
+                            <button class="btn" onclick="showSection('students')">Manage Students</button>
+                        </div>
+                        <div class="feature-card">
+                            <div>⏰</div>
+                            <h3>Time Slots</h3>
+                            <p>View students grouped by their class time slots.</p>
+                            <button class="btn" onclick="showSection('timeslots')">View Time Slots</button>
+                        </div>
+                        <div class="feature-card">
+                            <div>📊</div>
+                            <h3>View Reports</h3>
+                            <p>Generate detailed attendance reports.</p>
+                            <button class="btn" onclick="showSection('exports')">View Reports</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Student Management -->
+                <div id="students" class="section">
+                    <h2>👥 Student Management</h2>
+                    
+                    <div class="form-group">
+                        <label>Student Name</label>
+                        <input type="text" id="studentName" placeholder="Enter student name">
+                    </div>
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="number" id="studentAge" placeholder="Enter age" min="5" max="30">
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select id="studentGender">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Time Slot</label>
+                        <select id="studentTimeSlot">
+                            <option value="">Select Time Slot</option>
+                            <option value="Friday 2pm-3:30pm">Friday 2pm-3:30pm</option>
+                            <option value="Saturday 9am-10:30am">Saturday 9am-10:30am</option>
+                            <option value="Saturday 11am-12:30pm">Saturday 11am-12:30pm</option>
+                            <option value="Saturday 2pm-4pm">Saturday 2pm-4pm</option>
+                            <option value="Sunday 9am-10:30am">Sunday 9am-10:30am</option>
+                            <option value="Sunday 11am-12:30pm">Sunday 11am-12:30pm</option>
+                            <option value="Sunday 4pm-5:30pm">Sunday 4pm-5:30pm</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="addStudent()">Add Student</button>
+                    
+                    <h3 style="margin-top: 30px;">Student List by Time Slot</h3>
+                    
+                    <div class="time-slot-tabs" id="timeSlotTabs"></div>
+                    <div id="timeSlotContents"></div>
+                </div>
+                
+                <!-- Record Attendance -->
+                <div id="attendance" class="section">
+                    <h2>📝 Record Attendance</h2>
+                    <div class="form-group">
+                        <label>Select Time Slot</label>
+                        <select id="timeSlotSelect" onchange="updateStudentsCheckboxes()">
+                            <option value="">Select Time Slot</option>
+                            <option value="Friday 2pm-3:30pm">Friday 2pm-3:30pm</option>
+                            <option value="Saturday 9am-10:30am">Saturday 9am-10:30am</option>
+                            <option value="Saturday 11am-12:30pm">Saturday 11am-12:30pm</option>
+                            <option value="Saturday 2pm-4pm">Saturday 2pm-4pm</option>
+                            <option value="Sunday 9am-10:30am">Sunday 9am-10:30am</option>
+                            <option value="Sunday 11am-12:30pm">Sunday 11am-12:30pm</option>
+                            <option value="Sunday 4pm-5:30pm">Sunday 4pm-5:30pm</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="classDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Session Topic (Optional)</label>
+                        <input type="text" id="sessionTopic" placeholder="Enter session topic">
+                    </div>
+                    <div class="form-group">
+                        <label>Select Present Students</label>
+                        <div class="checkbox-group" id="studentsCheckboxes">
+                            <p>Please select a time slot to see students</p>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="recordAttendance()">Record Attendance</button>
+                </div>
+                
+                <!-- Attendance Records -->
+                <div id="records" class="section">
+                    <h2>📊 Attendance Records</h2>
+                    <div class="form-group">
+                        <label>Filter by Time Slot</label>
+                        <select id="filterTimeSlot" onchange="filterAttendanceRecords()">
+                            <option value="all">All Time Slots</option>
+                            <option value="Friday 2pm-3:30pm">Friday 2pm-3:30pm</option>
+                            <option value="Saturday 9am-10:30am">Saturday 9am-10:30am</option>
+                            <option value="Saturday 11am-12:30pm">Saturday 11am-12:30pm</option>
+                            <option value="Saturday 2pm-4pm">Saturday 2pm-4pm</option>
+                            <option value="Sunday 9am-10:30am">Sunday 9am-10:30am</option>
+                            <option value="Sunday 11am-12:30pm">Sunday 11am-12:30pm</option>
+                            <option value="Sunday 4pm-5:30pm">Sunday 4pm-5:30pm</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Filter by Student</label>
+                        <select id="filterStudent" onchange="filterAttendanceRecords()">
+                            <option value="all">All Students</option>
+                        </select>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                                <th>Time Slot</th>
+                                <th>Sessions Attended</th>
+                                <th>Attendance Rate</th>
+                                <th>Recent Attendance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceRecords"></tbody>
+                    </table>
+                </div>
+
+                <!-- Time Slots -->
+                <div id="timeslots" class="section">
+                    <h2>⏰ Time Slots</h2>
+                    <p>Students grouped by their class time slots.</p>
+                    <div id="timeSlotsContainer"></div>
+                </div>
+
+                <!-- Data Export -->
+                <div id="exports" class="section">
+                    <h2>📤 Data Export</h2>
+                    <div class="export-options">
+                        <button class="btn" onclick="exportToCSV()">Export to CSV</button>
+                        <button class="btn" onclick="exportToJSON()">Export to JSON</button>
+                        <button class="btn" onclick="printReport()">Print Report</button>
+                    </div>
+                    <div id="exportResult" style="margin-top: 20px;"></div>
+                </div>
+
+                <!-- Statistics -->
+                <div id="stats" class="section">
+                    <h2>📈 Statistics</h2>
+                    <div class="stats-grid" id="statsGrid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   <script>
+    // === 使用你的 Firebase 配置 ===
+    const firebaseConfig = {
+        apiKey: "AIzaSyB-enIolDzqs9sVcbB2Rxu7o86L5q7Kd7E",
+        authDomain: "memoschool-kuching.firebaseapp.com",
+        projectId: "memoschool-kuching",
+        storageBucket: "memoschool-kuching.firebasestorage.app",
+        messagingSenderId: "815724557443",
+        appId: "1:815724557443:web:4033c1d71ef7e339fa97b6",
+        measurementId: "G-KM0MJ80MN9"
+    };
+    // === 配置结束 ===
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    // Time slots configuration
+    const TIME_SLOTS = [
+        "Friday 2pm-3:30pm",
+        "Saturday 9am-10:30am", 
+        "Saturday 11am-12:30pm",
+        "Saturday 2pm-4pm",
+        "Sunday 9am-10:30am",
+        "Sunday 11am-12:30pm",
+        "Sunday 4pm-5:30pm"
+    ];
+
+    class MemoschoolAttendanceSystem {
+        constructor() {
+            this.students = new Map();
+            this.attendanceRecords = [];
+            this.userId = null;
+            this.isOnline = false;
+        }
+        
+        async initialize(userId) {
+            this.userId = userId;
+            await this.loadFromFirestore();
+            this.startRealtimeSync();
+        }
+        
+        async loadFromFirestore() {
+            if (!this.userId) return;
+            
+            try {
+                updateSyncStatus('🔄 Loading data from cloud...', 'syncing');
+                
+                // Load students data
+                const studentsSnapshot = await db.collection('users').doc(this.userId)
+                    .collection('students').get();
+                
+                this.students.clear();
+                studentsSnapshot.forEach(doc => {
+                    this.students.set(doc.id, doc.data());
+                });
+                
+                // Load attendance records
+                const attendanceSnapshot = await db.collection('users').doc(this.userId)
+                    .collection('attendance').get();
+                
+                this.attendanceRecords = [];
+                attendanceSnapshot.forEach(doc => {
+                    this.attendanceRecords.push(doc.data());
+                });
+                
+                updateSyncStatus('✅ Data loaded from cloud', 'synced');
+                this.isOnline = true;
+                updateUI();
+                
+            } catch (error) {
+                console.error('Error loading from Firestore:', error);
+                updateSyncStatus('❌ Error loading data', 'error');
+            }
+        }
+        
+        startRealtimeSync() {
+            if (!this.userId) return;
+            
+            // Real-time listener for students data
+            db.collection('users').doc(this.userId).collection('students')
+                .onSnapshot((snapshot) => {
+                    snapshot.docChanges().forEach((change) => {
+                        if (change.type === 'added' || change.type === 'modified') {
+                            this.students.set(change.doc.id, change.doc.data());
+                        } else if (change.type === 'removed') {
+                            this.students.delete(change.doc.id);
+                        }
+                    });
+                    updateUI();
+                    updateSyncStatus('✅ Real-time sync active', 'synced');
+                });
+            
+            // Real-time listener for attendance records
+            db.collection('users').doc(this.userId).collection('attendance')
+                .onSnapshot((snapshot) => {
+                    this.attendanceRecords = snapshot.docs.map(doc => doc.data());
+                    updateUI();
+                    updateSyncStatus('✅ Real-time sync active', 'synced');
+                });
+        }
+        
+        async addStudent(name, age, gender, timeSlot) {
+            if (!name || !timeSlot) {
+                throw new Error('Student name and time slot are required');
+            }
+            
+            const studentId = `${name.replace(/\s+/g, '')}-${timeSlot.replace(/\s+/g, '')}-${Date.now()}`;
+            const student = {
+                id: studentId,
+                name,
+                age: age || '',
+                gender: gender || '',
+                timeSlot,
+                attendanceCount: 0,
+                attendanceDates: [],
+                createdAt: new Date().toISOString()
+            };
+            
+            if (this.isOnline) {
+                await db.collection('users').doc(this.userId).collection('students')
+                    .doc(studentId).set(student);
+            } else {
+                this.students.set(studentId, student);
+            }
+            
+            return student;
+        }
+        
+        async recordAttendance(timeSlot, date, topic, presentStudentIds) {
+            if (!timeSlot || !date) {
+                throw new Error('Time slot and date are required');
+            }
+            
+            const recordId = `${timeSlot}-${date}`.replace(/[^a-zA-Z0-9]/g, '-');
+            const record = {
+                id: recordId,
+                timeSlot,
+                date,
+                topic: topic || '',
+                presentStudents: presentStudentIds,
+                recordedAt: new Date().toISOString()
+            };
+            
+            // Update student attendance data
+            for (const studentId of presentStudentIds) {
+                const student = this.students.get(studentId);
+                if (student) {
+                    student.attendanceCount++;
+                    student.attendanceDates.push(date);
+                    
+                    if (this.isOnline) {
+                        await db.collection('users').doc(this.userId).collection('students')
+                            .doc(studentId).update({
+                                attendanceCount: student.attendanceCount,
+                                attendanceDates: student.attendanceDates
+                            });
+                    }
+                }
+            }
+            
+            if (this.isOnline) {
+                await db.collection('users').doc(this.userId).collection('attendance')
+                    .doc(recordId).set(record);
+            } else {
+                this.attendanceRecords.push(record);
+            }
+            
+            return record;
+        }
+        
+        getStudentAttendance(studentId) {
+            const student = this.students.get(studentId);
+            if (!student) return null;
+            
+            const totalSessions = this.attendanceRecords.filter(record => 
+                record.timeSlot === student.timeSlot
+            ).length;
+            
+            const attendanceRate = totalSessions > 0 ? 
+                (student.attendanceCount / totalSessions * 100).toFixed(1) : 0;
+            
+            return {
+                ...student,
+                attendanceRate,
+                recentAttendance: student.attendanceDates.slice(-5)
+            };
+        }
+        
+        getStudentsByTimeSlot(timeSlot) {
+            const students = [];
+            for (const student of this.students.values()) {
+                if (timeSlot === 'all' || student.timeSlot === timeSlot) {
+                    students.push(this.getStudentAttendance(student.id));
+                }
+            }
+            return students;
+        }
+        
+        getAllAttendance() {
+            const result = [];
+            for (const student of this.students.values()) {
+                result.push(this.getStudentAttendance(student.id));
+            }
+            return result;
+        }
+        
+        getSummary() {
+            const totalStudents = this.students.size;
+            let totalAttendance = 0;
+            let totalSessions = this.attendanceRecords.length;
+            
+            for (const student of this.students.values()) {
+                totalAttendance += student.attendanceCount;
+            }
+            
+            const avgAttendanceRate = totalStudents > 0 && totalSessions > 0 ? 
+                (totalAttendance / (totalStudents * totalSessions) * 100).toFixed(1) : 0;
+            
+            return {
+                totalStudents,
+                totalSessions,
+                totalAttendance,
+                averageAttendanceRate: avgAttendanceRate,
+                timeSlots: TIME_SLOTS.length
+            };
+        }
+
+        exportToCSV() {
+            let csv = 'Name,Age,Gender,Time Slot,Sessions Attended,Attendance Rate\n';
+            for (const student of this.students.values()) {
+                const info = this.getStudentAttendance(student.id);
+                csv += `"${student.name}",${student.age},${student.gender},"${student.timeSlot}",${info.attendanceCount},${info.attendanceRate}%\n`;
+            }
+            return csv;
+        }
+
+        exportToJSON() {
+            const data = {
+                system: {
+                    school: "Memoschool Kuching",
+                    timeSlots: TIME_SLOTS
+                },
+                students: Array.from(this.students.values()),
+                attendanceRecords: this.attendanceRecords
+            };
+            return JSON.stringify(data, null, 2);
+        }
+    }
+
+    // Create system instance
+    const system = new MemoschoolAttendanceSystem();
+
+    // Firebase Authentication Functions
+    async function login() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        if (!email || !password) {
+            alert('Please enter both email and password');
+            return;
+        }
+        
+        try {
+            updateSyncStatus('🔄 Signing in...', 'syncing');
+            const userCredential = await auth.signInWithEmailAndPassword(email, password);
+            showApp(userCredential.user);
+        } catch (error) {
+            console.error('Login error:', error);
+            alert('Login failed: ' + error.message);
+            updateSyncStatus('❌ Login failed', 'error');
+        }
+    }
+
+    async function signup() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        if (!email || !password) {
+            alert('Please enter both email and password');
+            return;
+        }
+        
+        if (password.length < 6) {
+            alert('Password should be at least 6 characters');
+            return;
+        }
+        
+        try {
+            updateSyncStatus('🔄 Creating account...', 'syncing');
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            showApp(userCredential.user);
+        } catch (error) {
+            console.error('Signup error:', error);
+            alert('Sign up failed: ' + error.message);
+            updateSyncStatus('❌ Sign up failed', 'error');
+        }
+    }
+
+    function logout() {
+        auth.signOut();
+        document.getElementById('loginSection').style.display = 'block';
+        document.getElementById('appSection').style.display = 'none';
+        updateSyncStatus('🔒 Logged out', 'syncing');
+    }
+
+    function showApp(user) {
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('appSection').style.display = 'block';
+        document.getElementById('userEmail').textContent = user.email;
+        
+        // Initialize system with user ID
+        system.initialize(user.uid);
+    }
+
+    // Listen for auth state changes
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            showApp(user);
+        } else {
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('appSection').style.display = 'none';
+        }
+    });
+
+    // Sync status update
+    function updateSyncStatus(message, type = 'syncing') {
+        const statusElement = document.getElementById('syncStatus');
+        statusElement.textContent = message;
+        statusElement.className = `sync-status ${type}`;
+    }
+
+    // Update all UI components
+    function updateUI() {
+        updateDashboard();
+        updateTimeSlotTabs();
+        updateStudentsCheckboxes();
+        updateAttendanceRecords();
+        updateStats();
+        updateTimeSlots();
+        updateFilterStudent();
+    }
+
+    // UI Functions
+    function showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active');
+        });
+        document.getElementById(sectionId).classList.add('active');
+    }
+
+    async function addStudent() {
+        const name = document.getElementById('studentName').value.trim();
+        const age = document.getElementById('studentAge').value;
+        const gender = document.getElementById('studentGender').value;
+        const timeSlot = document.getElementById('studentTimeSlot').value;
+        
+        if (!name || !timeSlot) {
+            alert('Please enter at least student name and select a time slot');
+            return;
+        }
+        
+        try {
+            await system.addStudent(name, age, gender, timeSlot);
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentAge').value = '';
+            document.getElementById('studentGender').value = '';
+            document.getElementById('studentTimeSlot').value = '';
+            alert('Student added successfully!');
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    }
+
+    function updateTimeSlotTabs() {
+        const tabsContainer = document.getElementById('timeSlotTabs');
+        const contentsContainer = document.getElementById('timeSlotContents');
+        
+        tabsContainer.innerHTML = '';
+        contentsContainer.innerHTML = '';
+        
+        let firstTab = true;
+        
+        for (const timeSlot of TIME_SLOTS) {
+            // Create tab
+            const tab = document.createElement('div');
+            tab.className = `time-slot-tab ${firstTab ? 'active' : ''}`;
+            tab.textContent = timeSlot;
+            tab.dataset.timeSlot = timeSlot;
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                document.querySelectorAll('.time-slot-tab').forEach(t => {
+                    t.classList.remove('active');
+                });
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Hide all content
+                document.querySelectorAll('.time-slot-content').forEach(c => {
+                    c.classList.remove('active');
+                });
+                // Show corresponding content
+                document.getElementById(`content-${timeSlot.replace(/\s+/g, '-')}`).classList.add('active');
+            });
+            
+            tabsContainer.appendChild(tab);
+            
+            // Create content
+            const content = document.createElement('div');
+            content.id = `content-${timeSlot.replace(/\s+/g, '-')}`;
+            content.className = `time-slot-content ${firstTab ? 'active' : ''}`;
+            
+            const students = system.getStudentsByTimeSlot(timeSlot);
+            
+            if (students.length === 0) {
+                content.innerHTML = `<p>No students in ${timeSlot}</p>`;
+            } else {
+                const table = document.createElement('table');
+                table.className = 'table';
+                
+                const thead = document.createElement('thead');
+                thead.innerHTML = `
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Sessions Attended</th>
+                        <th>Attendance Rate</th>
+                        <th>Actions</th>
+                    </tr>
+                `;
+                
+                const tbody = document.createElement('tbody');
+                
+                students.forEach(student => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${student.name}</td>
+                        <td>${student.age || 'N/A'}</td>
+                        <td>${student.gender || 'N/A'}</td>
+                        <td>${student.attendanceCount}</td>
+                        <td>${student.attendanceRate}%</td>
+                        <td><button class="btn btn-warning" onclick="deleteStudent('${student.id}')" style="padding: 5px 10px; font-size: 12px;">Delete</button></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                table.appendChild(thead);
+                table.appendChild(tbody);
+                content.appendChild(table);
+            }
+            
+            contentsContainer.appendChild(content);
+            firstTab = false;
+        }
+    }
+
+    async function deleteStudent(studentId) {
+        if (confirm('Are you sure you want to delete this student?')) {
+            try {
+                if (system.isOnline) {
+                    await db.collection('users').doc(system.userId).collection('students')
+                        .doc(studentId).delete();
+                } else {
+                    system.students.delete(studentId);
+                    updateUI();
+                }
+            } catch (error) {
+                alert('Error deleting student: ' + error.message);
+            }
+        }
+    }
+
+    function updateStudentsCheckboxes() {
+        const timeSlot = document.getElementById('timeSlotSelect').value;
+        const container = document.getElementById('studentsCheckboxes');
+        
+        if (!timeSlot) {
+            container.innerHTML = '<p>Please select a time slot to see students</p>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        const students = system.getStudentsByTimeSlot(timeSlot);
+        
+        if (students.length === 0) {
+            container.innerHTML = `<p>No students found for ${timeSlot}</p>`;
+            return;
+        }
+        
+        for (const student of students) {
+            const label = document.createElement('label');
+            label.style.display = 'block';
+            label.innerHTML = `
+                <input type="checkbox" value="${student.id}">
+                ${student.name} (${student.age || 'N/A'}, ${student.gender || 'N/A'})
+            `;
+            container.appendChild(label);
+        }
+    }
+
+    function updateFilterStudent() {
+        const select = document.getElementById('filterStudent');
+        // Keep the "All Students" option
+        const allOption = select.querySelector('option[value="all"]');
+        select.innerHTML = '';
+        select.appendChild(allOption);
+        
+        for (const student of system.students.values()) {
+            const option = document.createElement('option');
+            option.value = student.id;
+            option.textContent = `${student.name} (${student.timeSlot})`;
+            select.appendChild(option);
+        }
+    }
+
+    function filterAttendanceRecords() {
+        updateAttendanceRecords();
+    }
+
+    async function recordAttendance() {
+        const timeSlot = document.getElementById('timeSlotSelect').value;
+        const date = document.getElementById('classDate').value;
+        const topic = document.getElementById('sessionTopic').value.trim();
+        const checkboxes = document.querySelectorAll('#studentsCheckboxes input:checked');
+        const presentStudentIds = Array.from(checkboxes).map(cb => cb.value);
+        
+        if (!timeSlot) {
+            alert('Please select a time slot');
+            return;
+        }
+        
+        if (!date) {
+            alert('Please select a date');
+            return;
+        }
+        
+        if (presentStudentIds.length === 0) {
+            alert('Please select at least one student');
+            return;
+        }
+        
+        try {
+            const result = await system.recordAttendance(timeSlot, date, topic, presentStudentIds);
+            if (result) {
+                updateAttendanceRecords();
+                updateStats();
+                updateDashboard();
+                alert(`Attendance recorded successfully for ${timeSlot} on ${date}`);
+                
+                // Clear selection
+                checkboxes.forEach(cb => cb.checked = false);
+                document.getElementById('sessionTopic').value = '';
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    }
+
+    function updateAttendanceRecords() {
+        const tbody = document.getElementById('attendanceRecords');
+        tbody.innerHTML = '';
+        
+        const timeSlotFilter = document.getElementById('filterTimeSlot').value;
+        const studentFilter = document.getElementById('filterStudent').value;
+        const allAttendance = system.getAllAttendance();
+        
+        allAttendance.forEach(student => {
+            // Apply filters if needed
+            if (timeSlotFilter !== 'all' && student.timeSlot !== timeSlotFilter) {
+                return;
+            }
+            
+            if (studentFilter !== 'all' && student.id !== studentFilter) {
+                return;
+            }
+            
+            const row = document.createElement('tr');
+            
+            // Format recent attendance
+            const recentDates = student.recentAttendance.map(date => {
+                const d = new Date(date);
+                return `${d.getDate()}/${d.getMonth()+1}`;
+            }).join(', ');
+            
+            row.innerHTML = `
+                <td>${student.name}</td>
+                <td>${student.age || 'N/A'}</td>
+                <td>${student.gender || 'N/A'}</td>
+                <td>${student.timeSlot}</td>
+                <td>${student.attendanceCount}</td>
+                <td>${student.attendanceRate}%</td>
+                <td>${recentDates || 'No records'}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    function updateTimeSlots() {
+        const container = document.getElementById('timeSlotsContainer');
+        container.innerHTML = '';
+        
+        for (const timeSlot of TIME_SLOTS) {
+            const students = system.getStudentsByTimeSlot(timeSlot);
+            
+            const timeSlotCard = document.createElement('div');
+            timeSlotCard.className = 'time-slot-card';
+            
+            const header = document.createElement('div');
+            header.className = 'time-slot-header';
+            
+            const title = document.createElement('div');
+            title.className = 'time-slot-title';
+            title.textContent = timeSlot;
+            
+            const count = document.createElement('div');
+            count.className = 'student-count';
+            count.textContent = `${students.length} student${students.length !== 1 ? 's' : ''}`;
+            
+            header.appendChild(title);
+            header.appendChild(count);
+            
+            const studentsContainer = document.createElement('div');
+            studentsContainer.className = 'time-slot-students';
+            
+            if (students.length === 0) {
+                studentsContainer.innerHTML = '<p>No students in this time slot</p>';
+            } else {
+                students.forEach(student => {
+                    const studentCard = document.createElement('div');
+                    studentCard.className = 'student-card';
+                    studentCard.innerHTML = `
+                        <strong>${student.name}</strong><br>
+                        ${student.age || 'N/A'} years, ${student.gender || 'N/A'}<br>
+                        Attendance: ${student.attendanceRate}%
+                    `;
+                    studentsContainer.appendChild(studentCard);
+                });
+            }
+            
+            timeSlotCard.appendChild(header);
+            timeSlotCard.appendChild(studentsContainer);
+            container.appendChild(timeSlotCard);
+        }
+    }
+
+    function updateStats() {
+        const statsGrid = document.getElementById('statsGrid');
+        const summary = system.getSummary();
+        
+        statsGrid.innerHTML = `
+            <div class="stat-card">
+                <h3>Total Students</h3>
+                <div class="number">${summary.totalStudents}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Sessions</h3>
+                <div class="number">${summary.totalSessions}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Average Attendance Rate</h3>
+                <div class="number">${summary.averageAttendanceRate}%</div>
+            </div>
+            <div class="stat-card">
+                <h3>Time Slots</h3>
+                <div class="number">${summary.timeSlots}</div>
+            </div>
+        `;
+    }
+
+    function updateDashboard() {
+        const summary = system.getSummary();
+        
+        document.getElementById('totalStudents').textContent = summary.totalStudents;
+        document.getElementById('sessionsRecorded').textContent = summary.totalSessions;
+        document.getElementById('avgAttendance').textContent = summary.averageAttendanceRate + '%';
+        document.getElementById('timeSlotsCount').textContent = summary.timeSlots;
+        document.getElementById('recordedSessionsCount').textContent = summary.totalSessions;
+    }
+
+    // Export Functions
+    function exportToCSV() {
+        const csv = system.exportToCSV();
+        downloadFile(csv, 'memoschool_attendance.csv', 'text/csv');
+        document.getElementById('exportResult').innerHTML = '<p style="color: green;">CSV exported successfully!</p>';
+    }
+
+    function exportToJSON() {
+        const json = system.exportToJSON();
+        downloadFile(json, 'memoschool_data.json', 'application/json');
+        document.getElementById('exportResult').innerHTML = '<p style="color: green;">JSON exported successfully!</p>';
+    }
+
+    function printReport() {
+        window.print();
+    }
+
+    function downloadFile(content, fileName, contentType) {
+        const blob = new Blob([content], { type: contentType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Initialize the system when the page loads
+    window.onload = function() {
+        document.getElementById('classDate').valueAsDate = new Date();
+        updateSyncStatus('🔵 Ready to connect', 'syncing');
+    };
+</script>
+</body>
+</html>

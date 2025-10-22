@@ -356,14 +356,20 @@
             padding: 15px;
         }
         .checkbox-group label {
-            display: block;
+            display: flex;
+            align-items: center;
             padding: 8px;
             margin: 5px 0;
             border-radius: 4px;
             transition: background 0.2s;
+            cursor: pointer;
         }
         .checkbox-group label:hover {
             background: #ecf0f1;
+        }
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
         }
         .semester-info {
             background: #fef5e7;
@@ -417,6 +423,14 @@
             border-radius: 5px;
             padding: 10px;
             margin-bottom: 15px;
+        }
+        .attendance-info {
+            background: #fff3cd;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 14px;
+            border-left: 4px solid #ffc107;
         }
         @media (max-width: 768px) {
             .nav {
@@ -503,6 +517,10 @@
                     <div class="welcome-panel">
                         <h2>Welcome to Memoschool Kuching</h2>
                         <p>Your data is automatically synced across all devices in real-time</p>
+                        
+                        <div class="attendance-info">
+                            <strong>📊 Fair Attendance Calculation:</strong> Attendance rates are calculated only from the student's enrollment date, ensuring new students aren't penalized for classes they missed before joining.
+                        </div>
                         
                         <div class="semester-info">
                             <h3>Attendance Information</h3>
@@ -950,17 +968,29 @@
                 const student = this.students.get(studentId);
                 if (!student) return null;
                 
-                const totalSessions = this.attendanceRecords.filter(record => 
-                    record.timeSlot === student.timeSlot
-                ).length;
+                // 只计算入学日期之后的课程
+                const enrolledDate = student.enrolledDate ? new Date(student.enrolledDate) : new Date(0);
+                const eligibleRecords = this.attendanceRecords.filter(record => 
+                    record.timeSlot === student.timeSlot && 
+                    new Date(record.date) >= enrolledDate
+                );
+                
+                const totalSessions = eligibleRecords.length;
+                
+                // 只计算入学日期之后的出席
+                const eligibleAttendanceDates = student.attendanceDates.filter(date => 
+                    new Date(date) >= enrolledDate
+                );
                 
                 const attendanceRate = totalSessions > 0 ? 
-                    (student.attendanceCount / totalSessions * 100).toFixed(1) : 0;
+                    (eligibleAttendanceDates.length / totalSessions * 100).toFixed(1) : 0;
                 
                 return {
                     ...student,
+                    attendanceCount: eligibleAttendanceDates.length,
                     attendanceRate,
-                    recentAttendance: student.attendanceDates.slice(-5)
+                    recentAttendance: student.attendanceDates.slice(-5),
+                    totalEligibleSessions: totalSessions
                 };
             }
             
@@ -1422,11 +1452,26 @@
             
             for (const student of students) {
                 const label = document.createElement('label');
-                label.style.display = 'block';
+                label.style.display = 'flex';
+                label.style.alignItems = 'center';
+                label.style.padding = '8px';
+                label.style.margin = '5px 0';
+                label.style.borderRadius = '4px';
+                label.style.cursor = 'pointer';
+                label.style.transition = 'background 0.2s';
+                
                 label.innerHTML = `
-                    <input type="checkbox" value="${student.id}">
+                    <input type="checkbox" value="${student.id}" style="margin-right: 10px; transform: scale(1.2);">
                     ${student.name} (${student.age || 'N/A'}, ${student.gender || 'N/A'})
                 `;
+                
+                label.addEventListener('mouseover', function() {
+                    this.style.background = '#ecf0f1';
+                });
+                label.addEventListener('mouseout', function() {
+                    this.style.background = '';
+                });
+                
                 container.appendChild(label);
             }
         }

@@ -429,7 +429,7 @@
     </style>
 </head>
 <body>
-    <div class="container">
+   <div class="container">
         <div class="header">
            <div class="school-logo" id="schoolLogo">
                <img src="./gmlogo.png" alt="Genius Mind Academy" style="width: 100%; height: 100%; object-fit: contain;">
@@ -569,6 +569,10 @@
                             <option value="Sunday 4pm-5:30pm">Sunday 4pm-5:30pm</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label>Enrolled Date</label>
+                        <input type="date" id="studentEnrolledDate">
+                    </div>
                     <button class="btn" onclick="addStudent()">Add Student</button>
                     
                     <h3 style="margin-top: 30px;">Student List by Time Slot</h3>
@@ -638,6 +642,7 @@
                                 <th>Name</th>
                                 <th>Age</th>
                                 <th>Gender</th>
+                                <th>Enrolled Date</th>
                                 <th>Time Slot</th>
                                 <th>Sessions Attended</th>
                                 <th>Attendance Rate</th>
@@ -675,721 +680,742 @@
         </div>
     </div>
 
-   <script>
-    // === 使用你的 Firebase 配置 ===
-    const firebaseConfig = {
-        apiKey: "AIzaSyB-enIolDzqs9sVcbB2Rxu7o86L5q7Kd7E",
-        authDomain: "memoschool-kuching.firebaseapp.com",
-        projectId: "memoschool-kuching",
-        storageBucket: "memoschool-kuching.firebasestorage.app",
-        messagingSenderId: "815724557443",
-        appId: "1:815724557443:web:4033c1d71ef7e339fa97b6",
-        measurementId: "G-KM0MJ80MN9"
-    };
-    // === 配置结束 ===
+    <script>
+        // === 使用你的 Firebase 配置 ===
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-enIolDzqs9sVcbB2Rxu7o86L5q7Kd7E",
+            authDomain: "memoschool-kuching.firebaseapp.com",
+            projectId: "memoschool-kuching",
+            storageBucket: "memoschool-kuching.firebasestorage.app",
+            messagingSenderId: "815724557443",
+            appId: "1:815724557443:web:4033c1d71ef7e339fa97b6",
+            measurementId: "G-KM0MJ80MN9"
+        };
+        // === 配置结束 ===
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const auth = firebase.auth();
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
 
-    // Time slots configuration
-    const TIME_SLOTS = [
-        "Friday 2pm-3:30pm",
-        "Saturday 9am-10:30am", 
-        "Saturday 11am-12:30pm",
-        "Saturday 2pm-4pm",
-        "Sunday 9am-10:30am",
-        "Sunday 11am-12:30pm",
-        "Sunday 4pm-5:30pm"
-    ];
+        // Time slots configuration
+        const TIME_SLOTS = [
+            "Friday 2pm-3:30pm",
+            "Saturday 9am-10:30am", 
+            "Saturday 11am-12:30pm",
+            "Saturday 2pm-4pm",
+            "Sunday 9am-10:30am",
+            "Sunday 11am-12:30pm",
+            "Sunday 4pm-5:30pm"
+        ];
 
-    class MemoschoolAttendanceSystem {
-        constructor() {
-            this.students = new Map();
-            this.attendanceRecords = [];
-            this.userId = null;
-            this.isOnline = false;
-        }
-        
-        async initialize(userId) {
-            this.userId = userId;
-            await this.loadFromFirestore();
-            this.startRealtimeSync();
-        }
-        
-        async loadFromFirestore() {
-            if (!this.userId) return;
-            
-            try {
-                updateSyncStatus('🔄 Loading data from cloud...', 'syncing');
-                
-                // Load students data
-                const studentsSnapshot = await db.collection('users').doc(this.userId)
-                    .collection('students').get();
-                
-                this.students.clear();
-                studentsSnapshot.forEach(doc => {
-                    this.students.set(doc.id, doc.data());
-                });
-                
-                // Load attendance records
-                const attendanceSnapshot = await db.collection('users').doc(this.userId)
-                    .collection('attendance').get();
-                
+        class MemoschoolAttendanceSystem {
+            constructor() {
+                this.students = new Map();
                 this.attendanceRecords = [];
-                attendanceSnapshot.forEach(doc => {
-                    this.attendanceRecords.push(doc.data());
-                });
+                this.userId = null;
+                this.isOnline = false;
+            }
+            
+            async initialize(userId) {
+                this.userId = userId;
+                await this.loadFromFirestore();
+                this.startRealtimeSync();
+            }
+            
+            async loadFromFirestore() {
+                if (!this.userId) return;
                 
-                updateSyncStatus('✅ Data loaded from cloud', 'synced');
-                this.isOnline = true;
-                updateUI();
-                
-            } catch (error) {
-                console.error('Error loading from Firestore:', error);
-                updateSyncStatus('❌ Error loading data', 'error');
-            }
-        }
-        
-        startRealtimeSync() {
-            if (!this.userId) return;
-            
-            // Real-time listener for students data
-            db.collection('users').doc(this.userId).collection('students')
-                .onSnapshot((snapshot) => {
-                    snapshot.docChanges().forEach((change) => {
-                        if (change.type === 'added' || change.type === 'modified') {
-                            this.students.set(change.doc.id, change.doc.data());
-                        } else if (change.type === 'removed') {
-                            this.students.delete(change.doc.id);
-                        }
-                    });
-                    updateUI();
-                    updateSyncStatus('✅ Real-time sync active', 'synced');
-                });
-            
-            // Real-time listener for attendance records
-            db.collection('users').doc(this.userId).collection('attendance')
-                .onSnapshot((snapshot) => {
-                    this.attendanceRecords = snapshot.docs.map(doc => doc.data());
-                    updateUI();
-                    updateSyncStatus('✅ Real-time sync active', 'synced');
-                });
-        }
-        
-        async addStudent(name, age, gender, timeSlot) {
-            if (!name || !timeSlot) {
-                throw new Error('Student name and time slot are required');
-            }
-            
-            const studentId = `${name.replace(/\s+/g, '')}-${timeSlot.replace(/\s+/g, '')}-${Date.now()}`;
-            const student = {
-                id: studentId,
-                name,
-                age: age || '',
-                gender: gender || '',
-                timeSlot,
-                attendanceCount: 0,
-                attendanceDates: [],
-                createdAt: new Date().toISOString()
-            };
-            
-            if (this.isOnline) {
-                await db.collection('users').doc(this.userId).collection('students')
-                    .doc(studentId).set(student);
-            } else {
-                this.students.set(studentId, student);
-            }
-            
-            return student;
-        }
-        
-        async recordAttendance(timeSlot, date, topic, presentStudentIds) {
-            if (!timeSlot || !date) {
-                throw new Error('Time slot and date are required');
-            }
-            
-            const recordId = `${timeSlot}-${date}`.replace(/[^a-zA-Z0-9]/g, '-');
-            const record = {
-                id: recordId,
-                timeSlot,
-                date,
-                topic: topic || '',
-                presentStudents: presentStudentIds,
-                recordedAt: new Date().toISOString()
-            };
-            
-            // Update student attendance data
-            for (const studentId of presentStudentIds) {
-                const student = this.students.get(studentId);
-                if (student) {
-                    student.attendanceCount++;
-                    student.attendanceDates.push(date);
+                try {
+                    updateSyncStatus('🔄 Loading data from cloud...', 'syncing');
                     
-                    if (this.isOnline) {
-                        await db.collection('users').doc(this.userId).collection('students')
-                            .doc(studentId).update({
-                                attendanceCount: student.attendanceCount,
-                                attendanceDates: student.attendanceDates
-                            });
+                    // Load students data
+                    const studentsSnapshot = await db.collection('users').doc(this.userId)
+                        .collection('students').get();
+                    
+                    this.students.clear();
+                    studentsSnapshot.forEach(doc => {
+                        this.students.set(doc.id, doc.data());
+                    });
+                    
+                    // Load attendance records
+                    const attendanceSnapshot = await db.collection('users').doc(this.userId)
+                        .collection('attendance').get();
+                    
+                    this.attendanceRecords = [];
+                    attendanceSnapshot.forEach(doc => {
+                        this.attendanceRecords.push(doc.data());
+                    });
+                    
+                    updateSyncStatus('✅ Data loaded from cloud', 'synced');
+                    this.isOnline = true;
+                    updateUI();
+                    
+                } catch (error) {
+                    console.error('Error loading from Firestore:', error);
+                    updateSyncStatus('❌ Error loading data', 'error');
+                }
+            }
+            
+            startRealtimeSync() {
+                if (!this.userId) return;
+                
+                // Real-time listener for students data
+                db.collection('users').doc(this.userId).collection('students')
+                    .onSnapshot((snapshot) => {
+                        snapshot.docChanges().forEach((change) => {
+                            if (change.type === 'added' || change.type === 'modified') {
+                                this.students.set(change.doc.id, change.doc.data());
+                            } else if (change.type === 'removed') {
+                                this.students.delete(change.doc.id);
+                            }
+                        });
+                        updateUI();
+                        updateSyncStatus('✅ Real-time sync active', 'synced');
+                    });
+                
+                // Real-time listener for attendance records
+                db.collection('users').doc(this.userId).collection('attendance')
+                    .onSnapshot((snapshot) => {
+                        this.attendanceRecords = snapshot.docs.map(doc => doc.data());
+                        updateUI();
+                        updateSyncStatus('✅ Real-time sync active', 'synced');
+                    });
+            }
+            
+            async addStudent(name, age, gender, timeSlot, enrolledDate) {
+                if (!name || !timeSlot) {
+                    throw new Error('Student name and time slot are required');
+                }
+                
+                const studentId = `${name.replace(/\s+/g, '')}-${timeSlot.replace(/\s+/g, '')}-${Date.now()}`;
+                const student = {
+                    id: studentId,
+                    name,
+                    age: age || '',
+                    gender: gender || '',
+                    timeSlot,
+                    enrolledDate: enrolledDate || new Date().toISOString().split('T')[0],
+                    attendanceCount: 0,
+                    attendanceDates: [],
+                    createdAt: new Date().toISOString()
+                };
+                
+                if (this.isOnline) {
+                    await db.collection('users').doc(this.userId).collection('students')
+                        .doc(studentId).set(student);
+                } else {
+                    this.students.set(studentId, student);
+                }
+                
+                return student;
+            }
+            
+            async recordAttendance(timeSlot, date, topic, presentStudentIds) {
+                if (!timeSlot || !date) {
+                    throw new Error('Time slot and date are required');
+                }
+                
+                const recordId = `${timeSlot}-${date}`.replace(/[^a-zA-Z0-9]/g, '-');
+                const record = {
+                    id: recordId,
+                    timeSlot,
+                    date,
+                    topic: topic || '',
+                    presentStudents: presentStudentIds,
+                    recordedAt: new Date().toISOString()
+                };
+                
+                // Update student attendance data
+                for (const studentId of presentStudentIds) {
+                    const student = this.students.get(studentId);
+                    if (student) {
+                        student.attendanceCount++;
+                        student.attendanceDates.push(date);
+                        
+                        if (this.isOnline) {
+                            await db.collection('users').doc(this.userId).collection('students')
+                                .doc(studentId).update({
+                                    attendanceCount: student.attendanceCount,
+                                    attendanceDates: student.attendanceDates
+                                });
+                        }
                     }
                 }
-            }
-            
-            if (this.isOnline) {
-                await db.collection('users').doc(this.userId).collection('attendance')
-                    .doc(recordId).set(record);
-            } else {
-                this.attendanceRecords.push(record);
-            }
-            
-            return record;
-        }
-        
-        getStudentAttendance(studentId) {
-            const student = this.students.get(studentId);
-            if (!student) return null;
-            
-            const totalSessions = this.attendanceRecords.filter(record => 
-                record.timeSlot === student.timeSlot
-            ).length;
-            
-            const attendanceRate = totalSessions > 0 ? 
-                (student.attendanceCount / totalSessions * 100).toFixed(1) : 0;
-            
-            return {
-                ...student,
-                attendanceRate,
-                recentAttendance: student.attendanceDates.slice(-5)
-            };
-        }
-        
-        getStudentsByTimeSlot(timeSlot) {
-            const students = [];
-            for (const student of this.students.values()) {
-                if (timeSlot === 'all' || student.timeSlot === timeSlot) {
-                    students.push(this.getStudentAttendance(student.id));
+                
+                if (this.isOnline) {
+                    await db.collection('users').doc(this.userId).collection('attendance')
+                        .doc(recordId).set(record);
+                } else {
+                    this.attendanceRecords.push(record);
                 }
-            }
-            return students;
-        }
-        
-        getAllAttendance() {
-            const result = [];
-            for (const student of this.students.values()) {
-                result.push(this.getStudentAttendance(student.id));
-            }
-            return result;
-        }
-        
-        getSummary() {
-            const totalStudents = this.students.size;
-            let totalAttendance = 0;
-            let totalSessions = this.attendanceRecords.length;
-            
-            for (const student of this.students.values()) {
-                totalAttendance += student.attendanceCount;
+                
+                return record;
             }
             
-            const avgAttendanceRate = totalStudents > 0 && totalSessions > 0 ? 
-                (totalAttendance / (totalStudents * totalSessions) * 100).toFixed(1) : 0;
-            
-            return {
-                totalStudents,
-                totalSessions,
-                totalAttendance,
-                averageAttendanceRate: avgAttendanceRate,
-                timeSlots: TIME_SLOTS.length
-            };
-        }
-
-        exportToCSV() {
-            let csv = 'Name,Age,Gender,Time Slot,Sessions Attended,Attendance Rate\n';
-            for (const student of this.students.values()) {
-                const info = this.getStudentAttendance(student.id);
-                csv += `"${student.name}",${student.age},${student.gender},"${student.timeSlot}",${info.attendanceCount},${info.attendanceRate}%\n`;
+            getStudentAttendance(studentId) {
+                const student = this.students.get(studentId);
+                if (!student) return null;
+                
+                const totalSessions = this.attendanceRecords.filter(record => 
+                    record.timeSlot === student.timeSlot
+                ).length;
+                
+                const attendanceRate = totalSessions > 0 ? 
+                    (student.attendanceCount / totalSessions * 100).toFixed(1) : 0;
+                
+                return {
+                    ...student,
+                    attendanceRate,
+                    recentAttendance: student.attendanceDates.slice(-5)
+                };
             }
-            return csv;
+            
+            getStudentsByTimeSlot(timeSlot) {
+                const students = [];
+                for (const student of this.students.values()) {
+                    if (timeSlot === 'all' || student.timeSlot === timeSlot) {
+                        students.push(this.getStudentAttendance(student.id));
+                    }
+                }
+                return students;
+            }
+            
+            getAllAttendance() {
+                const result = [];
+                for (const student of this.students.values()) {
+                    result.push(this.getStudentAttendance(student.id));
+                }
+                return result;
+            }
+            
+            getSummary() {
+                const totalStudents = this.students.size;
+                let totalAttendance = 0;
+                let totalSessions = this.attendanceRecords.length;
+                
+                for (const student of this.students.values()) {
+                    totalAttendance += student.attendanceCount;
+                }
+                
+                const avgAttendanceRate = totalStudents > 0 && totalSessions > 0 ? 
+                    (totalAttendance / (totalStudents * totalSessions) * 100).toFixed(1) : 0;
+                
+                return {
+                    totalStudents,
+                    totalSessions,
+                    totalAttendance,
+                    averageAttendanceRate: avgAttendanceRate,
+                    timeSlots: TIME_SLOTS.length
+                };
+            }
+
+            exportToCSV() {
+                let csv = 'Name,Age,Gender,Enrolled Date,Time Slot,Sessions Attended,Attendance Rate\n';
+                for (const student of this.students.values()) {
+                    const info = this.getStudentAttendance(student.id);
+                    csv += `"${student.name}",${student.age},${student.gender},"${student.enrolledDate}","${student.timeSlot}",${info.attendanceCount},${info.attendanceRate}%\n`;
+                }
+                return csv;
+            }
+
+            exportToJSON() {
+                const data = {
+                    system: {
+                        school: "Memoschool Kuching",
+                        timeSlots: TIME_SLOTS
+                    },
+                    students: Array.from(this.students.values()),
+                    attendanceRecords: this.attendanceRecords
+                };
+                return JSON.stringify(data, null, 2);
+            }
         }
 
-        exportToJSON() {
-            const data = {
-                system: {
-                    school: "Memoschool Kuching",
-                    timeSlots: TIME_SLOTS
-                },
-                students: Array.from(this.students.values()),
-                attendanceRecords: this.attendanceRecords
-            };
-            return JSON.stringify(data, null, 2);
-        }
-    }
+        // Create system instance
+        const system = new MemoschoolAttendanceSystem();
 
-    // Create system instance
-    const system = new MemoschoolAttendanceSystem();
-
-    // Firebase Authentication Functions
-    async function login() {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        
-        if (!email || !password) {
-            alert('Please enter both email and password');
-            return;
+        // Firebase Authentication Functions
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                alert('Please enter both email and password');
+                return;
+            }
+            
+            try {
+                updateSyncStatus('🔄 Signing in...', 'syncing');
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                showApp(userCredential.user);
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Login failed: ' + error.message);
+                updateSyncStatus('❌ Login failed', 'error');
+            }
         }
-        
-        try {
-            updateSyncStatus('🔄 Signing in...', 'syncing');
-            const userCredential = await auth.signInWithEmailAndPassword(email, password);
-            showApp(userCredential.user);
-        } catch (error) {
-            console.error('Login error:', error);
-            alert('Login failed: ' + error.message);
-            updateSyncStatus('❌ Login failed', 'error');
-        }
-    }
 
-    async function signup() {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        
-        if (!email || !password) {
-            alert('Please enter both email and password');
-            return;
+        async function signup() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                alert('Please enter both email and password');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('Password should be at least 6 characters');
+                return;
+            }
+            
+            try {
+                updateSyncStatus('🔄 Creating account...', 'syncing');
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                showApp(userCredential.user);
+            } catch (error) {
+                console.error('Signup error:', error);
+                alert('Sign up failed: ' + error.message);
+                updateSyncStatus('❌ Sign up failed', 'error');
+            }
         }
-        
-        if (password.length < 6) {
-            alert('Password should be at least 6 characters');
-            return;
-        }
-        
-        try {
-            updateSyncStatus('🔄 Creating account...', 'syncing');
-            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-            showApp(userCredential.user);
-        } catch (error) {
-            console.error('Signup error:', error);
-            alert('Sign up failed: ' + error.message);
-            updateSyncStatus('❌ Sign up failed', 'error');
-        }
-    }
 
-    function logout() {
-        auth.signOut();
-        document.getElementById('loginSection').style.display = 'block';
-        document.getElementById('appSection').style.display = 'none';
-        updateSyncStatus('🔒 Logged out', 'syncing');
-    }
-
-    function showApp(user) {
-        document.getElementById('loginSection').style.display = 'none';
-        document.getElementById('appSection').style.display = 'block';
-        document.getElementById('userEmail').textContent = user.email;
-        
-        // Initialize system with user ID
-        system.initialize(user.uid);
-    }
-
-    // Listen for auth state changes
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            showApp(user);
-        } else {
+        function logout() {
+            auth.signOut();
             document.getElementById('loginSection').style.display = 'block';
             document.getElementById('appSection').style.display = 'none';
+            updateSyncStatus('🔒 Logged out', 'syncing');
         }
-    });
 
-    // Sync status update
-    function updateSyncStatus(message, type = 'syncing') {
-        const statusElement = document.getElementById('syncStatus');
-        statusElement.textContent = message;
-        statusElement.className = `sync-status ${type}`;
-    }
+        function showApp(user) {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('appSection').style.display = 'block';
+            document.getElementById('userEmail').textContent = user.email;
+            
+            // Initialize system with user ID
+            system.initialize(user.uid);
+        }
 
-    // Update all UI components
-    function updateUI() {
-        updateDashboard();
-        updateTimeSlotTabs();
-        updateStudentsCheckboxes();
-        updateAttendanceRecords();
-        updateStats();
-        updateTimeSlots();
-        updateFilterStudent();
-    }
-
-    // UI Functions
-    function showSection(sectionId) {
-        document.querySelectorAll('.section').forEach(section => {
-            section.classList.remove('active');
+        // Listen for auth state changes
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                showApp(user);
+            } else {
+                document.getElementById('loginSection').style.display = 'block';
+                document.getElementById('appSection').style.display = 'none';
+            }
         });
-        document.getElementById(sectionId).classList.add('active');
-    }
 
-    async function addStudent() {
-        const name = document.getElementById('studentName').value.trim();
-        const age = document.getElementById('studentAge').value;
-        const gender = document.getElementById('studentGender').value;
-        const timeSlot = document.getElementById('studentTimeSlot').value;
-        
-        if (!name || !timeSlot) {
-            alert('Please enter at least student name and select a time slot');
-            return;
+        // Sync status update
+        function updateSyncStatus(message, type = 'syncing') {
+            const statusElement = document.getElementById('syncStatus');
+            statusElement.textContent = message;
+            statusElement.className = `sync-status ${type}`;
         }
-        
-        try {
-            await system.addStudent(name, age, gender, timeSlot);
-            document.getElementById('studentName').value = '';
-            document.getElementById('studentAge').value = '';
-            document.getElementById('studentGender').value = '';
-            document.getElementById('studentTimeSlot').value = '';
-            alert('Student added successfully!');
-        } catch (error) {
-            alert('Error: ' + error.message);
-        }
-    }
 
-    function updateTimeSlotTabs() {
-        const tabsContainer = document.getElementById('timeSlotTabs');
-        const contentsContainer = document.getElementById('timeSlotContents');
-        
-        tabsContainer.innerHTML = '';
-        contentsContainer.innerHTML = '';
-        
-        let firstTab = true;
-        
-        for (const timeSlot of TIME_SLOTS) {
-            // Create tab
-            const tab = document.createElement('div');
-            tab.className = `time-slot-tab ${firstTab ? 'active' : ''}`;
-            tab.textContent = timeSlot;
-            tab.dataset.timeSlot = timeSlot;
-            tab.addEventListener('click', function() {
-                // Remove active class from all tabs
-                document.querySelectorAll('.time-slot-tab').forEach(t => {
-                    t.classList.remove('active');
-                });
-                // Add active class to clicked tab
-                this.classList.add('active');
-                
-                // Hide all content
-                document.querySelectorAll('.time-slot-content').forEach(c => {
-                    c.classList.remove('active');
-                });
-                // Show corresponding content
-                document.getElementById(`content-${timeSlot.replace(/\s+/g, '-')}`).classList.add('active');
+        // Update all UI components
+        function updateUI() {
+            updateDashboard();
+            updateTimeSlotTabs();
+            updateStudentsCheckboxes();
+            updateAttendanceRecords();
+            updateStats();
+            updateTimeSlots();
+            updateFilterStudent();
+        }
+
+        // UI Functions
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
             });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        async function addStudent() {
+            const name = document.getElementById('studentName').value.trim();
+            const age = document.getElementById('studentAge').value;
+            const gender = document.getElementById('studentGender').value;
+            const timeSlot = document.getElementById('studentTimeSlot').value;
+            const enrolledDate = document.getElementById('studentEnrolledDate').value;
             
-            tabsContainer.appendChild(tab);
+            if (!name || !timeSlot) {
+                alert('Please enter at least student name and select a time slot');
+                return;
+            }
             
-            // Create content
-            const content = document.createElement('div');
-            content.id = `content-${timeSlot.replace(/\s+/g, '-')}`;
-            content.className = `time-slot-content ${firstTab ? 'active' : ''}`;
+            // 如果没有选择入学日期，默认使用今天
+            const finalEnrolledDate = enrolledDate || new Date().toISOString().split('T')[0];
             
+            try {
+                await system.addStudent(name, age, gender, timeSlot, finalEnrolledDate);
+                document.getElementById('studentName').value = '';
+                document.getElementById('studentAge').value = '';
+                document.getElementById('studentGender').value = '';
+                document.getElementById('studentTimeSlot').value = '';
+                document.getElementById('studentEnrolledDate').value = '';
+                alert('Student added successfully!');
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        function updateTimeSlotTabs() {
+            const tabsContainer = document.getElementById('timeSlotTabs');
+            const contentsContainer = document.getElementById('timeSlotContents');
+            
+            tabsContainer.innerHTML = '';
+            contentsContainer.innerHTML = '';
+            
+            let firstTab = true;
+            
+            for (const timeSlot of TIME_SLOTS) {
+                // Create tab
+                const tab = document.createElement('div');
+                tab.className = `time-slot-tab ${firstTab ? 'active' : ''}`;
+                tab.textContent = timeSlot;
+                tab.dataset.timeSlot = timeSlot;
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.time-slot-tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Hide all content
+                    document.querySelectorAll('.time-slot-content').forEach(c => {
+                        c.classList.remove('active');
+                    });
+                    // Show corresponding content
+                    document.getElementById(`content-${timeSlot.replace(/\s+/g, '-')}`).classList.add('active');
+                });
+                
+                tabsContainer.appendChild(tab);
+                
+                // Create content
+                const content = document.createElement('div');
+                content.id = `content-${timeSlot.replace(/\s+/g, '-')}`;
+                content.className = `time-slot-content ${firstTab ? 'active' : ''}`;
+                
+                const students = system.getStudentsByTimeSlot(timeSlot);
+                
+                if (students.length === 0) {
+                    content.innerHTML = `<p>No students in ${timeSlot}</p>`;
+                } else {
+                    const table = document.createElement('table');
+                    table.className = 'table';
+                    
+                    const thead = document.createElement('thead');
+                    thead.innerHTML = `
+                        <tr>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Gender</th>
+                            <th>Enrolled Date</th>
+                            <th>Time Slot</th>
+                            <th>Sessions Attended</th>
+                            <th>Attendance Rate</th>
+                            <th>Actions</th>
+                        </tr>
+                    `;
+                    
+                    const tbody = document.createElement('tbody');
+                    
+                    students.forEach(student => {
+                        const row = document.createElement('tr');
+                        
+                        // 格式化入学日期
+                        const enrolledDate = student.enrolledDate ? 
+                            new Date(student.enrolledDate).toLocaleDateString() : 'N/A';
+                        
+                        row.innerHTML = `
+                            <td>${student.name}</td>
+                            <td>${student.age || 'N/A'}</td>
+                            <td>${student.gender || 'N/A'}</td>
+                            <td>${enrolledDate}</td>
+                            <td>${student.timeSlot}</td>
+                            <td>${student.attendanceCount}</td>
+                            <td>${student.attendanceRate}%</td>
+                            <td><button class="btn btn-warning" onclick="deleteStudent('${student.id}')" style="padding: 5px 10px; font-size: 12px;">Delete</button></td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                    
+                    table.appendChild(thead);
+                    table.appendChild(tbody);
+                    content.appendChild(table);
+                }
+                
+                contentsContainer.appendChild(content);
+                firstTab = false;
+            }
+        }
+
+        async function deleteStudent(studentId) {
+            if (confirm('Are you sure you want to delete this student?')) {
+                try {
+                    if (system.isOnline) {
+                        await db.collection('users').doc(system.userId).collection('students')
+                            .doc(studentId).delete();
+                    } else {
+                        system.students.delete(studentId);
+                        updateUI();
+                    }
+                } catch (error) {
+                    alert('Error deleting student: ' + error.message);
+                }
+            }
+        }
+
+        function updateStudentsCheckboxes() {
+            const timeSlot = document.getElementById('timeSlotSelect').value;
+            const container = document.getElementById('studentsCheckboxes');
+            
+            if (!timeSlot) {
+                container.innerHTML = '<p>Please select a time slot to see students</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
             const students = system.getStudentsByTimeSlot(timeSlot);
             
             if (students.length === 0) {
-                content.innerHTML = `<p>No students in ${timeSlot}</p>`;
-            } else {
-                const table = document.createElement('table');
-                table.className = 'table';
-                
-                const thead = document.createElement('thead');
-                thead.innerHTML = `
-                    <tr>
-                        <th>Name</th>
-                        <th>Age</th>
-                        <th>Gender</th>
-                        <th>Sessions Attended</th>
-                        <th>Attendance Rate</th>
-                        <th>Actions</th>
-                    </tr>
-                `;
-                
-                const tbody = document.createElement('tbody');
-                
-                students.forEach(student => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${student.name}</td>
-                        <td>${student.age || 'N/A'}</td>
-                        <td>${student.gender || 'N/A'}</td>
-                        <td>${student.attendanceCount}</td>
-                        <td>${student.attendanceRate}%</td>
-                        <td><button class="btn btn-warning" onclick="deleteStudent('${student.id}')" style="padding: 5px 10px; font-size: 12px;">Delete</button></td>
-                    `;
-                    tbody.appendChild(row);
-                });
-                
-                table.appendChild(thead);
-                table.appendChild(tbody);
-                content.appendChild(table);
+                container.innerHTML = `<p>No students found for ${timeSlot}</p>`;
+                return;
             }
             
-            contentsContainer.appendChild(content);
-            firstTab = false;
+            for (const student of students) {
+                const label = document.createElement('label');
+                label.style.display = 'block';
+                label.innerHTML = `
+                    <input type="checkbox" value="${student.id}">
+                    ${student.name} (${student.age || 'N/A'}, ${student.gender || 'N/A'})
+                `;
+                container.appendChild(label);
+            }
         }
-    }
 
-    async function deleteStudent(studentId) {
-        if (confirm('Are you sure you want to delete this student?')) {
+        function updateFilterStudent() {
+            const select = document.getElementById('filterStudent');
+            // Keep the "All Students" option
+            const allOption = select.querySelector('option[value="all"]');
+            select.innerHTML = '';
+            select.appendChild(allOption);
+            
+            for (const student of system.students.values()) {
+                const option = document.createElement('option');
+                option.value = student.id;
+                option.textContent = `${student.name} (${student.timeSlot})`;
+                select.appendChild(option);
+            }
+        }
+
+        function filterAttendanceRecords() {
+            updateAttendanceRecords();
+        }
+
+        async function recordAttendance() {
+            const timeSlot = document.getElementById('timeSlotSelect').value;
+            const date = document.getElementById('classDate').value;
+            const topic = document.getElementById('sessionTopic').value.trim();
+            const checkboxes = document.querySelectorAll('#studentsCheckboxes input:checked');
+            const presentStudentIds = Array.from(checkboxes).map(cb => cb.value);
+            
+            if (!timeSlot) {
+                alert('Please select a time slot');
+                return;
+            }
+            
+            if (!date) {
+                alert('Please select a date');
+                return;
+            }
+            
+            if (presentStudentIds.length === 0) {
+                alert('Please select at least one student');
+                return;
+            }
+            
             try {
-                if (system.isOnline) {
-                    await db.collection('users').doc(system.userId).collection('students')
-                        .doc(studentId).delete();
-                } else {
-                    system.students.delete(studentId);
-                    updateUI();
+                const result = await system.recordAttendance(timeSlot, date, topic, presentStudentIds);
+                if (result) {
+                    updateAttendanceRecords();
+                    updateStats();
+                    updateDashboard();
+                    alert(`Attendance recorded successfully for ${timeSlot} on ${date}`);
+                    
+                    // Clear selection
+                    checkboxes.forEach(cb => cb.checked = false);
+                    document.getElementById('sessionTopic').value = '';
                 }
             } catch (error) {
-                alert('Error deleting student: ' + error.message);
+                alert(error.message);
             }
         }
-    }
 
-    function updateStudentsCheckboxes() {
-        const timeSlot = document.getElementById('timeSlotSelect').value;
-        const container = document.getElementById('studentsCheckboxes');
-        
-        if (!timeSlot) {
-            container.innerHTML = '<p>Please select a time slot to see students</p>';
-            return;
-        }
-        
-        container.innerHTML = '';
-        const students = system.getStudentsByTimeSlot(timeSlot);
-        
-        if (students.length === 0) {
-            container.innerHTML = `<p>No students found for ${timeSlot}</p>`;
-            return;
-        }
-        
-        for (const student of students) {
-            const label = document.createElement('label');
-            label.style.display = 'block';
-            label.innerHTML = `
-                <input type="checkbox" value="${student.id}">
-                ${student.name} (${student.age || 'N/A'}, ${student.gender || 'N/A'})
-            `;
-            container.appendChild(label);
-        }
-    }
-
-    function updateFilterStudent() {
-        const select = document.getElementById('filterStudent');
-        // Keep the "All Students" option
-        const allOption = select.querySelector('option[value="all"]');
-        select.innerHTML = '';
-        select.appendChild(allOption);
-        
-        for (const student of system.students.values()) {
-            const option = document.createElement('option');
-            option.value = student.id;
-            option.textContent = `${student.name} (${student.timeSlot})`;
-            select.appendChild(option);
-        }
-    }
-
-    function filterAttendanceRecords() {
-        updateAttendanceRecords();
-    }
-
-    async function recordAttendance() {
-        const timeSlot = document.getElementById('timeSlotSelect').value;
-        const date = document.getElementById('classDate').value;
-        const topic = document.getElementById('sessionTopic').value.trim();
-        const checkboxes = document.querySelectorAll('#studentsCheckboxes input:checked');
-        const presentStudentIds = Array.from(checkboxes).map(cb => cb.value);
-        
-        if (!timeSlot) {
-            alert('Please select a time slot');
-            return;
-        }
-        
-        if (!date) {
-            alert('Please select a date');
-            return;
-        }
-        
-        if (presentStudentIds.length === 0) {
-            alert('Please select at least one student');
-            return;
-        }
-        
-        try {
-            const result = await system.recordAttendance(timeSlot, date, topic, presentStudentIds);
-            if (result) {
-                updateAttendanceRecords();
-                updateStats();
-                updateDashboard();
-                alert(`Attendance recorded successfully for ${timeSlot} on ${date}`);
+        function updateAttendanceRecords() {
+            const tbody = document.getElementById('attendanceRecords');
+            tbody.innerHTML = '';
+            
+            const timeSlotFilter = document.getElementById('filterTimeSlot').value;
+            const studentFilter = document.getElementById('filterStudent').value;
+            const allAttendance = system.getAllAttendance();
+            
+            allAttendance.forEach(student => {
+                // Apply filters if needed
+                if (timeSlotFilter !== 'all' && student.timeSlot !== timeSlotFilter) {
+                    return;
+                }
                 
-                // Clear selection
-                checkboxes.forEach(cb => cb.checked = false);
-                document.getElementById('sessionTopic').value = '';
-            }
-        } catch (error) {
-            alert('Error: ' + error.message);
+                if (studentFilter !== 'all' && student.id !== studentFilter) {
+                    return;
+                }
+                
+                const row = document.createElement('tr');
+                
+                // 格式化入学日期
+                const enrolledDate = student.enrolledDate ? 
+                    new Date(student.enrolledDate).toLocaleDateString() : 'N/A';
+                
+                // Format recent attendance
+                const recentDates = student.recentAttendance.map(date => {
+                    const d = new Date(date);
+                    return `${d.getDate()}/${d.getMonth()+1}`;
+                }).join(', ');
+                
+                row.innerHTML = `
+                    <td>${student.name}</td>
+                    <td>${student.age || 'N/A'}</td>
+                    <td>${student.gender || 'N/A'}</td>
+                    <td>${enrolledDate}</td>
+                    <td>${student.timeSlot}</td>
+                    <td>${student.attendanceCount}</td>
+                    <td>${student.attendanceRate}%</td>
+                    <td>${recentDates || 'No records'}</td>
+                `;
+                tbody.appendChild(row);
+            });
         }
-    }
 
-    function updateAttendanceRecords() {
-        const tbody = document.getElementById('attendanceRecords');
-        tbody.innerHTML = '';
-        
-        const timeSlotFilter = document.getElementById('filterTimeSlot').value;
-        const studentFilter = document.getElementById('filterStudent').value;
-        const allAttendance = system.getAllAttendance();
-        
-        allAttendance.forEach(student => {
-            // Apply filters if needed
-            if (timeSlotFilter !== 'all' && student.timeSlot !== timeSlotFilter) {
-                return;
+        function updateTimeSlots() {
+            const container = document.getElementById('timeSlotsContainer');
+            container.innerHTML = '';
+            
+            for (const timeSlot of TIME_SLOTS) {
+                const students = system.getStudentsByTimeSlot(timeSlot);
+                
+                const timeSlotCard = document.createElement('div');
+                timeSlotCard.className = 'time-slot-card';
+                
+                const header = document.createElement('div');
+                header.className = 'time-slot-header';
+                
+                const title = document.createElement('div');
+                title.className = 'time-slot-title';
+                title.textContent = timeSlot;
+                
+                const count = document.createElement('div');
+                count.className = 'student-count';
+                count.textContent = `${students.length} student${students.length !== 1 ? 's' : ''}`;
+                
+                header.appendChild(title);
+                header.appendChild(count);
+                
+                const studentsContainer = document.createElement('div');
+                studentsContainer.className = 'time-slot-students';
+                
+                if (students.length === 0) {
+                    studentsContainer.innerHTML = '<p>No students in this time slot</p>';
+                } else {
+                    students.forEach(student => {
+                        const studentCard = document.createElement('div');
+                        studentCard.className = 'student-card';
+                        studentCard.innerHTML = `
+                            <strong>${student.name}</strong><br>
+                            ${student.age || 'N/A'} years, ${student.gender || 'N/A'}<br>
+                            Attendance: ${student.attendanceRate}%
+                        `;
+                        studentsContainer.appendChild(studentCard);
+                    });
+                }
+                
+                timeSlotCard.appendChild(header);
+                timeSlotCard.appendChild(studentsContainer);
+                container.appendChild(timeSlotCard);
             }
+        }
+
+        function updateStats() {
+            const statsGrid = document.getElementById('statsGrid');
+            const summary = system.getSummary();
             
-            if (studentFilter !== 'all' && student.id !== studentFilter) {
-                return;
-            }
-            
-            const row = document.createElement('tr');
-            
-            // Format recent attendance
-            const recentDates = student.recentAttendance.map(date => {
-                const d = new Date(date);
-                return `${d.getDate()}/${d.getMonth()+1}`;
-            }).join(', ');
-            
-            row.innerHTML = `
-                <td>${student.name}</td>
-                <td>${student.age || 'N/A'}</td>
-                <td>${student.gender || 'N/A'}</td>
-                <td>${student.timeSlot}</td>
-                <td>${student.attendanceCount}</td>
-                <td>${student.attendanceRate}%</td>
-                <td>${recentDates || 'No records'}</td>
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <h3>Total Students</h3>
+                    <div class="number">${summary.totalStudents}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Sessions</h3>
+                    <div class="number">${summary.totalSessions}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Average Attendance Rate</h3>
+                    <div class="number">${summary.averageAttendanceRate}%</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Time Slots</h3>
+                    <div class="number">${summary.timeSlots}</div>
+                </div>
             `;
-            tbody.appendChild(row);
-        });
-    }
-
-    function updateTimeSlots() {
-        const container = document.getElementById('timeSlotsContainer');
-        container.innerHTML = '';
-        
-        for (const timeSlot of TIME_SLOTS) {
-            const students = system.getStudentsByTimeSlot(timeSlot);
-            
-            const timeSlotCard = document.createElement('div');
-            timeSlotCard.className = 'time-slot-card';
-            
-            const header = document.createElement('div');
-            header.className = 'time-slot-header';
-            
-            const title = document.createElement('div');
-            title.className = 'time-slot-title';
-            title.textContent = timeSlot;
-            
-            const count = document.createElement('div');
-            count.className = 'student-count';
-            count.textContent = `${students.length} student${students.length !== 1 ? 's' : ''}`;
-            
-            header.appendChild(title);
-            header.appendChild(count);
-            
-            const studentsContainer = document.createElement('div');
-            studentsContainer.className = 'time-slot-students';
-            
-            if (students.length === 0) {
-                studentsContainer.innerHTML = '<p>No students in this time slot</p>';
-            } else {
-                students.forEach(student => {
-                    const studentCard = document.createElement('div');
-                    studentCard.className = 'student-card';
-                    studentCard.innerHTML = `
-                        <strong>${student.name}</strong><br>
-                        ${student.age || 'N/A'} years, ${student.gender || 'N/A'}<br>
-                        Attendance: ${student.attendanceRate}%
-                    `;
-                    studentsContainer.appendChild(studentCard);
-                });
-            }
-            
-            timeSlotCard.appendChild(header);
-            timeSlotCard.appendChild(studentsContainer);
-            container.appendChild(timeSlotCard);
         }
-    }
 
-    function updateStats() {
-        const statsGrid = document.getElementById('statsGrid');
-        const summary = system.getSummary();
-        
-        statsGrid.innerHTML = `
-            <div class="stat-card">
-                <h3>Total Students</h3>
-                <div class="number">${summary.totalStudents}</div>
-            </div>
-            <div class="stat-card">
-                <h3>Total Sessions</h3>
-                <div class="number">${summary.totalSessions}</div>
-            </div>
-            <div class="stat-card">
-                <h3>Average Attendance Rate</h3>
-                <div class="number">${summary.averageAttendanceRate}%</div>
-            </div>
-            <div class="stat-card">
-                <h3>Time Slots</h3>
-                <div class="number">${summary.timeSlots}</div>
-            </div>
-        `;
-    }
+        function updateDashboard() {
+            const summary = system.getSummary();
+            
+            document.getElementById('totalStudents').textContent = summary.totalStudents;
+            document.getElementById('sessionsRecorded').textContent = summary.totalSessions;
+            document.getElementById('avgAttendance').textContent = summary.averageAttendanceRate + '%';
+            document.getElementById('timeSlotsCount').textContent = summary.timeSlots;
+            document.getElementById('recordedSessionsCount').textContent = summary.totalSessions;
+        }
 
-    function updateDashboard() {
-        const summary = system.getSummary();
-        
-        document.getElementById('totalStudents').textContent = summary.totalStudents;
-        document.getElementById('sessionsRecorded').textContent = summary.totalSessions;
-        document.getElementById('avgAttendance').textContent = summary.averageAttendanceRate + '%';
-        document.getElementById('timeSlotsCount').textContent = summary.timeSlots;
-        document.getElementById('recordedSessionsCount').textContent = summary.totalSessions;
-    }
+        // Export Functions
+        function exportToCSV() {
+            const csv = system.exportToCSV();
+            downloadFile(csv, 'memoschool_attendance.csv', 'text/csv');
+            document.getElementById('exportResult').innerHTML = '<p style="color: green;">CSV exported successfully!</p>';
+        }
 
-    // Export Functions
-    function exportToCSV() {
-        const csv = system.exportToCSV();
-        downloadFile(csv, 'memoschool_attendance.csv', 'text/csv');
-        document.getElementById('exportResult').innerHTML = '<p style="color: green;">CSV exported successfully!</p>';
-    }
+        function exportToJSON() {
+            const json = system.exportToJSON();
+            downloadFile(json, 'memoschool_data.json', 'application/json');
+            document.getElementById('exportResult').innerHTML = '<p style="color: green;">JSON exported successfully!</p>';
+        }
 
-    function exportToJSON() {
-        const json = system.exportToJSON();
-        downloadFile(json, 'memoschool_data.json', 'application/json');
-        document.getElementById('exportResult').innerHTML = '<p style="color: green;">JSON exported successfully!</p>';
-    }
+        function printReport() {
+            window.print();
+        }
 
-    function printReport() {
-        window.print();
-    }
+        function downloadFile(content, fileName, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
 
-    function downloadFile(content, fileName, contentType) {
-        const blob = new Blob([content], { type: contentType });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
-
-    // Initialize the system when the page loads
-    window.onload = function() {
-        document.getElementById('classDate').valueAsDate = new Date();
-        updateSyncStatus('🔵 Ready to connect', 'syncing');
-    };
-</script>
+        // Initialize the system when the page loads
+        window.onload = function() {
+            document.getElementById('classDate').valueAsDate = new Date();
+            document.getElementById('studentEnrolledDate').valueAsDate = new Date();
+            updateSyncStatus('🔵 Ready to connect', 'syncing');
+        };
+    </script>
 </body>
 </html>

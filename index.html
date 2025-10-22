@@ -153,6 +153,12 @@
         .btn-warning:hover {
             background: #c0392b;
         }
+        .btn-info {
+            background: #3498db;
+        }
+        .btn-info:hover {
+            background: #2980b9;
+        }
         .table {
             width: 100%;
             border-collapse: collapse;
@@ -397,6 +403,21 @@
             margin: 20px 0;
             flex-wrap: wrap;
         }
+        .search-box {
+            max-width: 400px;
+            margin-bottom: 30px;
+        }
+        .search-box input {
+            border-radius: 25px;
+            padding: 12px 20px;
+            font-size: 14px;
+        }
+        .search-info {
+            background: #e8f4fd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
         @media (max-width: 768px) {
             .nav {
                 flex-direction: column;
@@ -429,7 +450,7 @@
     </style>
 </head>
 <body>
-   <div class="container">
+    <div class="container">
         <div class="header">
            <div class="school-logo" id="schoolLogo">
                <img src="./gmlogo.png" alt="Genius Mind Academy" style="width: 100%; height: 100%; object-fit: contain;">
@@ -540,6 +561,13 @@
                 <div id="students" class="section">
                     <h2>👥 Student Management</h2>
                     
+                    <!-- 搜索框 -->
+                    <div class="form-group search-box">
+                        <label>🔍 Search Students</label>
+                        <input type="text" id="searchStudents" placeholder="Search by name, age, gender, or time slot...">
+                    </div>
+                    
+                    <!-- 添加学生表单 -->
                     <div class="form-group">
                         <label>Student Name</label>
                         <input type="text" id="studentName" placeholder="Enter student name">
@@ -575,7 +603,49 @@
                     </div>
                     <button class="btn" onclick="addStudent()">Add Student</button>
                     
-                    <h3 style="margin-top: 30px;">Student List by Time Slot</h3>
+                    <!-- 编辑学生表单 -->
+                    <div id="editStudentForm" style="display: none; margin-top: 40px; padding: 25px; background: #f8f9fa; border-radius: 10px; border-left: 4px solid #3498db;">
+                        <h3>✏️ Edit Student</h3>
+                        
+                        <div class="form-group">
+                            <label>Student Name</label>
+                            <input type="text" id="editStudentName" placeholder="Enter student name">
+                        </div>
+                        <div class="form-group">
+                            <label>Age</label>
+                            <input type="number" id="editStudentAge" placeholder="Enter age" min="5" max="30">
+                        </div>
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <select id="editStudentGender">
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Time Slot</label>
+                            <select id="editStudentTimeSlot">
+                                <option value="">Select Time Slot</option>
+                                <option value="Friday 2pm-3:30pm">Friday 2pm-3:30pm</option>
+                                <option value="Saturday 9am-10:30am">Saturday 9am-10:30am</option>
+                                <option value="Saturday 11am-12:30pm">Saturday 11am-12:30pm</option>
+                                <option value="Saturday 2pm-4pm">Saturday 2pm-4pm</option>
+                                <option value="Sunday 9am-10:30am">Sunday 9am-10:30am</option>
+                                <option value="Sunday 11am-12:30pm">Sunday 11am-12:30pm</option>
+                                <option value="Sunday 4pm-5:30pm">Sunday 4pm-5:30pm</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Enrolled Date</label>
+                            <input type="date" id="editStudentEnrolledDate">
+                        </div>
+                        <input type="hidden" id="editStudentId">
+                        <button class="btn" onclick="updateStudent()">Update Student</button>
+                        <button class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
+                    </div>
+                    
+                    <h3 style="margin-top: 40px;">Student List</h3>
                     
                     <div class="time-slot-tabs" id="timeSlotTabs"></div>
                     <div id="timeSlotContents"></div>
@@ -691,7 +761,6 @@
             appId: "1:815724557443:web:4033c1d71ef7e339fa97b6",
             measurementId: "G-KM0MJ80MN9"
         };
-        // === 配置结束 ===
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -708,6 +777,9 @@
             "Sunday 11am-12:30pm",
             "Sunday 4pm-5:30pm"
         ];
+
+        // 搜索相关变量
+        let currentSearchTerm = '';
 
         class MemoschoolAttendanceSystem {
             constructor() {
@@ -810,6 +882,27 @@
                 
                 return student;
             }
+
+            async updateStudent(studentId, updatedData) {
+                const student = this.students.get(studentId);
+                if (!student) {
+                    throw new Error('Student not found');
+                }
+                
+                const updatedStudent = {
+                    ...student,
+                    ...updatedData
+                };
+                
+                if (this.isOnline) {
+                    await db.collection('users').doc(this.userId).collection('students')
+                        .doc(studentId).update(updatedData);
+                } else {
+                    this.students.set(studentId, updatedStudent);
+                }
+                
+                return updatedStudent;
+            }
             
             async recordAttendance(timeSlot, date, topic, presentStudentIds) {
                 if (!timeSlot || !date) {
@@ -871,14 +964,33 @@
                 };
             }
             
-            getStudentsByTimeSlot(timeSlot) {
+            getStudentsByTimeSlot(timeSlot, searchTerm = '') {
                 const students = [];
                 for (const student of this.students.values()) {
                     if (timeSlot === 'all' || student.timeSlot === timeSlot) {
-                        students.push(this.getStudentAttendance(student.id));
+                        const studentWithAttendance = this.getStudentAttendance(student.id);
+                        
+                        // 如果没有搜索词或者匹配搜索，就包含这个学生
+                        if (!searchTerm || this.doesStudentMatchSearch(studentWithAttendance, searchTerm)) {
+                            students.push(studentWithAttendance);
+                        }
                     }
                 }
                 return students;
+            }
+
+            // 添加搜索匹配方法
+            doesStudentMatchSearch(student, searchTerm) {
+                if (!searchTerm) return true;
+                
+                const term = searchTerm.toLowerCase();
+                return (
+                    student.name.toLowerCase().includes(term) ||
+                    (student.age && student.age.toString().includes(term)) ||
+                    (student.gender && student.gender.toLowerCase().includes(term)) ||
+                    (student.timeSlot && student.timeSlot.toLowerCase().includes(term)) ||
+                    (student.enrolledDate && student.enrolledDate.toLowerCase().includes(term))
+                );
             }
             
             getAllAttendance() {
@@ -1061,6 +1173,92 @@
             }
         }
 
+        // 编辑学生函数
+        function editStudent(studentId) {
+            const student = system.students.get(studentId);
+            if (!student) {
+                alert('Student not found!');
+                return;
+            }
+            
+            // 填充编辑表单
+            document.getElementById('editStudentName').value = student.name;
+            document.getElementById('editStudentAge').value = student.age || '';
+            document.getElementById('editStudentGender').value = student.gender || '';
+            document.getElementById('editStudentTimeSlot').value = student.timeSlot;
+            document.getElementById('editStudentEnrolledDate').value = student.enrolledDate || new Date().toISOString().split('T')[0];
+            document.getElementById('editStudentId').value = studentId;
+            
+            // 显示编辑表单，隐藏添加表单
+            document.getElementById('editStudentForm').style.display = 'block';
+            
+            // 滚动到编辑表单
+            document.getElementById('editStudentForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 更新学生函数
+        async function updateStudent() {
+            const studentId = document.getElementById('editStudentId').value;
+            const name = document.getElementById('editStudentName').value.trim();
+            const age = document.getElementById('editStudentAge').value;
+            const gender = document.getElementById('editStudentGender').value;
+            const timeSlot = document.getElementById('editStudentTimeSlot').value;
+            const enrolledDate = document.getElementById('editStudentEnrolledDate').value;
+            
+            if (!name || !timeSlot) {
+                alert('Please enter at least student name and select a time slot');
+                return;
+            }
+            
+            try {
+                const updatedData = {
+                    name,
+                    age: age || '',
+                    gender: gender || '',
+                    timeSlot,
+                    enrolledDate: enrolledDate || new Date().toISOString().split('T')[0]
+                };
+                
+                await system.updateStudent(studentId, updatedData);
+                
+                // 隐藏编辑表单
+                document.getElementById('editStudentForm').style.display = 'none';
+                
+                alert('Student updated successfully!');
+                
+            } catch (error) {
+                alert('Error updating student: ' + error.message);
+            }
+        }
+
+        // 取消编辑函数
+        function cancelEdit() {
+            document.getElementById('editStudentForm').style.display = 'none';
+            // 清空表单
+            document.getElementById('editStudentName').value = '';
+            document.getElementById('editStudentAge').value = '';
+            document.getElementById('editStudentGender').value = '';
+            document.getElementById('editStudentTimeSlot').value = '';
+            document.getElementById('editStudentEnrolledDate').value = '';
+            document.getElementById('editStudentId').value = '';
+        }
+
+        async function deleteStudent(studentId) {
+            if (confirm('Are you sure you want to delete this student?')) {
+                try {
+                    if (system.isOnline) {
+                        await db.collection('users').doc(system.userId).collection('students')
+                            .doc(studentId).delete();
+                    } else {
+                        system.students.delete(studentId);
+                        updateUI();
+                    }
+                } catch (error) {
+                    alert('Error deleting student: ' + error.message);
+                }
+            }
+        }
+
         function updateTimeSlotTabs() {
             const tabsContainer = document.getElementById('timeSlotTabs');
             const contentsContainer = document.getElementById('timeSlotContents');
@@ -1068,12 +1266,29 @@
             tabsContainer.innerHTML = '';
             contentsContainer.innerHTML = '';
             
+            // 添加"All Students"标签
+            const allTab = document.createElement('div');
+            allTab.className = `time-slot-tab active`;
+            allTab.textContent = 'All Students';
+            allTab.dataset.timeSlot = 'all';
+            allTab.addEventListener('click', function() {
+                document.querySelectorAll('.time-slot-tab').forEach(t => {
+                    t.classList.remove('active');
+                });
+                this.classList.add('active');
+                document.querySelectorAll('.time-slot-content').forEach(c => {
+                    c.classList.remove('active');
+                });
+                document.getElementById('content-all').classList.add('active');
+            });
+            tabsContainer.appendChild(allTab);
+            
             let firstTab = true;
             
             for (const timeSlot of TIME_SLOTS) {
                 // Create tab
                 const tab = document.createElement('div');
-                tab.className = `time-slot-tab ${firstTab ? 'active' : ''}`;
+                tab.className = `time-slot-tab ${firstTab ? '' : ''}`;
                 tab.textContent = timeSlot;
                 tab.dataset.timeSlot = timeSlot;
                 tab.addEventListener('click', function() {
@@ -1097,76 +1312,95 @@
                 // Create content
                 const content = document.createElement('div');
                 content.id = `content-${timeSlot.replace(/\s+/g, '-')}`;
-                content.className = `time-slot-content ${firstTab ? 'active' : ''}`;
+                content.className = `time-slot-content ${firstTab ? '' : ''}`;
                 
-                const students = system.getStudentsByTimeSlot(timeSlot);
+                const students = system.getStudentsByTimeSlot(timeSlot, currentSearchTerm);
                 
                 if (students.length === 0) {
-                    content.innerHTML = `<p>No students in ${timeSlot}</p>`;
+                    content.innerHTML = `<p>No students found ${currentSearchTerm ? 'matching your search' : 'in '+timeSlot}</p>`;
                 } else {
-                    const table = document.createElement('table');
-                    table.className = 'table';
-                    
-                    const thead = document.createElement('thead');
-                    thead.innerHTML = `
-                        <tr>
-                            <th>Name</th>
-                            <th>Age</th>
-                            <th>Gender</th>
-                            <th>Enrolled Date</th>
-                            <th>Time Slot</th>
-                            <th>Sessions Attended</th>
-                            <th>Attendance Rate</th>
-                            <th>Actions</th>
-                        </tr>
-                    `;
-                    
-                    const tbody = document.createElement('tbody');
-                    
-                    students.forEach(student => {
-                        const row = document.createElement('tr');
-                        
-                        // 格式化入学日期
-                        const enrolledDate = student.enrolledDate ? 
-                            new Date(student.enrolledDate).toLocaleDateString() : 'N/A';
-                        
-                        row.innerHTML = `
-                            <td>${student.name}</td>
-                            <td>${student.age || 'N/A'}</td>
-                            <td>${student.gender || 'N/A'}</td>
-                            <td>${enrolledDate}</td>
-                            <td>${student.timeSlot}</td>
-                            <td>${student.attendanceCount}</td>
-                            <td>${student.attendanceRate}%</td>
-                            <td><button class="btn btn-warning" onclick="deleteStudent('${student.id}')" style="padding: 5px 10px; font-size: 12px;">Delete</button></td>
-                        `;
-                        tbody.appendChild(row);
-                    });
-                    
-                    table.appendChild(thead);
-                    table.appendChild(tbody);
+                    const table = createStudentsTable(students);
                     content.appendChild(table);
                 }
                 
                 contentsContainer.appendChild(content);
                 firstTab = false;
             }
+            
+            // 创建"All Students"内容
+            const allContent = document.createElement('div');
+            allContent.id = 'content-all';
+            allContent.className = 'time-slot-content active';
+            
+            const allStudents = system.getStudentsByTimeSlot('all', currentSearchTerm);
+            
+            if (allStudents.length === 0) {
+                allContent.innerHTML = `<p>No students found ${currentSearchTerm ? 'matching your search' : ''}</p>`;
+            } else {
+                const table = createStudentsTable(allStudents);
+                allContent.appendChild(table);
+            }
+            
+            contentsContainer.appendChild(allContent);
         }
 
-        async function deleteStudent(studentId) {
-            if (confirm('Are you sure you want to delete this student?')) {
-                try {
-                    if (system.isOnline) {
-                        await db.collection('users').doc(system.userId).collection('students')
-                            .doc(studentId).delete();
-                    } else {
-                        system.students.delete(studentId);
-                        updateUI();
-                    }
-                } catch (error) {
-                    alert('Error deleting student: ' + error.message);
-                }
-            }
+        // 添加创建学生表格的辅助函数
+        function createStudentsTable(students) {
+            const table = document.createElement('table');
+            table.className = 'table';
+            
+            const thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Enrolled Date</th>
+                    <th>Time Slot</th>
+                    <th>Sessions Attended</th>
+                    <th>Attendance Rate</th>
+                    <th>Actions</th>
+                </tr>
+            `;
+            
+            const tbody = document.createElement('tbody');
+            
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                
+                // 格式化入学日期
+                const enrolledDate = student.enrolledDate ? 
+                    new Date(student.enrolledDate).toLocaleDateString() : 'N/A';
+                
+                row.innerHTML = `
+                    <td>${student.name}</td>
+                    <td>${student.age || 'N/A'}</td>
+                    <td>${student.gender || 'N/A'}</td>
+                    <td>${enrolledDate}</td>
+                    <td>${student.timeSlot}</td>
+                    <td>${student.attendanceCount}</td>
+                    <td>${student.attendanceRate}%</td>
+                    <td>
+                        <button class="btn btn-info" onclick="editStudent('${student.id}')" style="padding: 5px 10px; font-size: 12px; margin-right: 5px;">Edit</button>
+                        <button class="btn btn-warning" onclick="deleteStudent('${student.id}')" style="padding: 5px 10px; font-size: 12px;">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            table.appendChild(thead);
+            table.appendChild(tbody);
+            
+            // 添加搜索结果统计
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'search-info';
+            infoDiv.innerHTML = `<strong>${students.length}</strong> student(s) found ${currentSearchTerm ? `matching "<em>${currentSearchTerm}</em>"` : ''}`;
+            
+            const container = document.createElement('div');
+            container.appendChild(infoDiv);
+            container.appendChild(table);
+            
+            return container;
         }
 
         function updateStudentsCheckboxes() {
@@ -1415,6 +1649,15 @@
             document.getElementById('classDate').valueAsDate = new Date();
             document.getElementById('studentEnrolledDate').valueAsDate = new Date();
             updateSyncStatus('🔵 Ready to connect', 'syncing');
+            
+            // 添加搜索功能
+            const searchInput = document.getElementById('searchStudents');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    currentSearchTerm = e.target.value.trim();
+                    updateTimeSlotTabs();
+                });
+            }
         };
     </script>
 </body>

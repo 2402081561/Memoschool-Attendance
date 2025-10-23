@@ -785,6 +785,27 @@
                 grid-template-columns: 1fr;
             }
         }
+        
+        /* 自定义课程总数样式 */
+        .total-sessions-input {
+            max-width: 120px;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        .total-sessions-info {
+            background: #e8f6ff;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+            border-left: 4px solid var(--info);
+            font-size: 14px;
+        }
+        .total-sessions-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 <body>
@@ -845,6 +866,7 @@
                         <div class="semester-info">
                             <h3>Attendance Information</h3>
                             <p><strong>Time Slots:</strong> 7 | <strong>Recorded Sessions:</strong> <span id="recordedSessionsCount">0</span></p>
+                            <p><strong>Default Total Sessions:</strong> 48 classes per student</p>
                         </div>
                         
                         <div class="stats-grid">
@@ -945,6 +967,13 @@
                             <label class="form-label">Enrolled Date</label>
                             <input type="date" id="studentEnrolledDate" class="form-input">
                         </div>
+                        <div class="form-group">
+                            <label class="form-label">Total Sessions (Optional)</label>
+                            <input type="number" id="studentTotalSessions" class="form-input" placeholder="48 (default)" min="1" max="200">
+                            <small style="color: var(--gray); margin-top: 5px; display: block;">
+                                Leave empty to use default 48 sessions. Set custom value for individual students.
+                            </small>
+                        </div>
                         <button class="btn btn-success" onclick="addStudent()">
                             <span>➕ Add Student</span>
                         </button>
@@ -986,6 +1015,13 @@
                         <div class="form-group">
                             <label class="form-label">Enrolled Date</label>
                             <input type="date" id="editStudentEnrolledDate" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Total Sessions</label>
+                            <input type="number" id="editStudentTotalSessions" class="form-input" placeholder="48 (default)" min="1" max="200">
+                            <small style="color: var(--gray); margin-top: 5px; display: block;">
+                                Set to 0 or leave empty to use default 48 sessions
+                            </small>
                         </div>
                         <input type="hidden" id="editStudentId">
                         <button class="btn" onclick="updateStudent()">💾 Update Student</button>
@@ -1039,7 +1075,9 @@
                 <div id="records" class="section">
                     <h2>📊 Attendance Records</h2>
                     <div class="accuracy-note">
-                        📈 <strong>Accuracy Note:</strong> Attendance rates are calculated based on sessions that occurred <strong>after</strong> each student's enrollment date. This ensures fair assessment for newly enrolled students.
+                        📈 <strong>Attendance Calculation:</strong> 
+                        Default total sessions is 48. You can customize total sessions for each student individually.
+                        Attendance rate = (Sessions Attended ÷ Total Sessions) × 100%
                     </div>
                     <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
                         <div class="form-group">
@@ -1070,9 +1108,9 @@
                                     <th>Enrolled Date</th>
                                     <th>Time Slot</th>
                                     <th>Sessions Attended</th>
-                                    <th>Available Sessions</th>
+                                    <th>Total Sessions</th>
                                     <th>Attendance Rate</th>
-                                    <th>Recent Attendance</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="attendanceRecords"></tbody>
@@ -1137,10 +1175,13 @@
             "Sunday 4pm-5:30pm"
         ];
 
+        // 默认总课程数
+        const DEFAULT_TOTAL_SESSIONS = 48;
+
         // 搜索相关变量
         let currentSearchTerm = '';
 
-        // 修正后的系统类 - 确保考勤数据准确性
+        // 修正后的系统类 - 支持自定义总课程数
         class MemoschoolAttendanceSystem {
             constructor() {
                 this.students = new Map();
@@ -1215,7 +1256,7 @@
                     });
             }
             
-            async addStudent(name, age, gender, timeSlot, enrolledDate) {
+            async addStudent(name, age, gender, timeSlot, enrolledDate, totalSessions = null) {
                 if (!name || !timeSlot) {
                     throw new Error('Student name and time slot are required');
                 }
@@ -1228,6 +1269,7 @@
                     gender: gender || '',
                     timeSlot,
                     enrolledDate: enrolledDate || new Date().toISOString().split('T')[0],
+                    totalSessions: totalSessions || DEFAULT_TOTAL_SESSIONS,
                     attendanceCount: 0,
                     attendanceDates: [],
                     createdAt: new Date().toISOString()
@@ -1337,19 +1379,14 @@
                 // 确保考勤数据存在
                 const attendanceDates = student.attendanceDates || [];
                 
-                // 只计算入学日期之后的课程
-                const relevantRecords = this.attendanceRecords.filter(record => 
-                    record.timeSlot === student.timeSlot && 
-                    record.date >= student.enrolledDate
-                );
-                
-                const totalSessions = relevantRecords.length;
-                
                 // 只计算入学日期之后的出席（去重）
                 const validAttendanceDates = attendanceDates.filter(date => 
                     date >= student.enrolledDate
                 );
                 const validAttendanceCount = [...new Set(validAttendanceDates)].length; // 去重
+                
+                // 使用自定义总课程数或默认值
+                const totalSessions = student.totalSessions || DEFAULT_TOTAL_SESSIONS;
                 
                 const attendanceRate = totalSessions > 0 ? 
                     (validAttendanceCount / totalSessions * 100).toFixed(1) : 0;
@@ -1357,7 +1394,7 @@
                 return {
                     ...student,
                     attendanceCount: validAttendanceCount,
-                    totalAvailableSessions: totalSessions,
+                    totalSessions: totalSessions,
                     attendanceRate,
                     recentAttendance: validAttendanceDates.slice(-5)
                 };
@@ -1403,32 +1440,32 @@
             getSummary() {
                 const totalStudents = this.students.size;
                 let totalAttendance = 0;
-                let totalAvailableSessions = 0;
+                let totalPossibleSessions = 0;
                 
                 for (const student of this.students.values()) {
                     const studentAttendance = this.getStudentAttendance(student.id);
                     totalAttendance += studentAttendance.attendanceCount;
-                    totalAvailableSessions += studentAttendance.totalAvailableSessions;
+                    totalPossibleSessions += studentAttendance.totalSessions;
                 }
                 
-                const avgAttendanceRate = totalStudents > 0 && totalAvailableSessions > 0 ? 
-                    (totalAttendance / totalAvailableSessions * 100).toFixed(1) : 0;
+                const avgAttendanceRate = totalStudents > 0 && totalPossibleSessions > 0 ? 
+                    (totalAttendance / totalPossibleSessions * 100).toFixed(1) : 0;
                 
                 return {
                     totalStudents,
                     totalSessions: this.attendanceRecords.length,
                     totalAttendance,
-                    totalAvailableSessions,
+                    totalPossibleSessions,
                     averageAttendanceRate: avgAttendanceRate,
                     timeSlots: TIME_SLOTS.length
                 };
             }
 
             exportToCSV() {
-                let csv = 'Name,Age,Gender,Enrolled Date,Time Slot,Sessions Attended,Available Sessions,Attendance Rate\n';
+                let csv = 'Name,Age,Gender,Enrolled Date,Time Slot,Total Sessions,Sessions Attended,Attendance Rate\n';
                 for (const student of this.students.values()) {
                     const info = this.getStudentAttendance(student.id);
-                    csv += `"${student.name}",${student.age},${student.gender},"${student.enrolledDate}","${student.timeSlot}",${info.attendanceCount},${info.totalAvailableSessions},${info.attendanceRate}%\n`;
+                    csv += `"${student.name}",${student.age},${student.gender},"${student.enrolledDate}","${student.timeSlot}",${info.totalSessions},${info.attendanceCount},${info.attendanceRate}%\n`;
                 }
                 return csv;
             }
@@ -1437,7 +1474,8 @@
                 const data = {
                     system: {
                         school: "Genius Mind Academy",
-                        timeSlots: TIME_SLOTS
+                        timeSlots: TIME_SLOTS,
+                        defaultTotalSessions: DEFAULT_TOTAL_SESSIONS
                     },
                     students: Array.from(this.students.values()),
                     attendanceRecords: this.attendanceRecords
@@ -1556,6 +1594,7 @@
             const gender = document.getElementById('studentGender').value;
             const timeSlot = document.getElementById('studentTimeSlot').value;
             const enrolledDate = document.getElementById('studentEnrolledDate').value;
+            const totalSessionsInput = document.getElementById('studentTotalSessions').value;
             
             if (!name || !timeSlot) {
                 showToast('Please enter at least student name and select a time slot', 'error');
@@ -1565,13 +1604,24 @@
             // 如果没有选择入学日期，默认使用今天
             const finalEnrolledDate = enrolledDate || new Date().toISOString().split('T')[0];
             
+            // 处理总课程数
+            let totalSessions = null;
+            if (totalSessionsInput && totalSessionsInput !== '') {
+                totalSessions = parseInt(totalSessionsInput);
+                if (isNaN(totalSessions) || totalSessions < 1) {
+                    showToast('Total sessions must be a positive number', 'error');
+                    return;
+                }
+            }
+            
             try {
-                await system.addStudent(name, age, gender, timeSlot, finalEnrolledDate);
+                await system.addStudent(name, age, gender, timeSlot, finalEnrolledDate, totalSessions);
                 document.getElementById('studentName').value = '';
                 document.getElementById('studentAge').value = '';
                 document.getElementById('studentGender').value = '';
                 document.getElementById('studentTimeSlot').value = '';
                 document.getElementById('studentEnrolledDate').value = '';
+                document.getElementById('studentTotalSessions').value = '';
                 showToast('Student added successfully!', 'success');
             } catch (error) {
                 showToast('Error: ' + error.message, 'error');
@@ -1592,6 +1642,7 @@
             document.getElementById('editStudentGender').value = student.gender || '';
             document.getElementById('editStudentTimeSlot').value = student.timeSlot;
             document.getElementById('editStudentEnrolledDate').value = student.enrolledDate || new Date().toISOString().split('T')[0];
+            document.getElementById('editStudentTotalSessions').value = student.totalSessions === DEFAULT_TOTAL_SESSIONS ? '' : student.totalSessions;
             document.getElementById('editStudentId').value = studentId;
             
             // 显示编辑表单，隐藏添加表单
@@ -1609,10 +1660,21 @@
             const gender = document.getElementById('editStudentGender').value;
             const timeSlot = document.getElementById('editStudentTimeSlot').value;
             const enrolledDate = document.getElementById('editStudentEnrolledDate').value;
+            const totalSessionsInput = document.getElementById('editStudentTotalSessions').value;
             
             if (!name || !timeSlot) {
                 showToast('Please enter at least student name and select a time slot', 'error');
                 return;
+            }
+            
+            // 处理总课程数
+            let totalSessions = DEFAULT_TOTAL_SESSIONS;
+            if (totalSessionsInput && totalSessionsInput !== '') {
+                totalSessions = parseInt(totalSessionsInput);
+                if (isNaN(totalSessions) || totalSessions < 1) {
+                    showToast('Total sessions must be a positive number', 'error');
+                    return;
+                }
             }
             
             try {
@@ -1621,7 +1683,8 @@
                     age: age || '',
                     gender: gender || '',
                     timeSlot,
-                    enrolledDate: enrolledDate || new Date().toISOString().split('T')[0]
+                    enrolledDate: enrolledDate || new Date().toISOString().split('T')[0],
+                    totalSessions: totalSessions
                 };
                 
                 await system.updateStudent(studentId, updatedData);
@@ -1636,6 +1699,23 @@
             }
         }
 
+        // 快速更新总课程数
+        async function updateTotalSessions(studentId, newTotalSessions) {
+            if (!studentId || !newTotalSessions || newTotalSessions < 1) {
+                showToast('Please enter a valid total sessions number', 'error');
+                return;
+            }
+            
+            try {
+                await system.updateStudent(studentId, {
+                    totalSessions: parseInt(newTotalSessions)
+                });
+                showToast('Total sessions updated successfully!', 'success');
+            } catch (error) {
+                showToast('Error updating total sessions: ' + error.message, 'error');
+            }
+        }
+
         // 取消编辑函数
         function cancelEdit() {
             document.getElementById('editStudentForm').style.display = 'none';
@@ -1645,6 +1725,7 @@
             document.getElementById('editStudentGender').value = '';
             document.getElementById('editStudentTimeSlot').value = '';
             document.getElementById('editStudentEnrolledDate').value = '';
+            document.getElementById('editStudentTotalSessions').value = '';
             document.getElementById('editStudentId').value = '';
             showToast('Edit cancelled', 'info');
         }
@@ -1788,12 +1869,17 @@
                 const enrolledDate = student.enrolledDate ? 
                     new Date(student.enrolledDate).toLocaleDateString() : 'N/A';
                 
+                // 显示总课程数信息
+                const totalSessionsInfo = student.totalSessions === DEFAULT_TOTAL_SESSIONS ? 
+                    '48 (default)' : `${student.totalSessions} (custom)`;
+                
                 card.innerHTML = `
                     <div class="student-header">
                         <div>
                             <div class="student-name">${student.name}</div>
                             <div class="student-meta">${student.age || 'N/A'} years, ${student.gender || 'N/A'}</div>
                             <div class="student-meta">Enrolled: ${enrolledDate}</div>
+                            <div class="student-meta">Total Sessions: ${totalSessionsInfo}</div>
                         </div>
                         <div class="${badgeClass}">${student.attendanceRate}%</div>
                     </div>
@@ -1801,10 +1887,10 @@
                     <div class="progress-container">
                         <div class="progress-label">
                             <span>Attendance</span>
-                            <span>${student.attendanceCount}/${student.totalAvailableSessions}</span>
+                            <span>${student.attendanceCount}/${student.totalSessions}</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="${progressClass}" style="width: ${student.attendanceRate}%"></div>
+                            <div class="${progressClass}" style="width: ${Math.min(student.attendanceRate, 100)}%"></div>
                         </div>
                     </div>
                     <div class="student-actions">
@@ -1928,12 +2014,6 @@
                 const enrolledDate = student.enrolledDate ? 
                     new Date(student.enrolledDate).toLocaleDateString() : 'N/A';
                 
-                // Format recent attendance
-                const recentDates = student.recentAttendance.map(date => {
-                    const d = new Date(date);
-                    return `${d.getDate()}/${d.getMonth()+1}`;
-                }).join(', ');
-                
                 row.innerHTML = `
                     <td>${student.name}</td>
                     <td>${student.age || 'N/A'}</td>
@@ -1941,9 +2021,22 @@
                     <td>${enrolledDate}</td>
                     <td>${student.timeSlot}</td>
                     <td>${student.attendanceCount}</td>
-                    <td>${student.totalAvailableSessions}</td>
+                    <td>
+                        <div class="total-sessions-label">
+                            <span>${student.totalSessions}</span>
+                            <input type="number" 
+                                   class="form-input total-sessions-input" 
+                                   value="${student.totalSessions}" 
+                                   min="1" 
+                                   max="200"
+                                   onchange="updateTotalSessions('${student.id}', this.value)"
+                                   style="padding: 6px 8px; font-size: 12px;">
+                        </div>
+                    </td>
                     <td>${student.attendanceRate}%</td>
-                    <td>${recentDates || 'No records'}</td>
+                    <td>
+                        <button class="btn btn-info" onclick="editStudent('${student.id}')" style="padding: 6px 10px; font-size: 12px;">Edit</button>
+                    </td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1986,7 +2079,8 @@
                             <strong>${student.name}</strong><br>
                             ${student.age || 'N/A'} years, ${student.gender || 'N/A'}<br>
                             Enrolled: ${new Date(student.enrolledDate).toLocaleDateString()}<br>
-                            Attendance: ${student.attendanceRate}% (${student.attendanceCount}/${student.totalAvailableSessions})
+                            Total Sessions: ${student.totalSessions}<br>
+                            Attendance: ${student.attendanceRate}% (${student.attendanceCount}/${student.totalSessions})
                         `;
                         studentsContainer.appendChild(studentCard);
                     });
@@ -2099,8 +2193,8 @@
 
         // Initialize the system when the page loads
         window.onload = function() {
-            document.getElementById('classDate').valueAsDate = new Date();
-            document.getElementById('studentEnrolledDate').valueAsDate = new Date();
+            document.getElementById('classDate').valueAsDate = new Date());
+            document.getElementById('studentEnrolledDate').valueAsDate = new Date());
             updateSyncStatus('🔵 Ready to connect', 'syncing');
             
             // 添加搜索功能

@@ -998,7 +998,6 @@
                     <div id="timeSlotContents"></div>
                 </div>
                 
-                <!-- 其余部分保持不变，但应用了新的样式类 -->
                 <!-- Record Attendance -->
                 <div id="attendance" class="section">
                     <h2>📝 Record Attendance</h2>
@@ -1111,7 +1110,6 @@
     </div>
 
     <script>
-        // Firebase配置和系统代码保持不变
         // === 使用你的 Firebase 配置 ===
         const firebaseConfig = {
             apiKey: "AIzaSyB-enIolDzqs9sVcbB2Rxu7o86L5q7Kd7E",
@@ -1142,7 +1140,7 @@
         // 搜索相关变量
         let currentSearchTerm = '';
 
-        // 原有的系统类保持不变
+        // 修正后的系统类 - 确保考勤数据准确性
         class MemoschoolAttendanceSystem {
             constructor() {
                 this.students = new Map();
@@ -1272,6 +1270,16 @@
                 }
                 
                 const recordId = `${timeSlot}-${date}`.replace(/[^a-zA-Z0-9]/g, '-');
+                
+                // 检查是否已经记录过这天的考勤
+                const existingRecord = this.attendanceRecords.find(record => 
+                    record.timeSlot === timeSlot && record.date === date
+                );
+                
+                if (existingRecord) {
+                    throw new Error(`Attendance for ${timeSlot} on ${date} already recorded`);
+                }
+                
                 const record = {
                     id: recordId,
                     timeSlot,
@@ -1281,13 +1289,23 @@
                     recordedAt: new Date().toISOString()
                 };
                 
-                // Update student attendance data
+                // 更新学生考勤数据 - 修正后的逻辑
                 for (const studentId of presentStudentIds) {
                     const student = this.students.get(studentId);
-                    if (student) {
-                        // 只有在课程日期在入学日期之后才计入考勤
-                        if (date >= student.enrolledDate) {
-                            student.attendanceCount++;
+                    if (student && date >= student.enrolledDate) {
+                        
+                        // 检查是否已经记录过这天的考勤
+                        const alreadyRecorded = student.attendanceDates && 
+                                              student.attendanceDates.includes(date);
+                        
+                        if (!alreadyRecorded) {
+                            // 初始化数组如果不存在
+                            if (!student.attendanceDates) {
+                                student.attendanceDates = [];
+                            }
+                            
+                            // 安全地更新考勤数据
+                            student.attendanceCount = (student.attendanceCount || 0) + 1;
                             student.attendanceDates.push(date);
                             
                             if (this.isOnline) {
@@ -1301,6 +1319,7 @@
                     }
                 }
                 
+                // 保存考勤记录
                 if (this.isOnline) {
                     await db.collection('users').doc(this.userId).collection('attendance')
                         .doc(recordId).set(record);
@@ -1315,6 +1334,9 @@
                 const student = this.students.get(studentId);
                 if (!student) return null;
                 
+                // 确保考勤数据存在
+                const attendanceDates = student.attendanceDates || [];
+                
                 // 只计算入学日期之后的课程
                 const relevantRecords = this.attendanceRecords.filter(record => 
                     record.timeSlot === student.timeSlot && 
@@ -1323,18 +1345,18 @@
                 
                 const totalSessions = relevantRecords.length;
                 
-                // 只计算入学日期之后的出席
-                const validAttendanceDates = student.attendanceDates.filter(date => 
+                // 只计算入学日期之后的出席（去重）
+                const validAttendanceDates = attendanceDates.filter(date => 
                     date >= student.enrolledDate
                 );
-                const attendanceCount = validAttendanceDates.length;
+                const validAttendanceCount = [...new Set(validAttendanceDates)].length; // 去重
                 
                 const attendanceRate = totalSessions > 0 ? 
-                    (attendanceCount / totalSessions * 100).toFixed(1) : 0;
+                    (validAttendanceCount / totalSessions * 100).toFixed(1) : 0;
                 
                 return {
                     ...student,
-                    attendanceCount: attendanceCount,
+                    attendanceCount: validAttendanceCount,
                     totalAvailableSessions: totalSessions,
                     attendanceRate,
                     recentAttendance: validAttendanceDates.slice(-5)
@@ -1427,7 +1449,6 @@
         // Create system instance
         const system = new MemoschoolAttendanceSystem();
 
-        // 原有的函数保持不变，但添加了Toast通知
         // Firebase Authentication Functions
         async function login() {
             const email = document.getElementById('email').value;
@@ -1645,7 +1666,6 @@
             }
         }
 
-        // 修改updateTimeSlotTabs函数以使用新的卡片布局
         function updateTimeSlotTabs() {
             const tabsContainer = document.getElementById('timeSlotTabs');
             const contentsContainer = document.getElementById('timeSlotContents');
@@ -1798,7 +1818,6 @@
             return grid;
         }
 
-        // 其余函数保持不变...
         function updateStudentsCheckboxes() {
             const timeSlot = document.getElementById('timeSlotSelect').value;
             const container = document.getElementById('studentsCheckboxes');

@@ -747,6 +747,36 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        
+        /* 自定义时间槽样式 */
+        .time-slots-management {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        .time-slots-list {
+            margin-top: 20px;
+        }
+        .time-slot-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+        .time-slot-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .time-slot-actions button {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
         @media (max-width: 768px) {
             .nav {
                 flex-direction: column;
@@ -783,6 +813,15 @@
             }
             .stats-grid {
                 grid-template-columns: 1fr;
+            }
+            .time-slot-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .time-slot-actions {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: flex-end;
             }
         }
     </style>
@@ -826,6 +865,7 @@
                 <button onclick="showSection('attendance')">📝 Attendance</button>
                 <button onclick="showSection('records')">📈 Records</button>
                 <button onclick="showSection('timeslots')">⏰ Time Slots</button>
+                <button onclick="showSection('timeSlotsManagement')">➕ Manage Time Slots</button>
                 <button onclick="showSection('exports')">📤 Export</button>
                 <button onclick="showSection('stats')">📊 Statistics</button>
             </div>
@@ -844,7 +884,7 @@
                         
                         <div class="semester-info">
                             <h3>Attendance Information</h3>
-                            <p><strong>Time Slots:</strong> 7 | <strong>Recorded Sessions:</strong> <span id="recordedSessionsCount">0</span></p>
+                            <p><strong>Time Slots:</strong> <span id="timeSlotsCount">0</span> | <strong>Recorded Sessions:</strong> <span id="recordedSessionsCount">0</span></p>
                         </div>
                         
                         <div class="stats-grid">
@@ -865,7 +905,7 @@
                             </div>
                             <div class="stat-card">
                                 <h3>Time Slots</h3>
-                                <div class="number" id="timeSlotsCount">7</div>
+                                <div class="number" id="timeSlotsCountDashboard">0</div>
                                 <div class="trend">All active</div>
                             </div>
                         </div>
@@ -891,10 +931,10 @@
                             <button class="btn" onclick="showSection('timeslots')">View Time Slots</button>
                         </div>
                         <div class="feature-card">
-                            <div class="icon">📊</div>
-                            <h3>View Reports</h3>
-                            <p>Generate detailed attendance reports and export data for analysis.</p>
-                            <button class="btn" onclick="showSection('exports')">View Reports</button>
+                            <div class="icon">➕</div>
+                            <h3>Manage Time Slots</h3>
+                            <p>Add, edit or remove time slots to match your class schedule.</p>
+                            <button class="btn" onclick="showSection('timeSlotsManagement')">Manage Time Slots</button>
                         </div>
                     </div>
                 </div>
@@ -932,13 +972,7 @@
                             <label class="form-label">Time Slot</label>
                             <select id="studentTimeSlot" class="form-input">
                                 <option value="">Select Time Slot</option>
-                                <option value="Friday 2pm-3:30pm">Friday 2pm-3:30pm</option>
-                                <option value="Saturday 9am-10:30am">Saturday 9am-10:30am</option>
-                                <option value="Saturday 11am-12:30pm">Saturday 11am-12:30pm</option>
-                                <option value="Saturday 2pm-4pm">Saturday 2pm-4pm</option>
-                                <option value="Sunday 9am-10:30am">Sunday 9am-10:30am</option>
-                                <option value="Sunday 11am-12:30pm">Sunday 11am-12:30pm</option>
-                                <option value="Sunday 4pm-5:30pm">Sunday 4pm-5:30pm</option>
+                                <!-- 时间槽将通过JavaScript动态加载 -->
                             </select>
                         </div>
                         <div class="form-group">
@@ -978,13 +1012,7 @@
                             <label class="form-label">Time Slot</label>
                             <select id="editStudentTimeSlot" class="form-input">
                                 <option value="">Select Time Slot</option>
-                                <option value="Friday 2pm-3:30pm">Friday 2pm-3:30pm</option>
-                                <option value="Saturday 9am-10:30am">Saturday 9am-10:30am</option>
-                                <option value="Saturday 11am-12:30pm">Saturday 11am-12:30pm</option>
-                                <option value="Saturday 2pm-4pm">Saturday 2pm-4pm</option>
-                                <option value="Sunday 9am-10:30am">Sunday 9am-10:30am</option>
-                                <option value="Sunday 11am-12:30pm">Sunday 11am-12:30pm</option>
-                                <option value="Sunday 4pm-5:30pm">Sunday 4pm-5:30pm</option>
+                                <!-- 时间槽将通过JavaScript动态加载 -->
                             </select>
                         </div>
                         <div class="form-group">
@@ -1014,13 +1042,7 @@
                             <label class="form-label">Select Time Slot</label>
                             <select id="timeSlotSelect" class="form-input" onchange="updateStudentsCheckboxes()">
                                 <option value="">Select Time Slot</option>
-                                <option value="Friday 2pm-3:30pm">Friday 2pm-3:30pm</option>
-                                <option value="Saturday 9am-10:30am">Saturday 9am-10:30am</option>
-                                <option value="Saturday 11am-12:30pm">Saturday 11am-12:30pm</option>
-                                <option value="Saturday 2pm-4pm">Saturday 2pm-4pm</option>
-                                <option value="Sunday 9am-10:30am">Sunday 9am-10:30am</option>
-                                <option value="Sunday 11am-12:30pm">Sunday 11am-12:30pm</option>
-                                <option value="Sunday 4pm-5:30pm">Sunday 4pm-5:30pm</option>
+                                <!-- 时间槽将通过JavaScript动态加载 -->
                             </select>
                         </div>
                         <div class="form-group">
@@ -1054,13 +1076,7 @@
                             <label class="form-label">Filter by Time Slot</label>
                             <select id="filterTimeSlot" class="form-input" onchange="filterAttendanceRecords()">
                                 <option value="all">All Time Slots</option>
-                                <option value="Friday 2pm-3:30pm">Friday 2pm-3:30pm</option>
-                                <option value="Saturday 9am-10:30am">Saturday 9am-10:30am</option>
-                                <option value="Saturday 11am-12:30pm">Saturday 11am-12:30pm</option>
-                                <option value="Saturday 2pm-4pm">Saturday 2pm-4pm</option>
-                                <option value="Sunday 9am-10:30am">Sunday 9am-10:30am</option>
-                                <option value="Sunday 11am-12:30pm">Sunday 11am-12:30pm</option>
-                                <option value="Sunday 4pm-5:30pm">Sunday 4pm-5:30pm</option>
+                                <!-- 时间槽将通过JavaScript动态加载 -->
                             </select>
                         </div>
                         <div class="form-group">
@@ -1093,6 +1109,30 @@
                     <h2>⏰ Time Slots</h2>
                     <p>Students grouped by their class time slots.</p>
                     <div id="timeSlotsContainer"></div>
+                </div>
+
+                <!-- Time Slots Management -->
+                <div id="timeSlotsManagement" class="section">
+                    <h2>➕ Manage Time Slots</h2>
+                    <p>Add, edit or remove time slots to match your class schedule.</p>
+                    
+                    <div class="time-slots-management">
+                        <h3>Add New Time Slot</h3>
+                        <div class="form-group">
+                            <label class="form-label">Time Slot Name</label>
+                            <input type="text" id="newTimeSlotName" class="form-input" placeholder="e.g., Friday 7pm-8:30pm">
+                        </div>
+                        <button class="btn btn-success" onclick="addTimeSlot()">
+                            <span>➕ Add Time Slot</span>
+                        </button>
+                    </div>
+                    
+                    <div class="time-slots-management">
+                        <h3>Current Time Slots</h3>
+                        <div class="time-slots-list" id="timeSlotsList">
+                            <!-- 时间槽列表将通过JavaScript动态加载 -->
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Data Export -->
@@ -1134,8 +1174,8 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
 
-        // Time slots configuration
-        const TIME_SLOTS = [
+        // 默认时间槽配置
+        const DEFAULT_TIME_SLOTS = [
             "Friday 2pm-3:30pm",
             "Saturday 9am-10:30am", 
             "Saturday 11am-12:30pm",
@@ -1148,11 +1188,12 @@
         // 搜索相关变量
         let currentSearchTerm = '';
 
-        // 修正后的系统类 - 确保考勤数据准确性，并支持自定义总课堂数
+        // 修正后的系统类 - 确保考勤数据准确性，并支持自定义总课堂数和动态时间槽
         class MemoschoolAttendanceSystem {
             constructor() {
                 this.students = new Map();
                 this.attendanceRecords = [];
+                this.timeSlots = [];
                 this.userId = null;
                 this.isOnline = false;
             }
@@ -1187,6 +1228,20 @@
                         this.attendanceRecords.push(doc.data());
                     });
                     
+                    // Load time slots
+                    const timeSlotsSnapshot = await db.collection('users').doc(this.userId)
+                        .collection('timeSlots').get();
+                    
+                    this.timeSlots = [];
+                    if (timeSlotsSnapshot.empty) {
+                        // 如果没有时间槽，创建默认时间槽
+                        await this.initializeDefaultTimeSlots();
+                    } else {
+                        timeSlotsSnapshot.forEach(doc => {
+                            this.timeSlots.push(doc.data());
+                        });
+                    }
+                    
                     updateSyncStatus('✅ Data loaded from cloud', 'synced');
                     this.isOnline = true;
                     updateUI();
@@ -1194,6 +1249,23 @@
                 } catch (error) {
                     console.error('Error loading from Firestore:', error);
                     updateSyncStatus('❌ Error loading data', 'error');
+                }
+            }
+            
+            async initializeDefaultTimeSlots() {
+                for (const timeSlot of DEFAULT_TIME_SLOTS) {
+                    const timeSlotId = timeSlot.replace(/\s+/g, '-').toLowerCase();
+                    const timeSlotData = {
+                        id: timeSlotId,
+                        name: timeSlot,
+                        isDefault: true,
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    await db.collection('users').doc(this.userId).collection('timeSlots')
+                        .doc(timeSlotId).set(timeSlotData);
+                    
+                    this.timeSlots.push(timeSlotData);
                 }
             }
             
@@ -1218,6 +1290,17 @@
                 db.collection('users').doc(this.userId).collection('attendance')
                     .onSnapshot((snapshot) => {
                         this.attendanceRecords = snapshot.docs.map(doc => doc.data());
+                        updateUI();
+                        updateSyncStatus('✅ Real-time sync active', 'synced');
+                    });
+                
+                // Real-time listener for time slots
+                db.collection('users').doc(this.userId).collection('timeSlots')
+                    .onSnapshot((snapshot) => {
+                        this.timeSlots = [];
+                        snapshot.forEach(doc => {
+                            this.timeSlots.push(doc.data());
+                        });
                         updateUI();
                         updateSyncStatus('✅ Real-time sync active', 'synced');
                     });
@@ -1424,7 +1507,7 @@
                     totalAttendance,
                     totalPossibleSessions,
                     averageAttendanceRate: avgAttendanceRate,
-                    timeSlots: TIME_SLOTS.length
+                    timeSlots: this.timeSlots.length
                 };
             }
 
@@ -1441,12 +1524,61 @@
                 const data = {
                     system: {
                         school: "Genius Mind Academy",
-                        timeSlots: TIME_SLOTS
+                        timeSlots: this.timeSlots
                     },
                     students: Array.from(this.students.values()),
                     attendanceRecords: this.attendanceRecords
                 };
                 return JSON.stringify(data, null, 2);
+            }
+            
+            // 时间槽管理方法
+            async addTimeSlot(name) {
+                if (!name) {
+                    throw new Error('Time slot name is required');
+                }
+                
+                const timeSlotId = name.replace(/\s+/g, '-').toLowerCase();
+                const timeSlot = {
+                    id: timeSlotId,
+                    name: name,
+                    isDefault: false,
+                    createdAt: new Date().toISOString()
+                };
+                
+                if (this.isOnline) {
+                    await db.collection('users').doc(this.userId).collection('timeSlots')
+                        .doc(timeSlotId).set(timeSlot);
+                } else {
+                    this.timeSlots.push(timeSlot);
+                }
+                
+                return timeSlot;
+            }
+            
+            async deleteTimeSlot(timeSlotId) {
+                // 检查是否有学生使用这个时间槽
+                const studentsInTimeSlot = Array.from(this.students.values()).filter(
+                    student => student.timeSlot === this.getTimeSlotNameById(timeSlotId)
+                );
+                
+                if (studentsInTimeSlot.length > 0) {
+                    throw new Error(`Cannot delete time slot. ${studentsInTimeSlot.length} student(s) are assigned to this time slot.`);
+                }
+                
+                if (this.isOnline) {
+                    await db.collection('users').doc(this.userId).collection('timeSlots')
+                        .doc(timeSlotId).delete();
+                } else {
+                    this.timeSlots = this.timeSlots.filter(slot => slot.id !== timeSlotId);
+                }
+                
+                return true;
+            }
+            
+            getTimeSlotNameById(timeSlotId) {
+                const timeSlot = this.timeSlots.find(slot => slot.id === timeSlotId);
+                return timeSlot ? timeSlot.name : '';
             }
         }
 
@@ -1538,12 +1670,14 @@
         // Update all UI components
         function updateUI() {
             updateDashboard();
+            updateTimeSlotSelects();
             updateTimeSlotTabs();
             updateStudentsCheckboxes();
             updateAttendanceRecords();
             updateStats();
             updateTimeSlots();
             updateFilterStudent();
+            updateTimeSlotsList();
         }
 
         // UI Functions
@@ -1552,6 +1686,97 @@
                 section.classList.remove('active');
             });
             document.getElementById(sectionId).classList.add('active');
+        }
+
+        // 更新所有时间槽选择框
+        function updateTimeSlotSelects() {
+            // 更新添加学生表单的时间槽选择框
+            const studentTimeSlotSelect = document.getElementById('studentTimeSlot');
+            studentTimeSlotSelect.innerHTML = '<option value="">Select Time Slot</option>';
+            
+            // 更新编辑学生表单的时间槽选择框
+            const editStudentTimeSlotSelect = document.getElementById('editStudentTimeSlot');
+            editStudentTimeSlotSelect.innerHTML = '<option value="">Select Time Slot</option>';
+            
+            // 更新考勤记录的时间槽选择框
+            const timeSlotSelect = document.getElementById('timeSlotSelect');
+            timeSlotSelect.innerHTML = '<option value="">Select Time Slot</option>';
+            
+            // 更新考勤记录筛选的时间槽选择框
+            const filterTimeSlotSelect = document.getElementById('filterTimeSlot');
+            filterTimeSlotSelect.innerHTML = '<option value="all">All Time Slots</option>';
+            
+            // 填充所有选择框
+            system.timeSlots.forEach(timeSlot => {
+                const option = document.createElement('option');
+                option.value = timeSlot.name;
+                option.textContent = timeSlot.name;
+                
+                studentTimeSlotSelect.appendChild(option.cloneNode(true));
+                editStudentTimeSlotSelect.appendChild(option.cloneNode(true));
+                timeSlotSelect.appendChild(option.cloneNode(true));
+                
+                const filterOption = option.cloneNode(true);
+                filterTimeSlotSelect.appendChild(filterOption);
+            });
+        }
+
+        // 更新时间槽列表
+        function updateTimeSlotsList() {
+            const timeSlotsList = document.getElementById('timeSlotsList');
+            timeSlotsList.innerHTML = '';
+            
+            if (system.timeSlots.length === 0) {
+                timeSlotsList.innerHTML = '<p>No time slots found. Add your first time slot above.</p>';
+                return;
+            }
+            
+            system.timeSlots.forEach(timeSlot => {
+                const timeSlotItem = document.createElement('div');
+                timeSlotItem.className = 'time-slot-item';
+                
+                timeSlotItem.innerHTML = `
+                    <div>
+                        <strong>${timeSlot.name}</strong>
+                        ${timeSlot.isDefault ? '<span style="color: var(--gray); font-size: 0.9em;"> (Default)</span>' : ''}
+                    </div>
+                    <div class="time-slot-actions">
+                        ${!timeSlot.isDefault ? `<button class="btn btn-warning" onclick="deleteTimeSlot('${timeSlot.id}')">Delete</button>` : ''}
+                    </div>
+                `;
+                
+                timeSlotsList.appendChild(timeSlotItem);
+            });
+        }
+
+        // 添加时间槽
+        async function addTimeSlot() {
+            const name = document.getElementById('newTimeSlotName').value.trim();
+            
+            if (!name) {
+                showToast('Please enter a time slot name', 'error');
+                return;
+            }
+            
+            try {
+                await system.addTimeSlot(name);
+                document.getElementById('newTimeSlotName').value = '';
+                showToast('Time slot added successfully!', 'success');
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+
+        // 删除时间槽
+        async function deleteTimeSlot(timeSlotId) {
+            if (confirm('Are you sure you want to delete this time slot? This action cannot be undone.')) {
+                try {
+                    await system.deleteTimeSlot(timeSlotId);
+                    showToast('Time slot deleted successfully', 'success');
+                } catch (error) {
+                    showToast('Error: ' + error.message, 'error');
+                }
+            }
         }
 
         async function addStudent() {
@@ -1702,12 +1927,12 @@
             
             let firstTab = true;
             
-            for (const timeSlot of TIME_SLOTS) {
+            for (const timeSlot of system.timeSlots) {
                 // Create tab
                 const tab = document.createElement('div');
                 tab.className = `time-slot-tab ${firstTab ? '' : ''}`;
-                tab.textContent = timeSlot;
-                tab.dataset.timeSlot = timeSlot;
+                tab.textContent = timeSlot.name;
+                tab.dataset.timeSlot = timeSlot.name;
                 tab.addEventListener('click', function() {
                     // Remove active class from all tabs
                     document.querySelectorAll('.time-slot-tab').forEach(t => {
@@ -1721,17 +1946,17 @@
                         c.classList.remove('active');
                     });
                     // Show corresponding content
-                    document.getElementById(`content-${timeSlot.replace(/\s+/g, '-')}`).classList.add('active');
+                    document.getElementById(`content-${timeSlot.id}`).classList.add('active');
                 });
                 
                 tabsContainer.appendChild(tab);
                 
                 // Create content
                 const content = document.createElement('div');
-                content.id = `content-${timeSlot.replace(/\s+/g, '-')}`;
+                content.id = `content-${timeSlot.id}`;
                 content.className = `time-slot-content ${firstTab ? '' : ''}`;
                 
-                const students = system.getStudentsByTimeSlot(timeSlot, currentSearchTerm);
+                const students = system.getStudentsByTimeSlot(timeSlot.name, currentSearchTerm);
                 
                 if (students.length === 0) {
                     content.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--gray);">
@@ -1964,8 +2189,8 @@
             const container = document.getElementById('timeSlotsContainer');
             container.innerHTML = '';
             
-            for (const timeSlot of TIME_SLOTS) {
-                const students = system.getStudentsByTimeSlot(timeSlot);
+            for (const timeSlot of system.timeSlots) {
+                const students = system.getStudentsByTimeSlot(timeSlot.name);
                 
                 const timeSlotCard = document.createElement('div');
                 timeSlotCard.className = 'time-slot-card';
@@ -1975,7 +2200,7 @@
                 
                 const title = document.createElement('div');
                 title.className = 'time-slot-title';
-                title.textContent = timeSlot;
+                title.textContent = timeSlot.name;
                 
                 const count = document.createElement('div');
                 count.className = 'student-count';
@@ -2045,6 +2270,7 @@
             document.getElementById('sessionsRecorded').textContent = summary.totalSessions;
             document.getElementById('avgAttendance').textContent = summary.averageAttendanceRate + '%';
             document.getElementById('timeSlotsCount').textContent = summary.timeSlots;
+            document.getElementById('timeSlotsCountDashboard').textContent = summary.timeSlots;
             document.getElementById('recordedSessionsCount').textContent = summary.totalSessions;
         }
 

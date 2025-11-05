@@ -1245,7 +1245,7 @@
         // 搜索相关变量
         let currentSearchTerm = '';
 
-        // 修正后的系统类 - 添加时间槽排序功能和日期格式化
+        // 修正后的系统类 - 修复出勤率计算问题
         class MemoschoolAttendanceSystem {
             constructor() {
                 this.students = new Map();
@@ -1507,6 +1507,7 @@
                     throw new Error('Student not found');
                 }
                 
+                // 更新学生数据
                 const updatedStudent = {
                     ...student,
                     ...updatedData
@@ -1518,6 +1519,9 @@
                 } else {
                     this.students.set(studentId, updatedStudent);
                 }
+                
+                // 强制更新UI
+                updateUI();
                 
                 return updatedStudent;
             }
@@ -1547,7 +1551,7 @@
                     recordedAt: new Date().toISOString()
                 };
                 
-                // 更新学生考勤数据 - 修正后的逻辑
+                // 更新学生考勤数据 - 修复后的逻辑
                 for (const studentId of presentStudentIds) {
                     const student = this.students.get(studentId);
                     if (student && date >= student.enrolledDate) {
@@ -1585,9 +1589,13 @@
                     this.attendanceRecords.push(record);
                 }
                 
+                // 强制更新UI
+                updateUI();
+                
                 return record;
             }
             
+            // 修复出勤率计算问题
             getStudentAttendance(studentId) {
                 const student = this.students.get(studentId);
                 if (!student) return null;
@@ -1604,8 +1612,9 @@
                 // 使用学生自定义的总课堂数，默认为48
                 const totalSessions = student.totalSessions || 48;
                 
+                // 修复：确保出勤率不会超过100%
                 const attendanceRate = totalSessions > 0 ? 
-                    (validAttendanceCount / totalSessions * 100).toFixed(1) : 0;
+                    Math.min((validAttendanceCount / totalSessions * 100), 100).toFixed(1) : 0;
                 
                 return {
                     ...student,
@@ -1817,12 +1826,15 @@
                             if (this.isOnline) {
                                 await db.collection('users').doc(this.userId).collection('students')
                                     .doc(stuId).update({
-                                        attendanceDates: student.attendanceDates,
-                                        attendanceCount: student.attendanceCount
+                                        attendanceCount: student.attendanceCount,
+                                        attendanceDates: student.attendanceDates
                                     });
                             }
                         }
                     }
+                    
+                    // 强制更新UI
+                    updateUI();
                     
                     return true;
                 } catch (error) {
@@ -1879,6 +1891,9 @@
                     if (record.presentStudents.length === 0) {
                         await this.deleteAttendanceRecord(recordId);
                     }
+                    
+                    // 强制更新UI
+                    updateUI();
                     
                     return true;
                 } catch (error) {

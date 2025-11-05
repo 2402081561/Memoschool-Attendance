@@ -925,6 +925,7 @@
                 <button onclick="showSection('timeSlotsManagement')">➕ Manage Time Slots</button>
                 <button onclick="showSection('exports')">📤 Export</button>
                 <button onclick="showSection('stats')">📊 Statistics</button>
+                <button onclick="system.cleanupInvalidAttendanceRecords()" style="background: var(--info);">🧹 Clean Data</button>
             </div>
             
             <div class="content">
@@ -1245,7 +1246,7 @@
         // 搜索相关变量
         let currentSearchTerm = '';
 
-        // 修正后的系统类 - 修复出勤率计算问题
+        // 修正后的系统类 - 修复所有已知问题
         class MemoschoolAttendanceSystem {
             constructor() {
                 this.students = new Map();
@@ -1533,13 +1534,25 @@
                 
                 const recordId = `${timeSlot}-${date}`.replace(/[^a-zA-Z0-9]/g, '-');
                 
-                // 检查是否已经记录过这天的考勤
+                // 🔧 修复：检查是否已经记录过这天的考勤，但只检查当前存在的学生
                 const existingRecord = this.attendanceRecords.find(record => 
                     record.timeSlot === timeSlot && record.date === date
                 );
                 
                 if (existingRecord) {
-                    throw new Error(`Attendance for ${timeSlot} on ${date} already recorded`);
+                    // 🔧 修复：检查现有记录中的学生是否仍然存在于系统中
+                    const existingValidStudents = existingRecord.presentStudents.filter(studentId => 
+                        this.students.has(studentId)
+                    );
+                    
+                    // 如果现有记录中还有有效学生，才抛出错误
+                    if (existingValidStudents.length > 0) {
+                        throw new Error(`Attendance for ${timeSlot} on ${date} already recorded`);
+                    } else {
+                        // 🔧 修复：如果记录中没有有效学生，删除这个无效记录
+                        console.log('Deleting invalid attendance record with no valid students');
+                        await this.deleteAttendanceRecord(existingRecord.id);
+                    }
                 }
                 
                 const record = {
@@ -1551,16 +1564,16 @@
                     recordedAt: new Date().toISOString()
                 };
                 
-                // 更新学生考勤数据 - 修复后的逻辑
+                // 更新学生考勤数据 - 修复重复计算问题
                 for (const studentId of presentStudentIds) {
                     const student = this.students.get(studentId);
                     if (student && date >= student.enrolledDate) {
                         
-                        // 检查是否已经记录过这天的考勤
-                        const alreadyRecorded = student.attendanceDates && 
-                                              student.attendanceDates.includes(date);
+                        // 🔧 修复：检查该学生是否已经在这一天有考勤记录
+                        const alreadyRecordedForStudent = student.attendanceDates && 
+                                                      student.attendanceDates.includes(date);
                         
-                        if (!alreadyRecorded) {
+                        if (!alreadyRecordedForStudent) {
                             // 初始化数组如果不存在
                             if (!student.attendanceDates) {
                                 student.attendanceDates = [];
@@ -1577,6 +1590,8 @@
                                         attendanceDates: student.attendanceDates
                                     });
                             }
+                        } else {
+                            console.warn(`Student ${student.name} already has attendance recorded for ${date}`);
                         }
                     }
                 }
@@ -1603,7 +1618,7 @@
                 // 确保考勤数据存在
                 const attendanceDates = student.attendanceDates || [];
                 
-                // 只计算入学日期之后的出席（去重）
+                // 🔧 修复：只计算入学日期之后的出席，并且去重
                 const validAttendanceDates = attendanceDates.filter(date => 
                     date >= student.enrolledDate
                 );
@@ -1618,7 +1633,7 @@
                 
                 return {
                     ...student,
-                    attendanceCount: validAttendanceCount,
+                    attendanceCount: validAttendanceCount, // 使用去重后的数量
                     totalSessions: totalSessions,
                     attendanceRate,
                     recentAttendance: validAttendanceDates.slice(-5)
@@ -1898,6 +1913,106 @@
                     return true;
                 } catch (error) {
                     console.error('Error removing student from attendance:', error);
+                    throw error;
+                }
+            }
+
+            // 🔧 新增：清理学生相关的考勤记录
+            async cleanupStudentAttendanceRecords(studentId) {
+                try {
+                    // 查找包含该学生的考勤记录
+                    const recordsWithStudent = this.attendanceRecords.filter(record => 
+                        record.presentStudents && record.presentStudents.includes(studentId)
+                    );
+                    
+                    for (const record of recordsWithStudent) {
+                        // 从出席学生列表中移除该学生
+                        const updatedPresentStudents = record.presentStudents.filter(id => id !== studentId);
+                        
+                        if (updatedPresentStudents.length === 0) {
+                            // 如果没有其他学生，删除整个记录
+                            await this.deleteAttendanceRecord(record.id);
+                        } else {
+                            // 更新记录，移除该学生
+                            if (this.isOnline) {
+                                await db.collection('users').doc(this.userId).collection('attendance')
+                                    .doc(record.id).update({
+                                        presentStudents: updatedPresentStudents
+                                    });
+                            } else {
+                                record.presentStudents = updatedPresentStudents;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error cleaning up student attendance records:', error);
+                }
+            }
+
+            // 🔧 新增：清理所有无效的考勤记录（没有有效学生的记录）
+            async cleanupInvalidAttendanceRecords() {
+                try {
+                    updateSyncStatus('🔄 Cleaning up invalid attendance records...', 'syncing');
+                    
+                    let deletedCount = 0;
+                    
+                    for (const record of [...this.attendanceRecords]) {
+                        // 检查记录中的学生是否仍然存在
+                        const validStudents = record.presentStudents.filter(studentId => 
+                            this.students.has(studentId)
+                        );
+                        
+                        if (validStudents.length === 0) {
+                            // 删除没有有效学生的记录
+                            await this.deleteAttendanceRecord(record.id);
+                            deletedCount++;
+                        } else if (validStudents.length !== record.presentStudents.length) {
+                            // 更新记录，只保留有效学生
+                            if (this.isOnline) {
+                                await db.collection('users').doc(this.userId).collection('attendance')
+                                    .doc(record.id).update({
+                                        presentStudents: validStudents
+                                    });
+                            } else {
+                                record.presentStudents = validStudents;
+                            }
+                        }
+                    }
+                    
+                    updateSyncStatus('✅ Cleanup completed', 'synced');
+                    showToast(`Cleaned up ${deletedCount} invalid attendance records`, 'success');
+                    updateUI();
+                    
+                } catch (error) {
+                    console.error('Error cleaning up invalid records:', error);
+                    updateSyncStatus('❌ Cleanup failed', 'error');
+                    showToast('Error cleaning up records: ' + error.message, 'error');
+                }
+            }
+
+            // 🔧 新增：删除学生（增强版）
+            async deleteStudent(studentId) {
+                const student = this.students.get(studentId);
+                if (!student) {
+                    throw new Error('Student not found');
+                }
+                
+                try {
+                    // 先清理相关的考勤记录
+                    await this.cleanupStudentAttendanceRecords(studentId);
+                    
+                    if (this.isOnline) {
+                        await db.collection('users').doc(this.userId).collection('students')
+                            .doc(studentId).delete();
+                    } else {
+                        this.students.delete(studentId);
+                    }
+                    
+                    updateUI();
+                    return true;
+                    
+                } catch (error) {
+                    console.error('Error deleting student:', error);
                     throw error;
                 }
             }
@@ -2207,15 +2322,9 @@
         }
 
         async function deleteStudent(studentId) {
-            if (confirm('Are you sure you want to delete this student?')) {
+            if (confirm('Are you sure you want to delete this student? This will also remove their attendance records.')) {
                 try {
-                    if (system.isOnline) {
-                        await db.collection('users').doc(system.userId).collection('students')
-                            .doc(studentId).delete();
-                    } else {
-                        system.students.delete(studentId);
-                        updateUI();
-                    }
+                    await system.deleteStudent(studentId);
                     showToast('Student deleted successfully', 'success');
                 } catch (error) {
                     showToast('Error deleting student: ' + error.message, 'error');
@@ -2851,6 +2960,35 @@
                 });
             }
         };
+
+        // 🔧 立即修复现有问题的临时函数
+        async function fixExistingIssues() {
+            const system = window.system;
+            let fixedCount = 0;
+            
+            for (const record of [...system.attendanceRecords]) {
+                const validStudents = record.presentStudents.filter(studentId => 
+                    system.students.has(studentId)
+                );
+                
+                if (validStudents.length === 0) {
+                    // 删除无效记录
+                    await system.deleteAttendanceRecord(record.id);
+                    fixedCount++;
+                } else if (validStudents.length !== record.presentStudents.length) {
+                    // 更新记录
+                    if (system.isOnline) {
+                        await db.collection('users').doc(system.userId).collection('attendance')
+                            .doc(record.id).update({
+                                presentStudents: validStudents
+                            });
+                    }
+                    fixedCount++;
+                }
+            }
+            
+            alert(`Fixed ${fixedCount} attendance records! You can now record attendance for the previously blocked dates.`);
+        }
     </script>
 </body>
 </html>

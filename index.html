@@ -3,15 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Genius Mind Mind Academy Attendance System</title>
+    <title>Memoschool Kuching Attendance</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-    
-    <!-- Chart.js for statistics -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         :root {
@@ -160,10 +157,6 @@
             color: var(--dark);
             font-size: 0.95em;
         }
-        .form-label.required::after {
-            content: ' *';
-            color: var(--danger);
-        }
         .form-input {
             width: 100%;
             padding: 14px 16px;
@@ -181,15 +174,6 @@
         }
         .form-input:hover {
             border-color: #ced4da;
-        }
-        .form-input.error {
-            border-color: var(--danger);
-        }
-        .error-message {
-            color: var(--danger);
-            font-size: 0.9em;
-            margin-top: 5px;
-            display: none;
         }
         .btn {
             background: var(--primary);
@@ -578,14 +562,14 @@
             margin-top: 10px;
         }
         .attendance-dot {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
+            width: 75px;
+            height: 40px;
+            border-radius: 90%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 10px;
+            font-size: 12px;
             cursor: pointer;
             transition: transform 0.2s ease;
         }
@@ -764,33 +748,6 @@
             to { transform: rotate(360deg); }
         }
         
-        /* Skeleton loading */
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: skeleton-loading 1.5s infinite;
-            border-radius: 4px;
-        }
-        @keyframes skeleton-loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-        .skeleton-card {
-            padding: 20px;
-            border-radius: 12px;
-            background: white;
-            margin-bottom: 20px;
-        }
-        .skeleton-text {
-            height: 16px;
-            margin-bottom: 8px;
-        }
-        .skeleton-title {
-            height: 24px;
-            margin-bottom: 16px;
-            width: 60%;
-        }
-        
         /* 自定义时间槽样式 */
         .time-slots-management {
             background: white;
@@ -820,104 +777,14 @@
             padding: 6px 12px;
             font-size: 12px;
         }
-        
-        /* Import students section */
-        .import-section {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-        }
-        .file-upload {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin: 15px 0;
-        }
-        .file-input {
-            display: none;
-        }
-        .file-label {
-            border: 2px dashed var(--border);
-            padding: 15px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-            flex: 1;
-        }
-        .file-label:hover {
-            border-color: var(--primary);
-            background: rgba(230, 126, 34, 0.05);
-        }
-        .file-name {
-            margin-top: 10px;
-            font-size: 0.9em;
-            color: var(--gray);
-        }
-        .template-link {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .template-link:hover {
-            text-decoration: underline;
-        }
-        
-        /* Charts container */
-        .chart-container {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            margin: 20px 0;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            height: 300px;
-        }
-        
-        /* Mobile bottom navigation */
-        .mobile-nav {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            z-index: 100;
-        }
-        .mobile-nav-buttons {
-            display: flex;
-            justify-content: space-around;
-        }
-        .mobile-nav-btn {
-            flex: 1;
-            padding: 15px 0;
-            text-align: center;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            font-size: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            color: var(--gray);
-        }
-        .mobile-nav-btn.active {
-            color: var(--primary);
-        }
-        .mobile-nav-btn i {
-            font-size: 18px;
-        }
-        
         @media (max-width: 768px) {
             .nav {
-                display: none;
+                flex-direction: column;
+                align-items: center;
             }
-            .mobile-nav {
-                display: block;
-            }
-            .content {
-                padding-bottom: 80px; /* Make space for mobile nav */
+            .nav button {
+                width: 100%;
+                max-width: 250px;
             }
             .header h1 {
                 font-size: 1.8em;
@@ -965,7 +832,7 @@
             <div class="school-logo" id="schoolLogo">
                 <img src="./gmlogo.png" alt="Genius Mind Academy" onerror="this.style.display='none'; this.parentNode.innerHTML='GMA'">
             </div>
-            <h1>Genius Mind Academy Attendance System</h1>
+            <h1>Genius Mind Academy</h1>
             <p>Real-time sync across all devices</p>
         </div>
         
@@ -976,16 +843,13 @@
                 <p>Sign in to automatically sync data across all your devices</p>
                 <div class="form-group">
                     <input type="email" id="email" placeholder="Email address" class="form-input" style="max-width: 300px; margin: 10px auto;">
-                    <div class="error-message" id="emailError"></div>
                     <input type="password" id="password" placeholder="Password" class="form-input" style="max-width: 300px; margin: 10px auto;">
-                    <div class="error-message" id="passwordError"></div>
                 </div>
                 <button class="btn" onclick="login()">Login</button>
                 <button class="btn btn-secondary" onclick="signup()">Sign Up</button>
                 <p style="margin-top: 15px; font-size: 14px; color: #666;">
                     Don't have an account? Click Sign Up to create one
                 </p>
-                <div id="authError" class="sync-status error" style="margin-top: 15px; display: none;"></div>
             </div>
         </div>
 
@@ -1004,28 +868,6 @@
                 <button onclick="showSection('timeSlotsManagement')">➕ Manage Time Slots</button>
                 <button onclick="showSection('exports')">📤 Export</button>
                 <button onclick="showSection('stats')">📊 Statistics</button>
-            </div>
-            
-            <!-- Mobile navigation -->
-            <div class="mobile-nav">
-                <div class="mobile-nav-buttons">
-                    <button class="mobile-nav-btn" onclick="showSection('dashboard')">
-                        <span>📊</span>
-                        <span>Dashboard</span>
-                    </button>
-                    <button class="mobile-nav-btn" onclick="showSection('students')">
-                        <span>👥</span>
-                        <span>Students</span>
-                    </button>
-                    <button class="mobile-nav-btn" onclick="showSection('attendance')">
-                        <span>📝</span>
-                        <span>Attendance</span>
-                    </button>
-                    <button class="mobile-nav-btn" onclick="showSection('stats')">
-                        <span>📊</span>
-                        <span>Stats</span>
-                    </button>
-                </div>
             </div>
             
             <div class="content">
@@ -1067,10 +909,6 @@
                                 <div class="trend">All active</div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <canvas id="attendanceTrendChart"></canvas>
                     </div>
                     
                     <div class="feature-cards">
@@ -1115,9 +953,8 @@
                     <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 30px;">
                         <h3 style="margin-bottom: 20px; color: var(--dark);">Add New Student</h3>
                         <div class="form-group">
-                            <label class="form-label required">Student Name</label>
+                            <label class="form-label">Student Name</label>
                             <input type="text" id="studentName" class="form-input" placeholder="Enter student name">
-                            <div class="error-message" id="studentNameError"></div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Age</label>
@@ -1132,12 +969,11 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label required">Time Slot</label>
+                            <label class="form-label">Time Slot</label>
                             <select id="studentTimeSlot" class="form-input">
                                 <option value="">Select Time Slot</option>
                                 <!-- 时间槽将通过JavaScript动态加载 -->
                             </select>
-                            <div class="error-message" id="studentTimeSlotError"></div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Enrolled Date</label>
@@ -1152,30 +988,13 @@
                         </button>
                     </div>
                     
-                    <!-- 批量导入学生 -->
-                    <div class="import-section">
-                        <h3 style="margin-bottom: 20px; color: var(--dark);">Batch Import Students</h3>
-                        <p>Import multiple students using a CSV template. <a href="#" class="template-link" onclick="downloadTemplate()">Download template</a></p>
-                        
-                        <div class="file-upload">
-                            <label class="file-label" for="studentFileUpload">
-                                <strong>Click to upload CSV file</strong>
-                                <p>or drag and drop here</p>
-                                <div class="file-name" id="fileName">No file selected</div>
-                            </label>
-                            <input type="file" id="studentFileUpload" class="file-input" accept=".csv">
-                            <button class="btn" onclick="importStudents()">Import</button>
-                        </div>
-                    </div>
-                    
                     <!-- 编辑学生表单 -->
                     <div id="editStudentForm" style="display: none; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 30px; border-left: 4px solid var(--info);">
                         <h3 style="margin-bottom: 20px; color: var(--dark);">✏️ Edit Student</h3>
                         
                         <div class="form-group">
-                            <label class="form-label required">Student Name</label>
+                            <label class="form-label">Student Name</label>
                             <input type="text" id="editStudentName" class="form-input" placeholder="Enter student name">
-                            <div class="error-message" id="editStudentNameError"></div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Age</label>
@@ -1190,12 +1009,11 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label required">Time Slot</label>
+                            <label class="form-label">Time Slot</label>
                             <select id="editStudentTimeSlot" class="form-input">
                                 <option value="">Select Time Slot</option>
                                 <!-- 时间槽将通过JavaScript动态加载 -->
                             </select>
-                            <div class="error-message" id="editStudentTimeSlotError"></div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Enrolled Date</label>
@@ -1212,13 +1030,6 @@
                     
                     <h3 style="margin-top: 10px; margin-bottom: 20px;">Student List</h3>
                     
-                    <div id="studentsSkeleton" class="skeleton-card" style="display: none;">
-                        <div class="skeleton skeleton-title"></div>
-                        <div class="skeleton skeleton-text" style="width: 80%;"></div>
-                        <div class="skeleton skeleton-text" style="width: 60%;"></div>
-                        <div class="skeleton skeleton-text" style="width: 40%;"></div>
-                    </div>
-                    
                     <div class="time-slot-tabs" id="timeSlotTabs"></div>
                     <div id="timeSlotContents"></div>
                 </div>
@@ -1228,28 +1039,25 @@
                     <h2>📝 Record Attendance</h2>
                     <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
                         <div class="form-group">
-                            <label class="form-label required">Select Time Slot</label>
+                            <label class="form-label">Select Time Slot</label>
                             <select id="timeSlotSelect" class="form-input" onchange="updateStudentsCheckboxes()">
                                 <option value="">Select Time Slot</option>
                                 <!-- 时间槽将通过JavaScript动态加载 -->
                             </select>
-                            <div class="error-message" id="timeSlotSelectError"></div>
                         </div>
                         <div class="form-group">
-                            <label class="form-label required">Date</label>
+                            <label class="form-label">Date</label>
                             <input type="date" id="classDate" class="form-input">
-                            <div class="error-message" id="classDateError"></div>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Session Topic (Optional)</label>
                             <input type="text" id="sessionTopic" class="form-input" placeholder="Enter session topic">
                         </div>
                         <div class="form-group">
-                            <label class="form-label required">Select Present Students</label>
+                            <label class="form-label">Select Present Students</label>
                             <div class="checkbox-group" id="studentsCheckboxes">
                                 <p>Please select a time slot to see students</p>
                             </div>
-                            <div class="error-message" id="presentStudentsError"></div>
                         </div>
                         <button class="btn btn-success" onclick="recordAttendance()">
                             <span>✅ Record Attendance</span>
@@ -1263,20 +1071,53 @@
                     <div class="accuracy-note">
                         📈 <strong>Accuracy Note:</strong> Attendance rates are calculated based on total sessions set for each student (default: 48). You can adjust total sessions for individual students in the student management section.
                     </div>
-                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
+                    
+                    <!-- Class Attendance Records -->
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 30px;">
+                        <h3 style="margin-bottom: 20px; color: var(--dark);">📅 Class Attendance Records</h3>
+                        <p style="margin-bottom: 15px; color: var(--gray);">View and manage attendance records for all classes. Click on a record to see details or delete it.</p>
+                        
                         <div class="form-group">
                             <label class="form-label">Filter by Time Slot</label>
-                            <select id="filterTimeSlot" class="form-input" onchange="filterAttendanceRecords()">
+                            <select id="classFilterTimeSlot" class="form-input" onchange="updateClassAttendanceRecords()">
+                                <option value="all">All Time Slots</option>
+                                <!-- 时间槽将通过JavaScript动态加载 -->
+                            </select>
+                        </div>
+                        
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time Slot</th>
+                                    <th>Topic</th>
+                                    <th>Present Students</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="classAttendanceRecords"></tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Student Attendance Summary -->
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
+                        <h3 style="margin-bottom: 20px; color: var(--dark);">👥 Student Attendance Summary</h3>
+                        <p style="margin-bottom: 15px; color: var(--grey);">View attendance summary for each student. Click on "View Dates" to see all attended dates.</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Filter by Time Slot</label>
+                            <select id="studentFilterTimeSlot" class="form-input" onchange="updateStudentAttendanceSummary()">
                                 <option value="all">All Time Slots</option>
                                 <!-- 时间槽将通过JavaScript动态加载 -->
                             </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Filter by Student</label>
-                            <select id="filterStudent" class="form-input" onchange="filterAttendanceRecords()">
+                            <select id="studentFilterStudent" class="form-input" onchange="updateStudentAttendanceSummary()">
                                 <option value="all">All Students</option>
                             </select>
                         </div>
+                        
                         <table class="table">
                             <thead>
                                 <tr>
@@ -1289,19 +1130,10 @@
                                     <th>Total Sessions</th>
                                     <th>Attendance Rate</th>
                                     <th>Recent Attendance</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="attendanceRecords">
-                                <!-- Skeleton loading for table -->
-                                <tr id="recordsSkeleton" style="display: none;">
-                                    <td colspan="9">
-                                        <div class="skeleton-card">
-                                            <div class="skeleton skeleton-title"></div>
-                                            <div class="skeleton skeleton-text" style="width: 80%;"></div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
+                            <tbody id="studentAttendanceSummary"></tbody>
                         </table>
                     </div>
                 </div>
@@ -1321,9 +1153,8 @@
                     <div class="time-slots-management">
                         <h3>Add New Time Slot</h3>
                         <div class="form-group">
-                            <label class="form-label required">Time Slot Name</label>
+                            <label class="form-label">Time Slot Name</label>
                             <input type="text" id="newTimeSlotName" class="form-input" placeholder="e.g., Friday 7pm-8:30pm">
-                            <div class="error-message" id="newTimeSlotNameError"></div>
                         </div>
                         <button class="btn btn-success" onclick="addTimeSlot()">
                             <span>➕ Add Time Slot</span>
@@ -1347,9 +1178,6 @@
                             <button class="btn" onclick="exportToJSON()">🔤 Export to JSON</button>
                             <button class="btn" onclick="printReport()">🖨️ Print Report</button>
                         </div>
-                        <div id="exportProgress" style="margin-top: 20px; display: none;">
-                            <div class="sync-status syncing">🔄 Exporting data...</div>
-                        </div>
                         <div id="exportResult" style="margin-top: 20px;"></div>
                     </div>
                 </div>
@@ -1357,17 +1185,34 @@
                 <!-- Statistics -->
                 <div id="stats" class="section">
                     <h2>📈 Statistics</h2>
-                    <div class="chart-container">
-                        <canvas id="timeSlotComparisonChart"></canvas>
-                    </div>
                     <div class="stats-grid" id="statsGrid"></div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- View Attendance Dates Modal -->
+    <div id="viewAttendanceModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background-color: white; padding: 30px; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0; font-size: 1.5em; color: var(--dark);">Attendance Dates for <span id="modalStudentName" style="color: var(--primary);"></span></h3>
+                <button class="btn" onclick="closeAttendanceModal()" style="padding: 8px 16px; background: var(--gray);">×</button>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <p><strong>Time Slot:</strong> <span id="modalStudentTimeSlot"></span></p>
+                <p><strong>Enrolled Date:</strong> <span id="modalStudentEnrolledDate"></span></p>
+                <p><strong>Sessions Attended:</strong> <span id="modalStudentAttendanceCount"></span> of <span id="modalStudentTotalSessions"></span></p>
+                <p><strong>Attendance Rate:</strong> <span id="modalStudentAttendanceRate"></span></p>
+            </div>
+            <div id="attendanceDatesContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 20px;"></div>
+            <div style="margin-top: 30px; text-align: center;">
+                <button class="btn btn-secondary" onclick="closeAttendanceModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // === Firebase 配置 ===
+        // === 使用你的 Firebase 配置 ===
         const firebaseConfig = {
             apiKey: "AIzaSyB-enIolDzqs9sVcbB2Rxu7o86L5q7Kd7E",
             authDomain: "memoschool-kuching.firebaseapp.com",
@@ -1378,19 +1223,10 @@
             measurementId: "G-KM0MJ80MN9"
         };
 
-        // 初始化Firebase
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
-
-        // 启用离线持久化
-        db.enablePersistence().catch((err) => {
-            if (err.code === 'failed-precondition') {
-                console.log('Multiple tabs open, persistence can only be enabled in one tab at a time.');
-            } else if (err.code === 'unimplemented') {
-                console.log('The current browser does not support all of the features required to enable persistence');
-            }
-        });
 
         // 默认时间槽配置 - 按时间顺序排列
         const DEFAULT_TIME_SLOTS = [
@@ -1405,10 +1241,8 @@
 
         // 搜索相关变量
         let currentSearchTerm = '';
-        let attendanceTrendChart = null;
-        let timeSlotComparisonChart = null;
 
-        // 系统类
+        // 修正后的系统类 - 添加时间槽排序功能和日期格式化
         class MemoschoolAttendanceSystem {
             constructor() {
                 this.students = new Map();
@@ -1430,10 +1264,7 @@
                 try {
                     updateSyncStatus('🔄 Loading data from cloud...', 'syncing');
                     
-                    // 显示骨架屏
-                    showSkeletons();
-                    
-                    // 加载学生数据
+                    // Load students data
                     const studentsSnapshot = await db.collection('users').doc(this.userId)
                         .collection('students').get();
                     
@@ -1442,7 +1273,7 @@
                         this.students.set(doc.id, doc.data());
                     });
                     
-                    // 加载考勤记录
+                    // Load attendance records
                     const attendanceSnapshot = await db.collection('users').doc(this.userId)
                         .collection('attendance').get();
                     
@@ -1451,7 +1282,7 @@
                         this.attendanceRecords.push(doc.data());
                     });
                     
-                    // 加载时间槽
+                    // Load time slots
                     const timeSlotsSnapshot = await db.collection('users').doc(this.userId)
                         .collection('timeSlots').get();
                     
@@ -1467,9 +1298,6 @@
                         this.sortTimeSlots();
                     }
                     
-                    // 隐藏骨架屏
-                    hideSkeletons();
-                    
                     updateSyncStatus('✅ Data loaded from cloud', 'synced');
                     this.isOnline = true;
                     updateUI();
@@ -1477,7 +1305,6 @@
                 } catch (error) {
                     console.error('Error loading from Firestore:', error);
                     updateSyncStatus('❌ Error loading data', 'error');
-                    hideSkeletons();
                 }
             }
             
@@ -1606,7 +1433,7 @@
             startRealtimeSync() {
                 if (!this.userId) return;
                 
-                // 学生数据实时监听
+                // Real-time listener for students data
                 db.collection('users').doc(this.userId).collection('students')
                     .onSnapshot((snapshot) => {
                         snapshot.docChanges().forEach((change) => {
@@ -1620,7 +1447,7 @@
                         updateSyncStatus('✅ Real-time sync active', 'synced');
                     });
                 
-                // 考勤记录实时监听
+                // Real-time listener for attendance records
                 db.collection('users').doc(this.userId).collection('attendance')
                     .onSnapshot((snapshot) => {
                         this.attendanceRecords = snapshot.docs.map(doc => doc.data());
@@ -1628,7 +1455,7 @@
                         updateSyncStatus('✅ Real-time sync active', 'synced');
                     });
                 
-                // 时间槽实时监听
+                // Real-time listener for time slots
                 db.collection('users').doc(this.userId).collection('timeSlots')
                     .onSnapshot((snapshot) => {
                         this.timeSlots = [];
@@ -1643,14 +1470,8 @@
             }
             
             async addStudent(name, age, gender, timeSlot, enrolledDate, totalSessions = 48) {
-                // 检查同时间槽是否有同名学生
-                const nameExists = Array.from(this.students.values()).some(
-                    student => student.name.trim().toLowerCase() === name.trim().toLowerCase() && 
-                              student.timeSlot === timeSlot
-                );
-                
-                if (nameExists) {
-                    throw new Error(`A student named "${name}" already exists in this time slot.`);
+                if (!name || !timeSlot) {
+                    throw new Error('Student name and time slot are required');
                 }
                 
                 const studentId = `${name.replace(/\s+/g, '')}-${timeSlot.replace(/\s+/g, '')}-${Date.now()}`;
@@ -1683,24 +1504,6 @@
                     throw new Error('Student not found');
                 }
                 
-                // 如果修改了姓名或时间槽，检查是否有重复
-                if ((updatedData.name && updatedData.name !== student.name) || 
-                    (updatedData.timeSlot && updatedData.timeSlot !== student.timeSlot)) {
-                    
-                    const name = updatedData.name || student.name;
-                    const timeSlot = updatedData.timeSlot || student.timeSlot;
-                    
-                    const nameExists = Array.from(this.students.values()).some(
-                        s => s.id !== studentId && 
-                             s.name.trim().toLowerCase() === name.trim().toLowerCase() && 
-                             s.timeSlot === timeSlot
-                    );
-                    
-                    if (nameExists) {
-                        throw new Error(`A student named "${name}" already exists in this time slot.`);
-                    }
-                }
-                
                 const updatedStudent = {
                     ...student,
                     ...updatedData
@@ -1729,38 +1532,7 @@
                 );
                 
                 if (existingRecord) {
-                    // 提供修改选项
-                    const modify = confirm(`Attendance for ${timeSlot} on ${this.formatDate(date)} already recorded. Do you want to modify it?`);
-                    if (!modify) {
-                        return null;
-                    }
-                    
-                    // 删除原有记录
-                    if (this.isOnline) {
-                        await db.collection('users').doc(this.userId).collection('attendance')
-                            .doc(recordId).delete();
-                    } else {
-                        this.attendanceRecords = this.attendanceRecords.filter(r => r.id !== recordId);
-                    }
-                    
-                    // 从学生记录中移除该日期的出勤
-                    for (const student of this.students.values()) {
-                        if (student.attendanceDates && student.attendanceDates.includes(date)) {
-                            const updatedDates = student.attendanceDates.filter(d => d !== date);
-                            const updatedCount = updatedDates.length;
-                            
-                            if (this.isOnline) {
-                                await db.collection('users').doc(this.userId).collection('students')
-                                    .doc(student.id).update({
-                                        attendanceCount: updatedCount,
-                                        attendanceDates: updatedDates
-                                    });
-                            } else {
-                                student.attendanceCount = updatedCount;
-                                student.attendanceDates = updatedDates;
-                            }
-                        }
-                    }
+                    throw new Error(`Attendance for ${timeSlot} on ${date} already recorded`);
                 }
                 
                 const record = {
@@ -1772,7 +1544,7 @@
                     recordedAt: new Date().toISOString()
                 };
                 
-                // 更新学生考勤数据
+                // 更新学生考勤数据 - 修正后的逻辑
                 for (const studentId of presentStudentIds) {
                     const student = this.students.get(studentId);
                     if (student && date >= student.enrolledDate) {
@@ -1856,7 +1628,7 @@
                 return students;
             }
 
-            // 搜索匹配方法
+            // 添加搜索匹配方法
             doesStudentMatchSearch(student, searchTerm) {
                 if (!searchTerm) return true;
                 
@@ -1866,7 +1638,7 @@
                     (student.age && student.age.toString().includes(term)) ||
                     (student.gender && student.gender.toLowerCase().includes(term)) ||
                     (student.timeSlot && student.timeSlot.toLowerCase().includes(term)) ||
-                    (student.enrolledDate && this.formatDate(student.enrolledDate).toLowerCase().includes(term))
+                    (student.enrolledDate && student.enrolledDate.toLowerCase().includes(term))
                 );
             }
             
@@ -1902,70 +1674,12 @@
                 };
             }
 
-            // 获取考勤趋势数据（过去6周）
-            getAttendanceTrendData() {
-                const today = new Date();
-                const trendData = [];
-                
-                // 获取过去6周的日期范围
-                for (let i = 5; i >= 0; i--) {
-                    const endDate = new Date(today);
-                    endDate.setDate(today.getDate() - (i * 7));
-                    
-                    const startDate = new Date(endDate);
-                    startDate.setDate(endDate.getDate() - 6);
-                    
-                    // 计算该周的考勤记录数
-                    const weekRecords = this.attendanceRecords.filter(record => {
-                        const recordDate = new Date(record.date);
-                        return recordDate >= startDate && recordDate <= endDate;
-                    });
-                    
-                    // 格式化显示的日期范围
-                    const startStr = `${startDate.getDate()}/${startDate.getMonth() + 1}`;
-                    const endStr = `${endDate.getDate()}/${endDate.getMonth() + 1}`;
-                    
-                    trendData.push({
-                        period: `${startStr}-${endStr}`,
-                        sessions: weekRecords.length
-                    });
-                }
-                
-                return trendData;
-            }
-            
-            // 获取各时间槽的平均出勤率
-            getTimeSlotAttendanceData() {
-                const timeSlotData = [];
-                
-                this.timeSlots.forEach(timeSlot => {
-                    const students = this.getStudentsByTimeSlot(timeSlot.name);
-                    if (students.length === 0) return;
-                    
-                    let totalRate = 0;
-                    students.forEach(student => {
-                        totalRate += parseFloat(student.attendanceRate);
-                    });
-                    
-                    const avgRate = (totalRate / students.length).toFixed(1);
-                    
-                    timeSlotData.push({
-                        timeSlot: timeSlot.name,
-                        avgRate: parseFloat(avgRate),
-                        studentCount: students.length
-                    });
-                });
-                
-                // 按平均出勤率排序
-                return timeSlotData.sort((a, b) => b.avgRate - a.avgRate);
-            }
-
             exportToCSV() {
                 let csv = 'Name,Age,Gender,Enrolled Date,Time Slot,Sessions Attended,Total Sessions,Attendance Rate\n';
                 for (const student of this.students.values()) {
                     const info = this.getStudentAttendance(student.id);
                     const formattedDate = this.formatDate(student.enrolledDate);
-                    csv += `"${student.name}",${student.age || ''},${student.gender || ''},"${formattedDate}","${student.timeSlot}",${info.attendanceCount},${info.totalSessions},${info.attendanceRate}%\n`;
+                    csv += `"${student.name}",${student.age},${student.gender},"${formattedDate}","${student.timeSlot}",${info.attendanceCount},${info.totalSessions},${info.attendanceRate}%\n`;
                 }
                 return csv;
             }
@@ -1974,8 +1688,7 @@
                 const data = {
                     system: {
                         school: "Genius Mind Academy",
-                        timeSlots: this.timeSlots,
-                        exportDate: new Date().toISOString()
+                        timeSlots: this.timeSlots
                     },
                     students: Array.from(this.students.values()),
                     attendanceRecords: this.attendanceRecords
@@ -1983,99 +1696,10 @@
                 return JSON.stringify(data, null, 2);
             }
             
-            // 批量导入学生
-            async importStudentsFromCSV(csvContent) {
-                const lines = csvContent.split('\n');
-                const results = {
-                    success: 0,
-                    failed: 0,
-                    errors: []
-                };
-                
-                // 跳过标题行
-                for (let i = 1; i < lines.length; i++) {
-                    const line = lines[i].trim();
-                    if (!line) continue;
-                    
-                    try {
-                        // 使用正则表达式处理带引号的字段
-                        const regex = /(".*?"|[^",]+)(?=\s*,|\s*$)/g;
-                        const matches = line.match(regex);
-                        
-                        if (!matches || matches.length < 3) {
-                            throw new Error('Invalid format');
-                        }
-                        
-                        // 解析CSV字段
-                        const name = matches[0].replace(/"/g, '').trim();
-                        const age = matches[1].replace(/"/g, '').trim() || '';
-                        const gender = matches[2].replace(/"/g, '').trim() || '';
-                        const timeSlot = matches[3].replace(/"/g, '').trim();
-                        const enrolledDate = matches[4] ? matches[4].replace(/"/g, '').trim() : '';
-                        const totalSessions = matches[5] ? matches[5].replace(/"/g, '').trim() : 48;
-                        
-                        // 验证必填字段
-                        if (!name || !timeSlot) {
-                            throw new Error('Name and time slot are required');
-                        }
-                        
-                        // 检查时间槽是否存在
-                        const timeSlotExists = this.timeSlots.some(ts => ts.name === timeSlot);
-                        if (!timeSlotExists) {
-                            throw new Error(`Time slot "${timeSlot}" does not exist`);
-                        }
-                        
-                        // 检查是否已存在同名学生
-                        const nameExists = Array.from(this.students.values()).some(
-                            student => student.name.trim().toLowerCase() === name.trim().toLowerCase() && 
-                                      student.timeSlot === timeSlot
-                        );
-                        
-                        if (nameExists) {
-                            throw new Error(`Student "${name}" already exists in this time slot`);
-                        }
-                        
-                        // 处理日期格式
-                        let formattedEnrolledDate = enrolledDate;
-                        if (enrolledDate && enrolledDate.includes('/')) {
-                            formattedEnrolledDate = this.parseDate(enrolledDate);
-                        }
-                        
-                        // 添加学生
-                        await this.addStudent(
-                            name,
-                            age,
-                            gender,
-                            timeSlot,
-                            formattedEnrolledDate || new Date().toISOString().split('T')[0],
-                            totalSessions
-                        );
-                        
-                        results.success++;
-                    } catch (error) {
-                        results.failed++;
-                        results.errors.push(`Line ${i + 1}: ${error.message}`);
-                        console.error(`Error importing line ${i + 1}:`, error);
-                    }
-                }
-                
-                return results;
-            }
-            
             // 时间槽管理方法
             async addTimeSlot(name) {
                 if (!name) {
                     throw new Error('Time slot name is required');
-                }
-                
-                // 检查时间槽名称是否重复（忽略空格差异）
-                const normalizedName = name.trim().toLowerCase().replace(/\s+/g, '');
-                const nameExists = this.timeSlots.some(
-                    slot => slot.name.trim().toLowerCase().replace(/\s+/g, '') === normalizedName
-                );
-                
-                if (nameExists) {
-                    throw new Error('A time slot with this name already exists');
                 }
                 
                 const timeSlotId = name.replace(/\s+/g, '-').toLowerCase();
@@ -2123,130 +1747,53 @@
             }
         }
 
-        // 创建系统实例
+        // Create system instance
         const system = new MemoschoolAttendanceSystem();
 
-        // Firebase 认证功能 - 优化版
+        // Firebase Authentication Functions
         async function login() {
-            // 重置错误状态
-            document.getElementById('authError').style.display = 'none';
-            hideError('emailError');
-            hideError('passwordError');
-            
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            let isValid = true;
             
-            // 验证
-            if (!email) {
-                showError('emailError', 'Please enter your email');
-                isValid = false;
-            } else if (!isValidEmail(email)) {
-                showError('emailError', 'Please enter a valid email');
-                isValid = false;
+            if (!email || !password) {
+                showToast('Please enter both email and password', 'error');
+                return;
             }
-            
-            if (!password) {
-                showError('passwordError', 'Please enter your password');
-                isValid = false;
-            } else if (password.length < 6) {
-                showError('passwordError', 'Password must be at least 6 characters');
-                isValid = false;
-            }
-            
-            if (!isValid) return;
             
             try {
-                // 显示登录状态
                 updateSyncStatus('🔄 Signing in...', 'syncing');
-                
-                // 尝试登录
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                
-                // 登录成功后处理
                 showApp(userCredential.user);
                 showToast('Login successful!', 'success');
             } catch (error) {
                 console.error('Login error:', error);
-                
-                // 显示具体错误信息
-                let errorMessage = 'Login failed. Please try again.';
-                if (error.code === 'auth/user-not-found') {
-                    errorMessage = 'No account found with this email.';
-                } else if (error.code === 'auth/wrong-password') {
-                    errorMessage = 'Incorrect password.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'Invalid email format.';
-                } else if (error.code === 'auth/network-request-failed') {
-                    errorMessage = 'Network error. Please check your connection.';
-                }
-                
-                // 显示错误
-                document.getElementById('authError').textContent = errorMessage;
-                document.getElementById('authError').style.display = 'block';
+                showToast('Login failed: ' + error.message, 'error');
                 updateSyncStatus('❌ Login failed', 'error');
             }
         }
 
         async function signup() {
-            // 重置错误状态
-            document.getElementById('authError').style.display = 'none';
-            hideError('emailError');
-            hideError('passwordError');
-            
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            let isValid = true;
             
-            // 验证
-            if (!email) {
-                showError('emailError', 'Please enter your email');
-                isValid = false;
-            } else if (!isValidEmail(email)) {
-                showError('emailError', 'Please enter a valid email');
-                isValid = false;
+            if (!email || !password) {
+                showToast('Please enter both email and password', 'error');
+                return;
             }
             
-            if (!password) {
-                showError('passwordError', 'Please enter your password');
-                isValid = false;
-            } else if (password.length < 6) {
-                showError('passwordError', 'Password must be at least 6 characters');
-                isValid = false;
+            if (password.length < 6) {
+                showToast('Password should be at least 6 characters', 'error');
+                return;
             }
-            
-            if (!isValid) return;
             
             try {
-                // 显示注册状态
                 updateSyncStatus('🔄 Creating account...', 'syncing');
-                
-                // 尝试注册
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                
-                // 注册成功后处理
                 showApp(userCredential.user);
                 showToast('Account created successfully!', 'success');
             } catch (error) {
                 console.error('Signup error:', error);
-                
-                // 显示具体错误信息
-                let errorMessage = 'Sign up failed. Please try again.';
-                if (error.code === 'auth/email-already-in-use') {
-                    errorMessage = 'An account with this email already exists.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'Invalid email format.';
-                } else if (error.code === 'auth/operation-not-allowed') {
-                    errorMessage = 'This operation is not allowed.';
-                } else if (error.code === 'auth/weak-password') {
-                    errorMessage = 'Password is too weak.';
-                } else if (error.code === 'auth/network-request-failed') {
-                    errorMessage = 'Network error. Please check your connection.';
-                }
-                
-                // 显示错误
-                document.getElementById('authError').textContent = errorMessage;
-                document.getElementById('authError').style.display = 'block';
+                showToast('Sign up failed: ' + error.message, 'error');
                 updateSyncStatus('❌ Sign up failed', 'error');
             }
         }
@@ -2264,107 +1811,47 @@
             document.getElementById('appSection').style.display = 'block';
             document.getElementById('userEmail').textContent = user.email;
             
-            // 初始化系统
+            // Initialize system with user ID
             system.initialize(user.uid);
         }
 
-        // 监听认证状态变化 - 优化版
+        // Listen for auth state changes
         auth.onAuthStateChanged((user) => {
             if (user) {
-                // 用户已登录
-                console.log('User is logged in:', user.email);
                 showApp(user);
             } else {
-                // 用户未登录
-                console.log('User is logged out');
                 document.getElementById('loginSection').style.display = 'block';
                 document.getElementById('appSection').style.display = 'none';
             }
         });
 
-        // 同步状态更新
+        // Sync status update
         function updateSyncStatus(message, type = 'syncing') {
             const statusElement = document.getElementById('syncStatus');
             statusElement.textContent = message;
             statusElement.className = `sync-status ${type}`;
         }
 
-        // 显示/隐藏骨架屏
-        function showSkeletons() {
-            document.getElementById('studentsSkeleton').style.display = 'block';
-            document.getElementById('recordsSkeleton').style.display = 'table-row';
-        }
-
-        function hideSkeletons() {
-            document.getElementById('studentsSkeleton').style.display = 'none';
-            document.getElementById('recordsSkeleton').style.display = 'none';
-        }
-
-        // 更新所有UI组件
+        // Update all UI components
         function updateUI() {
             updateDashboard();
             updateTimeSlotSelects();
             updateTimeSlotTabs();
             updateStudentsCheckboxes();
-            updateAttendanceRecords();
+            updateClassAttendanceRecords();
+            updateStudentAttendanceSummary();
             updateStats();
             updateTimeSlots();
             updateFilterStudent();
             updateTimeSlotsList();
-            updateCharts();
         }
 
-        // UI 函数
+        // UI Functions
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
             });
             document.getElementById(sectionId).classList.add('active');
-            
-            // 更新移动端导航激活状态
-            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.getAttribute('onclick').includes(sectionId)) {
-                    btn.classList.add('active');
-                }
-            });
-        }
-
-        // 显示/隐藏错误信息
-        function showError(elementId, message) {
-            const element = document.getElementById(elementId);
-            if (element) {
-                element.textContent = message;
-                element.style.display = 'block';
-                
-                // 为相关输入框添加错误样式
-                const inputId = elementId.replace('Error', '');
-                const inputElement = document.getElementById(inputId);
-                if (inputElement) {
-                    inputElement.classList.add('error');
-                }
-            }
-        }
-
-        function hideError(elementId) {
-            const element = document.getElementById(elementId);
-            if (element) {
-                element.textContent = '';
-                element.style.display = 'none';
-                
-                // 移除相关输入框的错误样式
-                const inputId = elementId.replace('Error', '');
-                const inputElement = document.getElementById(inputId);
-                if (inputElement) {
-                    inputElement.classList.remove('error');
-                }
-            }
-        }
-
-        // 验证邮箱格式
-        function isValidEmail(email) {
-            const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(email);
         }
 
         // 更新所有时间槽选择框
@@ -2381,9 +1868,13 @@
             const timeSlotSelect = document.getElementById('timeSlotSelect');
             timeSlotSelect.innerHTML = '<option value="">Select Time Slot</option>';
             
-            // 更新考勤记录筛选的时间槽选择框
-            const filterTimeSlotSelect = document.getElementById('filterTimeSlot');
-            filterTimeSlotSelect.innerHTML = '<option value="all">All Time Slots</option>';
+            // 更新课程考勤记录筛选的时间槽选择框
+            const classFilterTimeSlotSelect = document.getElementById('classFilterTimeSlot');
+            classFilterTimeSlotSelect.innerHTML = '<option value="all">All Time Slots</option>';
+            
+            // 更新学生考勤摘要筛选的时间槽选择框
+            const studentFilterTimeSlotSelect = document.getElementById('studentFilterTimeSlot');
+            studentFilterTimeSlotSelect.innerHTML = '<option value="all">All Time Slots</option>';
             
             // 填充所有选择框（系统已经排序了时间槽）
             system.timeSlots.forEach(timeSlot => {
@@ -2395,8 +1886,11 @@
                 editStudentTimeSlotSelect.appendChild(option.cloneNode(true));
                 timeSlotSelect.appendChild(option.cloneNode(true));
                 
-                const filterOption = option.cloneNode(true);
-                filterTimeSlotSelect.appendChild(filterOption);
+                const classFilterOption = option.cloneNode(true);
+                classFilterTimeSlotSelect.appendChild(classFilterOption);
+                
+                const studentFilterOption = option.cloneNode(true);
+                studentFilterTimeSlotSelect.appendChild(studentFilterOption);
             });
         }
 
@@ -2432,23 +1926,17 @@
         // 添加时间槽
         async function addTimeSlot() {
             const name = document.getElementById('newTimeSlotName').value.trim();
-            let isValid = true;
             
             if (!name) {
-                showError('newTimeSlotNameError', 'Please enter a time slot name');
-                isValid = false;
-            } else {
-                hideError('newTimeSlotNameError');
+                showToast('Please enter a time slot name', 'error');
+                return;
             }
-            
-            if (!isValid) return;
             
             try {
                 await system.addTimeSlot(name);
                 document.getElementById('newTimeSlotName').value = '';
                 showToast('Time slot added successfully!', 'success');
             } catch (error) {
-                showError('newTimeSlotNameError', error.message);
                 showToast('Error: ' + error.message, 'error');
             }
         }
@@ -2472,23 +1960,11 @@
             const timeSlot = document.getElementById('studentTimeSlot').value;
             const enrolledDate = document.getElementById('studentEnrolledDate').value;
             const totalSessions = document.getElementById('studentTotalSessions').value || 48;
-            let isValid = true;
             
-            if (!name) {
-                showError('studentNameError', 'Please enter student name');
-                isValid = false;
-            } else {
-                hideError('studentNameError');
+            if (!name || !timeSlot) {
+                showToast('Please enter at least student name and select a time slot', 'error');
+                return;
             }
-            
-            if (!timeSlot) {
-                showError('studentTimeSlotError', 'Please select a time slot');
-                isValid = false;
-            } else {
-                hideError('studentTimeSlotError');
-            }
-            
-            if (!isValid) return;
             
             // 如果没有选择入学日期，默认使用今天
             const finalEnrolledDate = enrolledDate || new Date().toISOString().split('T')[0];
@@ -2503,7 +1979,6 @@
                 document.getElementById('studentTotalSessions').value = '48';
                 showToast('Student added successfully!', 'success');
             } catch (error) {
-                showError('studentNameError', error.message);
                 showToast('Error: ' + error.message, 'error');
             }
         }
@@ -2541,23 +2016,11 @@
             const timeSlot = document.getElementById('editStudentTimeSlot').value;
             const enrolledDate = document.getElementById('editStudentEnrolledDate').value;
             const totalSessions = document.getElementById('editStudentTotalSessions').value || 48;
-            let isValid = true;
             
-            if (!name) {
-                showError('editStudentNameError', 'Please enter student name');
-                isValid = false;
-            } else {
-                hideError('editStudentNameError');
+            if (!name || !timeSlot) {
+                showToast('Please enter at least student name and select a time slot', 'error');
+                return;
             }
-            
-            if (!timeSlot) {
-                showError('editStudentTimeSlotError', 'Please select a time slot');
-                isValid = false;
-            } else {
-                hideError('editStudentTimeSlotError');
-            }
-            
-            if (!isValid) return;
             
             try {
                 const updatedData = {
@@ -2577,7 +2040,6 @@
                 showToast('Student updated successfully!', 'success');
                 
             } catch (error) {
-                showError('editStudentNameError', error.message);
                 showToast('Error updating student: ' + error.message, 'error');
             }
         }
@@ -2585,33 +2047,20 @@
         // 取消编辑函数
         function cancelEdit() {
             document.getElementById('editStudentForm').style.display = 'none';
-            // 清空表单错误
-            hideError('editStudentNameError');
-            hideError('editStudentTimeSlotError');
+            // 清空表单
+            document.getElementById('editStudentName').value = '';
+            document.getElementById('editStudentAge').value = '';
+            document.getElementById('editStudentGender').value = '';
+            document.getElementById('editStudentTimeSlot').value = '';
+            document.getElementById('editStudentEnrolledDate').value = '';
+            document.getElementById('editStudentTotalSessions').value = '48';
+            document.getElementById('editStudentId').value = '';
             showToast('Edit cancelled', 'info');
         }
 
         async function deleteStudent(studentId) {
-            if (confirm('Are you sure you want to delete this student? This will also remove their attendance records.')) {
+            if (confirm('Are you sure you want to delete this student?')) {
                 try {
-                    // 先删除学生的考勤记录
-                    const student = system.students.get(studentId);
-                    if (student && student.attendanceDates && student.attendanceDates.length > 0) {
-                        // 找到包含该学生的所有考勤记录
-                        const recordsToDelete = system.attendanceRecords.filter(record => 
-                            record.presentStudents && record.presentStudents.includes(studentId)
-                        );
-                        
-                        // 删除这些记录
-                        for (const record of recordsToDelete) {
-                            if (system.isOnline) {
-                                await db.collection('users').doc(system.userId).collection('attendance')
-                                    .doc(record.id).delete();
-                            }
-                        }
-                    }
-                    
-                    // 再删除学生
                     if (system.isOnline) {
                         await db.collection('users').doc(system.userId).collection('students')
                             .doc(studentId).delete();
@@ -2619,7 +2068,6 @@
                         system.students.delete(studentId);
                         updateUI();
                     }
-                    
                     showToast('Student deleted successfully', 'success');
                 } catch (error) {
                     showToast('Error deleting student: ' + error.message, 'error');
@@ -2655,30 +2103,30 @@
             
             // 系统已经排序了时间槽，直接使用
             for (const timeSlot of system.timeSlots) {
-                // 创建标签
+                // Create tab
                 const tab = document.createElement('div');
                 tab.className = `time-slot-tab ${firstTab ? '' : ''}`;
                 tab.textContent = timeSlot.name;
                 tab.dataset.timeSlot = timeSlot.name;
                 tab.addEventListener('click', function() {
-                    // 移除所有标签的active类
+                    // Remove active class from all tabs
                     document.querySelectorAll('.time-slot-tab').forEach(t => {
                         t.classList.remove('active');
                     });
-                    // 为当前点击的标签添加active类
+                    // Add active class to clicked tab
                     this.classList.add('active');
                     
-                    // 隐藏所有内容
+                    // Hide all content
                     document.querySelectorAll('.time-slot-content').forEach(c => {
                         c.classList.remove('active');
                     });
-                    // 显示对应的内容
+                    // Show corresponding content
                     document.getElementById(`content-${timeSlot.id}`).classList.add('active');
                 });
                 
                 tabsContainer.appendChild(tab);
                 
-                // 创建内容
+                // Create content
                 const content = document.createElement('div');
                 content.id = `content-${timeSlot.id}`;
                 content.className = `time-slot-content ${firstTab ? '' : ''}`;
@@ -2687,17 +2135,15 @@
                 
                 if (students.length === 0) {
                     content.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--gray);">
-                        <p style="font-size: 1.2em; margin-bottom:
-                                                10px;">No students found</p>
-                        <p>Add students to this time slot in the form above.</p>
+                        <p style="font-size: 1.2em; margin-bottom: 10px;">No students found</p>
+                        <p>${currentSearchTerm ? 'No students match your search criteria' : 'Add students to this time slot to see them here'}</p>
                     </div>`;
                 } else {
-                    const grid = createStudentGrid(students);
-                    content.appendChild(grid);
+                    const studentGrid = createStudentGrid(students);
+                    content.appendChild(studentGrid);
                 }
                 
                 contentsContainer.appendChild(content);
-                
                 firstTab = false;
             }
             
@@ -2711,11 +2157,11 @@
             if (allStudents.length === 0) {
                 allContent.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--gray);">
                     <p style="font-size: 1.2em; margin-bottom: 10px;">No students found</p>
-                    <p>Add your first student using the form above.</p>
+                    <p>${currentSearchTerm ? 'No students match your search criteria' : 'Add students to the system to see them here'}</p>
                 </div>`;
             } else {
-                const grid = createStudentGrid(allStudents);
-                allContent.appendChild(grid);
+                const studentGrid = createStudentGrid(allStudents);
+                allContent.appendChild(studentGrid);
             }
             
             contentsContainer.appendChild(allContent);
@@ -2726,8 +2172,12 @@
             const grid = document.createElement('div');
             grid.className = 'student-grid';
             
-            // 按出勤率从高到低排序
-            students.sort((a, b) => b.attendanceRate - a.attendanceRate);
+            // 添加搜索结果统计
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'search-info';
+            infoDiv.style.gridColumn = '1 / -1';
+            infoDiv.innerHTML = `<strong>${students.length}</strong> student(s) found ${currentSearchTerm ? `matching "<em>${currentSearchTerm}</em>"` : ''}`;
+            grid.appendChild(infoDiv);
             
             students.forEach(student => {
                 const card = document.createElement('div');
@@ -2736,27 +2186,28 @@
                 // 根据出勤率确定进度条颜色
                 let progressClass = 'progress-fill';
                 let badgeClass = 'attendance-badge';
-                const rate = parseFloat(student.attendanceRate);
-                
-                if (rate < 70) {
+                if (student.attendanceRate < 60) {
                     progressClass += ' low';
                     badgeClass += ' attendance-low';
-                } else if (rate < 90) {
+                } else if (student.attendanceRate < 80) {
                     progressClass += ' medium';
                     badgeClass += ' attendance-medium';
                 }
                 
+                // 使用新的日期格式化函数
+                const enrolledDate = system.formatDate(student.enrolledDate);
+                
                 card.innerHTML = `
                     <div class="student-header">
                         <div>
-                            <h3 class="student-name">${student.name}</h3>
-                            <div class="student-meta">${student.age || 'N/A'} | ${student.gender || 'N/A'}</div>
-                            <div class="student-meta">Time Slot: ${student.timeSlot}</div>
-                            <div class="student-meta">Enrolled: ${system.formatDate(student.enrolledDate)}</div>
+                            <div class="student-name">${student.name}</div>
+                            <div class="student-meta">${student.age || 'N/A'} years, ${student.gender || 'N/A'}</div>
+                            <div class="student-meta">Enrolled: ${enrolledDate}</div>
+                            <div class="student-meta">Total Sessions: ${student.totalSessions}</div>
                         </div>
                         <div class="${badgeClass}">${student.attendanceRate}%</div>
                     </div>
-                    
+                    <div class="student-meta">${student.timeSlot}</div>
                     <div class="progress-container">
                         <div class="progress-label">
                             <span>Attendance</span>
@@ -2766,38 +2217,17 @@
                             <div class="${progressClass}" style="width: ${student.attendanceRate}%"></div>
                         </div>
                     </div>
-                    
-                    <div>
-                        <strong>Recent Attendance:</strong>
-                        <div class="attendance-record">
-                            ${student.recentAttendance.map(date => `
-                                <div class="attendance-dot present" title="${system.formatDate(date)}">
-                                    ✓
-                                </div>
-                            `).join('')}
-                            ${Array(5 - student.recentAttendance.length).fill().map(() => `
-                                <div class="attendance-dot absent" title="No record">
-                                    ✗
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    
                     <div class="student-actions">
-                        <button class="btn btn-info" style="padding: 6px 12px; font-size: 14px;" 
-                            onclick="editStudent('${student.id}')">Edit</button>
-                        <button class="btn btn-warning" style="padding: 6px 12px; font-size: 14px;" 
-                            onclick="deleteStudent('${student.id}')">Delete</button>
+                        <button class="btn btn-info" onclick="editStudent('${student.id}')" style="padding: 8px 12px; font-size: 12px; flex: 1;">Edit</button>
+                        <button class="btn btn-warning" onclick="deleteStudent('${student.id}')" style="padding: 8px 12px; font-size: 12px; flex: 1;">Delete</button>
                     </div>
                 `;
-                
                 grid.appendChild(card);
             });
             
             return grid;
         }
 
-        // 更新学生复选框
         function updateStudentsCheckboxes() {
             const timeSlot = document.getElementById('timeSlotSelect').value;
             const container = document.getElementById('studentsCheckboxes');
@@ -2807,529 +2237,645 @@
                 return;
             }
             
+            container.innerHTML = '';
             const students = system.getStudentsByTimeSlot(timeSlot);
             
             if (students.length === 0) {
-                container.innerHTML = '<p>No students found in this time slot</p>';
+                container.innerHTML = `<p>No students found for ${timeSlot}</p>`;
                 return;
             }
             
-            let html = '';
-            students.forEach(student => {
-                html += `
-                    <label>
-                        <input type="checkbox" value="${student.id}" 
-                            id="student-${student.id}" class="student-checkbox">
-                        ${student.name} (${student.age || 'N/A'})
-                    </label>
+            for (const student of students) {
+                const label = document.createElement('label');
+                label.style.display = 'block';
+                label.innerHTML = `
+                    <input type="checkbox" value="${student.id}">
+                    ${student.name} (${student.age || 'N/A'}, ${student.gender || 'N/A'})
                 `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        // 记录考勤
-        async function recordAttendance() {
-            const timeSlot = document.getElementById('timeSlotSelect').value;
-            const date = document.getElementById('classDate').value;
-            const topic = document.getElementById('sessionTopic').value;
-            const presentStudentIds = Array.from(document.querySelectorAll('.student-checkbox:checked'))
-                .map(checkbox => checkbox.value);
-            
-            let isValid = true;
-            
-            if (!timeSlot) {
-                showError('timeSlotSelectError', 'Please select a time slot');
-                isValid = false;
-            } else {
-                hideError('timeSlotSelectError');
-            }
-            
-            if (!date) {
-                showError('classDateError', 'Please select a date');
-                isValid = false;
-            } else {
-                // 检查是否选择了未来的日期
-                const selectedDate = new Date(date);
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                
-                if (selectedDate > today) {
-                    showError('classDateError', 'Cannot select a future date');
-                    isValid = false;
-                } else {
-                    hideError('classDateError');
-                }
-            }
-            
-            if (presentStudentIds.length === 0) {
-                showError('presentStudentsError', 'Please select at least one present student');
-                isValid = false;
-            } else {
-                hideError('presentStudentsError');
-            }
-            
-            if (!isValid) return;
-            
-            try {
-                const record = await system.recordAttendance(timeSlot, date, topic, presentStudentIds);
-                if (record) {
-                    showToast(`Attendance recorded for ${timeSlot} on ${system.formatDate(date)}`, 'success');
-                    // 重置表单
-                    document.getElementById('sessionTopic').value = '';
-                    document.querySelectorAll('.student-checkbox').forEach(checkbox => {
-                        checkbox.checked = false;
-                    });
-                }
-            } catch (error) {
-                showToast('Error recording attendance: ' + error.message, 'error');
+                container.appendChild(label);
             }
         }
 
-        // 更新考勤记录
-        function updateAttendanceRecords() {
-            const container = document.getElementById('attendanceRecords');
-            const filterTimeSlot = document.getElementById('filterTimeSlot').value;
-            const filterStudent = document.getElementById('filterStudent').value;
-            
-            let allAttendance = system.getAllAttendance();
-            
-            // 应用筛选
-            if (filterTimeSlot !== 'all') {
-                allAttendance = allAttendance.filter(item => item.timeSlot === filterTimeSlot);
-            }
-            
-            if (filterStudent !== 'all') {
-                allAttendance = allAttendance.filter(item => item.id === filterStudent);
-            }
-            
-            if (allAttendance.length === 0) {
-                container.innerHTML = `
-                    <tr>
-                        <td colspan="9" style="text-align: center; padding: 40px; color: var(--gray);">
-                            No attendance records found
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            // 按出勤率从高到低排序
-            allAttendance.sort((a, b) => b.attendanceRate - a.attendanceRate);
-            
-            let html = '';
-            allAttendance.forEach(student => {
-                // 根据出勤率确定样式
-                let rateClass = '';
-                const rate = parseFloat(student.attendanceRate);
-                
-                if (rate < 70) rateClass = 'text-danger';
-                else if (rate < 90) rateClass = 'text-warning';
-                else rateClass = 'text-success';
-                
-                html += `
-                    <tr>
-                        <td>${student.name}</td>
-                        <td>${student.age || 'N/A'}</td>
-                        <td>${student.gender || 'N/A'}</td>
-                        <td>${system.formatDate(student.enrolledDate)}</td>
-                        <td>${student.timeSlot}</td>
-                        <td>${student.attendanceCount}</td>
-                        <td>${student.totalSessions}</td>
-                        <td class="${rateClass}"><strong>${student.attendanceRate}%</strong></td>
-                        <td>
-                            <div class="attendance-record">
-                                ${student.recentAttendance.map(date => `
-                                    <div class="attendance-dot present" title="${system.formatDate(date)}">✓</div>
-                                `).join('')}
-                                ${Array(5 - student.recentAttendance.length).fill().map(() => `
-                                    <div class="attendance-dot absent" title="No record">✗</div>
-                                `).join('')}
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        // 更新学生筛选下拉框
         function updateFilterStudent() {
-            const filterStudentSelect = document.getElementById('filterStudent');
-            filterStudentSelect.innerHTML = '<option value="all">All Students</option>';
+            // 更新学生考勤摘要的学生筛选框
+            const studentFilterSelect = document.getElementById('studentFilterStudent');
+            // Keep the "All Students" option
+            const allOption = studentFilterSelect.querySelector('option[value="all"]');
+            studentFilterSelect.innerHTML = '';
+            studentFilterSelect.appendChild(allOption);
             
             for (const student of system.students.values()) {
                 const option = document.createElement('option');
                 option.value = student.id;
-                option.textContent = student.name;
-                filterStudentSelect.appendChild(option);
+                option.textContent = `${student.name} (${student.timeSlot})`;
+                studentFilterSelect.appendChild(option);
             }
         }
 
-        // 筛选考勤记录
-        function filterAttendanceRecords() {
-            updateAttendanceRecords();
+        // Update课程考勤记录
+        function updateClassAttendanceRecords() {
+            const tbody = document.getElementById('classAttendanceRecords');
+            tbody.innerHTML = '';
+            
+            const timeSlotFilter = document.getElementById('classFilterTimeSlot').value;
+            
+            // 复制并排序考勤记录（按日期降序）
+            const sortedRecords = [...system.attendanceRecords].sort((a, b) => 
+                new Date(b.date) - new Date(a.date)
+            );
+            
+            sortedRecords.forEach(record => {
+                // 应用时间槽筛选
+                if (timeSlotFilter !== 'all' && record.timeSlot !== timeSlotFilter) {
+                    return;
+                }
+                
+                const row = document.createElement('tr');
+                
+                // 格式化日期
+                const formattedDate = system.formatDate(record.date);
+                
+                // 获取出席学生的姓名
+                const presentStudentNames = record.presentStudents.map(studentId => {
+                    const student = system.students.get(studentId);
+                    return student ? student.name : 'Unknown Student';
+                }).join(', ');
+                
+                row.innerHTML = `
+                    <td>${formattedDate}</td>
+                    <td>${record.timeSlot}</td>
+                    <td>${record.topic || 'No topic'}</td>
+                    <td>${presentStudentNames}</td>
+                    <td>
+                        <button class="btn btn-info" onclick="viewClassAttendanceDetails('${record.id}')" style="padding: 6px 12px; font-size: 12px;">View</button>
+                        <button class="btn btn-warning" onclick="deleteClassAttendanceRecord('${record.id}')" style="padding: 6px 12px; font-size: 12px;">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            if (sortedRecords.length === 0 || tbody.children.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: var(--gray);">No attendance records found</td></tr>';
+            }
+        }
+        
+        // 更新学生考勤摘要
+        function updateStudentAttendanceSummary() {
+            const tbody = document.getElementById('studentAttendanceSummary');
+            tbody.innerHTML = '';
+            
+            const timeSlotFilter = document.getElementById('studentFilterTimeSlot').value;
+            const studentFilter = document.getElementById('studentFilterStudent').value;
+            const allAttendance = system.getAllAttendance();
+            
+            allAttendance.forEach(student => {
+                // Apply filters if needed
+                if (timeSlotFilter !== 'all' && student.timeSlot !== timeSlotFilter) {
+                    return;
+                }
+                
+                if (studentFilter !== 'all' && student.id !== studentFilter) {
+                    return;
+                }
+                
+                const row = document.createElement('tr');
+                
+                // 使用新的日期格式化函数
+                const enrolledDate = system.formatDate(student.enrolledDate);
+                
+                // Format recent attendance
+                const recentDates = student.recentAttendance.map(date => {
+                    return system.formatDate(date);
+                }).join(', ');
+                
+                row.innerHTML = `
+                    <td>${student.name}</td>
+                    <td>${student.age || 'N/A'}</td>
+                    <td>${student.gender || 'N/A'}</td>
+                    <td>${enrolledDate}</td>
+                    <td>${student.timeSlot}</td>
+                    <td>${student.attendanceCount}</td>
+                    <td>${student.totalSessions}</td>
+                    <td>${student.attendanceRate}%</td>
+                    <td>${recentDates || 'No records'}</td>
+                    <td>
+                        <button class="btn btn-info" onclick="viewAttendanceDates('${student.id}')" style="padding: 6px 12px; font-size: 12px;">View Dates</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            if (allAttendance.length === 0 || tbody.children.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 20px; color: var(--gray);">No students found</td></tr>';
+            }
+        }
+        
+        // 查看课程考勤详情
+        function viewClassAttendanceDetails(recordId) {
+            const record = system.attendanceRecords.find(r => r.id === recordId);
+            if (!record) {
+                showToast('Attendance record not found!', 'error');
+                return;
+            }
+            
+            // 创建详情模态框
+            const modal = document.createElement('div');
+            modal.id = 'classAttendanceDetailsModal';
+            modal.style = 'display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;';
+            
+            // 获取出席学生的详细信息
+            const presentStudents = record.presentStudents.map(studentId => {
+                const student = system.students.get(studentId);
+                return student ? `
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${student.name}</strong> (${student.age || 'N/A'}, ${student.gender || 'N/A'})
+                        </div>
+                        <button class="btn btn-warning" onclick="removeStudentFromAttendance('${record.id}', '${studentId}')" style="padding: 4px 8px; font-size: 12px;">Remove</button>
+                    </div>
+                ` : '';
+            }).join('');
+            
+            modal.innerHTML = `
+                <div style="background-color: white; padding: 30px; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="margin: 0; font-size: 1.5em; color: var(--dark);">Class Attendance Details</h3>
+                        <button class="btn" onclick="closeClassAttendanceDetailsModal()" style="padding: 8px 16px; background: var(--gray);">×</button>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <p><strong>Date:</strong> ${system.formatDate(record.date)}</p>
+                        <p><strong>Time Slot:</strong> ${record.timeSlot}</p>
+                        <p><strong>Topic:</strong> ${record.topic || 'No topic'}</p>
+                        <p><strong>Present Students:</strong> ${record.presentStudents.length}</p>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <h4 style="margin-bottom: 15px; color: var(--dark);">Present Students</h4>
+                        <div id="presentStudentsList">
+                            ${presentStudents || '<p style="color: var(--gray);">No students present</p>'}
+                        </div>
+                    </div>
+                    <div style="margin-top: 30px; text-align: center;">
+                        <button class="btn btn-warning" onclick="deleteClassAttendanceRecord('${record.id}')" style="margin-right: 10px;">Delete Entire Record</button>
+                        <button class="btn btn-secondary" onclick="closeClassAttendanceDetailsModal()">Close</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        // 关闭课程考勤详情模态框
+        function closeClassAttendanceDetailsModal() {
+            const modal = document.getElementById('classAttendanceDetailsModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        // 从考勤记录中移除学生
+        async function removeStudentFromAttendance(recordId, studentId) {
+            try {
+                const record = system.attendanceRecords.find(r => r.id === recordId);
+                if (!record) {
+                    throw new Error('Attendance record not found');
+                }
+                
+                const student = system.students.get(studentId);
+                if (!student) {
+                    throw new Error('Student not found');
+                }
+                
+                // 从考勤记录中移除学生
+                record.presentStudents = record.presentStudents.filter(id => id !== studentId);
+                
+                // 更新Firestore中的考勤记录
+                if (system.isOnline) {
+                    await db.collection('users').doc(system.userId).collection('attendance')
+                        .doc(recordId).update({
+                            presentStudents: record.presentStudents
+                        });
+                }
+                
+                // 从学生的考勤日期中移除该日期
+                if (student.attendanceDates && student.attendanceDates.includes(record.date)) {
+                    student.attendanceDates = student.attendanceDates.filter(date => date !== record.date);
+                    student.attendanceCount = student.attendanceDates.length;
+                    
+                    // 更新Firestore中的学生信息
+                    if (system.isOnline) {
+                        await db.collection('users').doc(system.userId).collection('students')
+                            .doc(studentId).update({
+                                attendanceDates: student.attendanceDates,
+                                attendanceCount: student.attendanceCount
+                            });
+                    }
+                }
+                
+                // 更新UI
+                closeClassAttendanceDetailsModal();
+                viewClassAttendanceDetails(recordId); // 重新打开模态框以显示更新后的数据
+                updateUI();
+                
+                showToast(`Successfully removed ${student.name} from attendance record`, 'success');
+            } catch (error) {
+                showToast('Error removing student from attendance: ' + error.message, 'error');
+            }
+        }
+        
+        // 删除课程考勤记录
+        async function deleteClassAttendanceRecord(recordId) {
+            if (!confirm('Are you sure you want to delete this attendance record? This will remove the attendance for all students in this class.')) {
+                return;
+            }
+            
+            try {
+                const record = system.attendanceRecords.find(r => r.id === recordId);
+                if (!record) {
+                    throw new Error('Attendance record not found');
+                }
+                
+                // 从所有学生的考勤日期中移除该日期
+                for (const studentId of record.presentStudents) {
+                    const student = system.students.get(studentId);
+                    if (student && student.attendanceDates && student.attendanceDates.includes(record.date)) {
+                        student.attendanceDates = student.attendanceDates.filter(date => date !== record.date);
+                        student.attendanceCount = student.attendanceDates.length;
+                        
+                        // 更新Firestore中的学生信息
+                        if (system.isOnline) {
+                            await db.collection('users').doc(system.userId).collection('students')
+                                .doc(studentId).update({
+                                    attendanceDates: student.attendanceDates,
+                                    attendanceCount: student.attendanceCount
+                                });
+                        }
+                    }
+                }
+                
+                // 删除Firestore中的考勤记录
+                if (system.isOnline) {
+                    await db.collection('users').doc(system.userId).collection('attendance')
+                        .doc(recordId).delete();
+                } else {
+                    // 如果离线，从本地数组中移除
+                    system.attendanceRecords = system.attendanceRecords.filter(r => r.id !== recordId);
+                }
+                
+                // 关闭模态框（如果打开）
+                closeClassAttendanceDetailsModal();
+                
+                // 更新UI
+                updateUI();
+                
+                showToast('Attendance record deleted successfully', 'success');
+            } catch (error) {
+                showToast('Error deleting attendance record: ' + error.message, 'error');
+            }
         }
 
-        // 更新时间槽页面
+        async function recordAttendance() {
+            const timeSlot = document.getElementById('timeSlotSelect').value;
+            const date = document.getElementById('classDate').value;
+            const topic = document.getElementById('sessionTopic').value.trim();
+            const checkboxes = document.querySelectorAll('#studentsCheckboxes input:checked');
+            const presentStudentIds = Array.from(checkboxes).map(cb => cb.value);
+            
+            if (!timeSlot) {
+                showToast('Please select a time slot', 'error');
+                return;
+            }
+            
+            if (!date) {
+                showToast('Please select a date', 'error');
+                return;
+            }
+            
+            if (presentStudentIds.length === 0) {
+                showToast('Please select at least one student', 'error');
+                return;
+            }
+            
+            try {
+                const result = await system.recordAttendance(timeSlot, date, topic, presentStudentIds);
+                if (result) {
+                    updateAttendanceRecords();
+                    updateStats();
+                    updateDashboard();
+                    showToast(`Attendance recorded successfully for ${timeSlot} on ${date}`, 'success');
+                    
+                    // Clear selection
+                    checkboxes.forEach(cb => cb.checked = false);
+                    document.getElementById('sessionTopic').value = '';
+                }
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+
+        function updateAttendanceRecords() {
+            const tbody = document.getElementById('attendanceRecords');
+            tbody.innerHTML = '';
+            
+            const timeSlotFilter = document.getElementById('filterTimeSlot').value;
+            const studentFilter = document.getElementById('filterStudent').value;
+            const allAttendance = system.getAllAttendance();
+            
+            allAttendance.forEach(student => {
+                // Apply filters if needed
+                if (timeSlotFilter !== 'all' && student.timeSlot !== timeSlotFilter) {
+                    return;
+                }
+                
+                if (studentFilter !== 'all' && student.id !== studentFilter) {
+                    return;
+                }
+                
+                const row = document.createElement('tr');
+                
+                // 使用新的日期格式化函数
+                const enrolledDate = system.formatDate(student.enrolledDate);
+                
+                // Format recent attendance
+                const recentDates = student.recentAttendance.map(date => {
+                    return system.formatDate(date);
+                }).join(', ');
+                
+                row.innerHTML = `
+                    <td>${student.name}</td>
+                    <td>${student.age || 'N/A'}</td>
+                    <td>${student.gender || 'N/A'}</td>
+                    <td>${enrolledDate}</td>
+                    <td>${student.timeSlot}</td>
+                    <td>${student.attendanceCount}</td>
+                    <td>${student.totalSessions}</td>
+                    <td>${student.attendanceRate}%</td>
+                    <td>${recentDates || 'No records'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
         function updateTimeSlots() {
             const container = document.getElementById('timeSlotsContainer');
             container.innerHTML = '';
             
-            if (system.timeSlots.length === 0) {
-                container.innerHTML = '<p>No time slots found. Add time slots in the "Manage Time Slots" section.</p>';
-                return;
-            }
-            
             // 系统已经排序了时间槽，直接使用
-            system.timeSlots.forEach(timeSlot => {
+            for (const timeSlot of system.timeSlots) {
                 const students = system.getStudentsByTimeSlot(timeSlot.name);
                 
                 const timeSlotCard = document.createElement('div');
                 timeSlotCard.className = 'time-slot-card';
                 
-                timeSlotCard.innerHTML = `
-                    <div class="time-slot-header">
-                        <div class="time-slot-title">${timeSlot.name}</div>
-                        <div class="student-count">${students.length} students</div>
-                    </div>
-                    
-                    <div class="time-slot-students">
-                        ${students.map(student => `
-                            <div class="student-card">
-                                <strong>${student.name}</strong>
-                                <div>${student.age || 'N/A'} | ${student.gender || 'N/A'}</div>
-                                <div>Enrolled: ${system.formatDate(student.enrolledDate)}</div>
-                                <div style="margin-top: 8px;">
-                                    <small>Attendance: ${student.attendanceRate}%</small>
-                                </div>
-                            </div>
-                        `).join('')}
-                        
-                        ${students.length === 0 ? `
-                            <div style="text-align: center; padding: 20px; color: var(--gray);">
-                                No students in this time slot
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
+                const header = document.createElement('div');
+                header.className = 'time-slot-header';
                 
+                const title = document.createElement('div');
+                title.className = 'time-slot-title';
+                title.textContent = timeSlot.name;
+                
+                const count = document.createElement('div');
+                count.className = 'student-count';
+                count.textContent = `${students.length} student${students.length !== 1 ? 's' : ''}`;
+                
+                header.appendChild(title);
+                header.appendChild(count);
+                
+                const studentsContainer = document.createElement('div');
+                studentsContainer.className = 'time-slot-students';
+                
+                if (students.length === 0) {
+                    studentsContainer.innerHTML = '<p>No students in this time slot</p>';
+                } else {
+                    students.forEach(student => {
+                        const studentCard = document.createElement('div');
+                        studentCard.className = 'student-card';
+                        
+                        // 使用新的日期格式化函数
+                        const enrolledDate = system.formatDate(student.enrolledDate);
+                        
+                        studentCard.innerHTML = `
+                            <strong>${student.name}</strong><br>
+                            ${student.age || 'N/A'} years, ${student.gender || 'N/A'}<br>
+                            Enrolled: ${enrolledDate}<br>
+                            Total Sessions: ${student.totalSessions}<br>
+                            Attendance: ${student.attendanceRate}% (${student.attendanceCount}/${student.totalSessions})
+                        `;
+                        studentsContainer.appendChild(studentCard);
+                    });
+                }
+                
+                timeSlotCard.appendChild(header);
+                timeSlotCard.appendChild(studentsContainer);
                 container.appendChild(timeSlotCard);
-            });
+            }
         }
 
-        // 更新统计页面
         function updateStats() {
-            const summary = system.getSummary();
-            const timeSlotData = system.getTimeSlotAttendanceData();
-            
             const statsGrid = document.getElementById('statsGrid');
-            statsGrid.innerHTML = '';
+            const summary = system.getSummary();
             
-            // 添加关键统计卡片
-            const stats = [
-                { label: 'Total Students', value: summary.totalStudents, icon: '👥' },
-                { label: 'Total Sessions', value: summary.totalSessions, icon: '📅' },
-                { label: 'Average Attendance', value: `${summary.averageAttendanceRate}%`, icon: '📊' },
-                { label: 'Total Time Slots', value: summary.timeSlots, icon: '⏰' }
-            ];
-            
-            stats.forEach(stat => {
-                const card = document.createElement('div');
-                card.className = 'stat-card';
-                card.innerHTML = `
-                    <div class="icon">${stat.icon}</div>
-                    <h3>${stat.label}</h3>
-                    <div class="number">${stat.value}</div>
-                `;
-                statsGrid.appendChild(card);
-            });
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <h3>Total Students</h3>
+                    <div class="number">${summary.totalStudents}</div>
+                    <div class="trend positive">Active tracking</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Sessions</h3>
+                    <div class="number">${summary.totalSessions}</div>
+                    <div class="trend positive">All recorded</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Average Attendance</h3>
+                    <div class="number">${summary.averageAttendanceRate}%</div>
+                    <div class="trend positive">Good performance</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Time Slots</h3>
+                    <div class="number">${summary.timeSlots}</div>
+                    <div class="trend">All active</div>
+                </div>
+            `;
         }
 
-        // 更新仪表板
         function updateDashboard() {
             const summary = system.getSummary();
             
             document.getElementById('totalStudents').textContent = summary.totalStudents;
             document.getElementById('sessionsRecorded').textContent = summary.totalSessions;
-            document.getElementById('avgAttendance').textContent = `${summary.averageAttendanceRate}%`;
+            document.getElementById('avgAttendance').textContent = summary.averageAttendanceRate + '%';
             document.getElementById('timeSlotsCount').textContent = summary.timeSlots;
             document.getElementById('timeSlotsCountDashboard').textContent = summary.timeSlots;
             document.getElementById('recordedSessionsCount').textContent = summary.totalSessions;
         }
 
-        // 更新图表
-        function updateCharts() {
-            // 考勤趋势图表
-            const trendData = system.getAttendanceTrendData();
-            const ctx1 = document.getElementById('attendanceTrendChart').getContext('2d');
-            
-            if (attendanceTrendChart) {
-                attendanceTrendChart.destroy();
-            }
-            
-            attendanceTrendChart = new Chart(ctx1, {
-                type: 'line',
-                data: {
-                    labels: trendData.map(item => item.period),
-                    datasets: [{
-                        label: 'Sessions Recorded',
-                        data: trendData.map(item => item.sessions),
-                        backgroundColor: 'rgba(230, 126, 34, 0.2)',
-                        borderColor: 'rgba(230, 126, 34, 1)',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        pointBackgroundColor: 'rgba(230, 126, 34, 1)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Attendance Trend (Last 6 Weeks)'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Number of Sessions'
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // 时间槽对比图表
-            const timeSlotData = system.getTimeSlotAttendanceData();
-            const ctx2 = document.getElementById('timeSlotComparisonChart').getContext('2d');
-            
-            if (timeSlotComparisonChart) {
-                timeSlotComparisonChart.destroy();
-            }
-            
-            timeSlotComparisonChart = new Chart(ctx2, {
-                type: 'bar',
-                data: {
-                    labels: timeSlotData.map(item => item.timeSlot),
-                    datasets: [{
-                        label: 'Average Attendance Rate',
-                        data: timeSlotData.map(item => item.avgRate),
-                        backgroundColor: 'rgba(52, 152, 219, 0.7)',
-                        borderColor: 'rgba(52, 152, 219, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Attendance by Time Slot'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            title: {
-                                display: true,
-                                text: 'Attendance Rate (%)'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // 导出功能
+        // Export Functions
         function exportToCSV() {
-            try {
-                document.getElementById('exportProgress').style.display = 'block';
-                document.getElementById('exportResult').innerHTML = '';
-                
-                setTimeout(() => {
-                    const csv = system.exportToCSV();
-                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.setAttribute('href', url);
-                    a.setAttribute('download', `genius-mind-attendance-${new Date().toISOString().split('T')[0]}.csv`);
-                    a.style.visibility = 'hidden';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    
-                    document.getElementById('exportProgress').style.display = 'none';
-                    document.getElementById('exportResult').innerHTML = `
-                        <div class="sync-status synced">
-                            ✅ Export successful! File downloaded.
-                        </div>
-                    `;
-                }, 800); // 模拟处理时间
-            } catch (error) {
-                document.getElementById('exportProgress').style.display = 'none';
-                document.getElementById('exportResult').innerHTML = `
-                    <div class="sync-status error">
-                        ❌ Export failed: ${error.message}
-                    </div>
-                `;
-            }
+            const csv = system.exportToCSV();
+            downloadFile(csv, 'genius_mind_academy_attendance.csv', 'text/csv');
+            showToast('CSV exported successfully!', 'success');
         }
 
         function exportToJSON() {
-            try {
-                document.getElementById('exportProgress').style.display = 'block';
-                document.getElementById('exportResult').innerHTML = '';
-                
-                setTimeout(() => {
-                    const json = system.exportToJSON();
-                    const blob = new Blob([json], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.setAttribute('href', url);
-                    a.setAttribute('download', `genius-mind-attendance-${new Date().toISOString().split('T')[0]}.json`);
-                    a.style.visibility = 'hidden';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    
-                    document.getElementById('exportProgress').style.display = 'none';
-                    document.getElementById('exportResult').innerHTML = `
-                        <div class="sync-status synced">
-                            ✅ Export successful! File downloaded.
-                        </div>
-                    `;
-                }, 800); // 模拟处理时间
-            } catch (error) {
-                document.getElementById('exportProgress').style.display = 'none';
-                document.getElementById('exportResult').innerHTML = `
-                    <div class="sync-status error">
-                        ❌ Export failed: ${error.message}
-                    </div>
-                `;
-            }
+            const json = system.exportToJSON();
+            downloadFile(json, 'genius_mind_academy_data.json', 'application/json');
+            showToast('JSON exported successfully!', 'success');
         }
 
         function printReport() {
             window.print();
         }
 
-        // 搜索功能
-        document.getElementById('searchStudents').addEventListener('input', function(e) {
-            currentSearchTerm = e.target.value.trim().toLowerCase();
-            updateTimeSlotTabs();
-        });
-
-        // 批量导入学生
-        document.getElementById('studentFileUpload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                document.getElementById('fileName').textContent = file.name;
-            } else {
-                document.getElementById('fileName').textContent = 'No file selected';
-            }
-        });
-
-        async function importStudents() {
-            const fileInput = document.getElementById('studentFileUpload');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                showToast('Please select a CSV file to import', 'warning');
-                return;
-            }
-            
-            if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
-                showToast('Please select a CSV file', 'error');
-                return;
-            }
-            
-            try {
-                updateSyncStatus('🔄 Importing students...', 'syncing');
-                
-                const reader = new FileReader();
-                reader.onload = async function(e) {
-                    try {
-                        const results = await system.importStudentsFromCSV(e.target.result);
-                        
-                        let message = `Import complete: ${results.success} students added, ${results.failed} failed.`;
-                        
-                        if (results.errors.length > 0) {
-                            message += '\n\nErrors:\n' + results.errors.join('\n');
-                        }
-                        
-                        showToast(message, results.failed > 0 ? 'warning' : 'success');
-                        updateSyncStatus('✅ Import completed', 'synced');
-                        
-                        // 重置文件输入
-                        fileInput.value = '';
-                        document.getElementById('fileName').textContent = 'No file selected';
-                    } catch (error) {
-                        showToast('Import failed: ' + error.message, 'error');
-                        updateSyncStatus('❌ Import failed', 'error');
-                    }
-                };
-                
-                reader.readAsText(file);
-            } catch (error) {
-                showToast('Import failed: ' + error.message, 'error');
-                updateSyncStatus('❌ Import failed', 'error');
-            }
-        }
-
-        // 下载CSV模板
-        function downloadTemplate() {
-            const csv = 'Name,Age,Gender,Time Slot,Enrolled Date,Total Sessions\n' +
-                       '"John Doe",10,Male,"Saturday 9am-10:30am","01/09/2023",48\n' +
-                       '"Jane Smith",9,Female,"Sunday 11am-12:30pm","01/09/2023",48';
-            
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        function downloadFile(content, fileName, contentType) {
+            const blob = new Blob([content], { type: contentType });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.setAttribute('href', url);
-            a.setAttribute('download', 'student-import-template.csv');
-            a.style.visibility = 'hidden';
+            a.href = url;
+            a.download = fileName;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
-        // 显示提示消息
+        // Toast通知函数
         function showToast(message, type = 'success') {
+            // 移除现有的toast
+            const existingToasts = document.querySelectorAll('.toast');
+            existingToasts.forEach(toast => toast.remove());
+            
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             
-            let icon = '✅';
-            if (type === 'error') icon = '❌';
-            else if (type === 'warning') icon = '⚠️';
-            else if (type === 'info') icon = 'ℹ️';
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
             
-            toast.innerHTML = `${icon} ${message}`;
+            toast.innerHTML = `
+                <span>${icons[type] || '💡'}</span>
+                <span class="toast-message">${message}</span>
+                <button class="btn" onclick="this.parentElement.remove()" style="padding: 4px; background: transparent; color: inherit;">&times;</button>
+            `;
+            
             document.body.appendChild(toast);
             
+            // 3秒后自动移除
             setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(100%)';
-                toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                
-                setTimeout(() => {
-                    document.body.removeChild(toast);
-                }, 300);
-            }, 5000);
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 3000);
         }
 
-        // 初始化日期选择器为今天
-        document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('classDate').value = today;
-            document.getElementById('studentEnrolledDate').value = today;
-        });
+        // View Attendance Dates Functions
+        function viewAttendanceDates(studentId) {
+            const student = system.students.get(studentId);
+            if (!student) {
+                showToast('Student not found!', 'error');
+                return;
+            }
+            
+            // Get student attendance info
+            const attendanceInfo = system.getStudentAttendance(studentId);
+            
+            // Populate modal with student info
+            document.getElementById('modalStudentName').textContent = student.name;
+            document.getElementById('modalStudentTimeSlot').textContent = student.timeSlot;
+            document.getElementById('modalStudentEnrolledDate').textContent = system.formatDate(student.enrolledDate);
+            document.getElementById('modalStudentAttendanceCount').textContent = attendanceInfo.attendanceCount;
+            document.getElementById('modalStudentTotalSessions').textContent = attendanceInfo.totalSessions;
+            document.getElementById('modalStudentAttendanceRate').textContent = attendanceInfo.attendanceRate + '%';
+            
+            // Populate attendance dates
+            const datesContainer = document.getElementById('attendanceDatesContainer');
+            datesContainer.innerHTML = '';
+            
+            // Get attendance dates (sorted in descending order)
+            const attendanceDates = [...(student.attendanceDates || [])]
+                .filter(date => date >= student.enrolledDate)
+                .sort((a, b) => new Date(b) - new Date(a));
+            
+            if (attendanceDates.length === 0) {
+                datesContainer.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--gray);">No attendance records found</p>';
+            } else {
+                attendanceDates.forEach(date => {
+                    const dateCard = document.createElement('div');
+                    dateCard.className = 'attendance-dot present';
+                    dateCard.textContent = system.formatDate(date);
+                    dateCard.title = `Attended on ${system.formatDate(date)}`;
+                    
+                    // Add click event to delete attendance
+                    dateCard.style.cursor = 'pointer';
+                    dateCard.addEventListener('click', function() {
+                        if (confirm(`Are you sure you want to delete the attendance record for ${system.formatDate(date)}?`)) {
+                            deleteAttendanceRecord(studentId, date);
+                        }
+                    });
+                    
+                    datesContainer.appendChild(dateCard);
+                });
+            }
+            
+            // Show modal
+            document.getElementById('viewAttendanceModal').style.display = 'flex';
+        }
+        
+        function closeAttendanceModal() {
+            document.getElementById('viewAttendanceModal').style.display = 'none';
+        }
+        
+        async function deleteAttendanceRecord(studentId, date) {
+            try {
+                const student = system.students.get(studentId);
+                if (!student) {
+                    throw new Error('Student not found');
+                }
+                
+                // Remove date from student's attendanceDates array
+                if (student.attendanceDates && student.attendanceDates.includes(date)) {
+                    student.attendanceDates = student.attendanceDates.filter(d => d !== date);
+                    student.attendanceCount = student.attendanceDates.length;
+                    
+                    // Update in Firestore
+                    if (system.isOnline) {
+                        await db.collection('users').doc(system.userId).collection('students')
+                            .doc(studentId).update({
+                                attendanceDates: student.attendanceDates,
+                                attendanceCount: student.attendanceCount
+                            });
+                    }
+                    
+                    // Update UI
+                    viewAttendanceDates(studentId);
+                    updateUI();
+                    
+                    showToast(`Attendance record for ${system.formatDate(date)} deleted successfully`, 'success');
+                } else {
+                    throw new Error('Attendance record not found');
+                }
+            } catch (error) {
+                showToast('Error deleting attendance record: ' + error.message, 'error');
+            }
+        }
+        
+        // Initialize the system when the page loads
+        window.onload = function() {
+            document.getElementById('classDate').valueAsDate = new Date();
+            document.getElementById('studentEnrolledDate').valueAsDate = new Date();
+            updateSyncStatus('🔵 Ready to connect', 'syncing');
+            
+            // 添加搜索功能
+            const searchInput = document.getElementById('searchStudents');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    currentSearchTerm = e.target.value.trim();
+                    updateTimeSlotTabs();
+                });
+            }
+        };
     </script>
 </body>
 </html>

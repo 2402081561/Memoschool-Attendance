@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Genius Mind Academy Attendance System</title>
+    <title>Genius Mind Mind Academy Attendance System</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -985,6 +985,7 @@
                 <p style="margin-top: 15px; font-size: 14px; color: #666;">
                     Don't have an account? Click Sign Up to create one
                 </p>
+                <div id="authError" class="sync-status error" style="margin-top: 15px; display: none;"></div>
             </div>
         </div>
 
@@ -1385,7 +1386,7 @@
         // 启用离线持久化
         db.enablePersistence().catch((err) => {
             if (err.code === 'failed-precondition') {
-                console.log('Multiple tabs open, persistence can only be enabled in one tab at a a time.');
+                console.log('Multiple tabs open, persistence can only be enabled in one tab at a time.');
             } else if (err.code === 'unimplemented') {
                 console.log('The current browser does not support all of the features required to enable persistence');
             }
@@ -2125,8 +2126,13 @@
         // 创建系统实例
         const system = new MemoschoolAttendanceSystem();
 
-        // Firebase 认证功能
+        // Firebase 认证功能 - 优化版
         async function login() {
+            // 重置错误状态
+            document.getElementById('authError').style.display = 'none';
+            hideError('emailError');
+            hideError('passwordError');
+            
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             let isValid = true;
@@ -2138,8 +2144,6 @@
             } else if (!isValidEmail(email)) {
                 showError('emailError', 'Please enter a valid email');
                 isValid = false;
-            } else {
-                hideError('emailError');
             }
             
             if (!password) {
@@ -2148,25 +2152,48 @@
             } else if (password.length < 6) {
                 showError('passwordError', 'Password must be at least 6 characters');
                 isValid = false;
-            } else {
-                hideError('passwordError');
             }
             
             if (!isValid) return;
             
             try {
+                // 显示登录状态
                 updateSyncStatus('🔄 Signing in...', 'syncing');
+                
+                // 尝试登录
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                
+                // 登录成功后处理
                 showApp(userCredential.user);
                 showToast('Login successful!', 'success');
             } catch (error) {
                 console.error('Login error:', error);
-                showToast('Login failed: ' + error.message, 'error');
+                
+                // 显示具体错误信息
+                let errorMessage = 'Login failed. Please try again.';
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'No account found with this email.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'Incorrect password.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Invalid email format.';
+                } else if (error.code === 'auth/network-request-failed') {
+                    errorMessage = 'Network error. Please check your connection.';
+                }
+                
+                // 显示错误
+                document.getElementById('authError').textContent = errorMessage;
+                document.getElementById('authError').style.display = 'block';
                 updateSyncStatus('❌ Login failed', 'error');
             }
         }
 
         async function signup() {
+            // 重置错误状态
+            document.getElementById('authError').style.display = 'none';
+            hideError('emailError');
+            hideError('passwordError');
+            
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             let isValid = true;
@@ -2178,8 +2205,6 @@
             } else if (!isValidEmail(email)) {
                 showError('emailError', 'Please enter a valid email');
                 isValid = false;
-            } else {
-                hideError('emailError');
             }
             
             if (!password) {
@@ -2188,20 +2213,40 @@
             } else if (password.length < 6) {
                 showError('passwordError', 'Password must be at least 6 characters');
                 isValid = false;
-            } else {
-                hideError('passwordError');
             }
             
             if (!isValid) return;
             
             try {
+                // 显示注册状态
                 updateSyncStatus('🔄 Creating account...', 'syncing');
+                
+                // 尝试注册
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                
+                // 注册成功后处理
                 showApp(userCredential.user);
                 showToast('Account created successfully!', 'success');
             } catch (error) {
                 console.error('Signup error:', error);
-                showToast('Sign up failed: ' + error.message, 'error');
+                
+                // 显示具体错误信息
+                let errorMessage = 'Sign up failed. Please try again.';
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'An account with this email already exists.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Invalid email format.';
+                } else if (error.code === 'auth/operation-not-allowed') {
+                    errorMessage = 'This operation is not allowed.';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = 'Password is too weak.';
+                } else if (error.code === 'auth/network-request-failed') {
+                    errorMessage = 'Network error. Please check your connection.';
+                }
+                
+                // 显示错误
+                document.getElementById('authError').textContent = errorMessage;
+                document.getElementById('authError').style.display = 'block';
                 updateSyncStatus('❌ Sign up failed', 'error');
             }
         }
@@ -2223,11 +2268,15 @@
             system.initialize(user.uid);
         }
 
-        // 监听认证状态变化
+        // 监听认证状态变化 - 优化版
         auth.onAuthStateChanged((user) => {
             if (user) {
+                // 用户已登录
+                console.log('User is logged in:', user.email);
                 showApp(user);
             } else {
+                // 用户未登录
+                console.log('User is logged out');
                 document.getElementById('loginSection').style.display = 'block';
                 document.getElementById('appSection').style.display = 'none';
             }
@@ -2638,15 +2687,17 @@
                 
                 if (students.length === 0) {
                     content.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--gray);">
-                        <p style="font-size: 1.2em; margin-bottom: 10px;">No students found</p>
-                        <p>${currentSearchTerm ? 'No students match your search criteria' : 'Add students to this time slot to see them here'}</p>
+                        <p style="font-size: 1.2em; margin-bottom:
+                                                10px;">No students found</p>
+                        <p>Add students to this time slot in the form above.</p>
                     </div>`;
                 } else {
-                    const studentGrid = createStudentGrid(students);
-                    content.appendChild(studentGrid);
+                    const grid = createStudentGrid(students);
+                    content.appendChild(grid);
                 }
                 
                 contentsContainer.appendChild(content);
+                
                 firstTab = false;
             }
             
@@ -2660,11 +2711,11 @@
             if (allStudents.length === 0) {
                 allContent.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--gray);">
                     <p style="font-size: 1.2em; margin-bottom: 10px;">No students found</p>
-                    <p>${currentSearchTerm ? 'No students match your search criteria' : 'Add students to the system to see them here'}</p>
+                    <p>Add your first student using the form above.</p>
                 </div>`;
             } else {
-                const studentGrid = createStudentGrid(allStudents);
-                allContent.appendChild(studentGrid);
+                const grid = createStudentGrid(allStudents);
+                allContent.appendChild(grid);
             }
             
             contentsContainer.appendChild(allContent);
@@ -2675,21 +2726,14 @@
             const grid = document.createElement('div');
             grid.className = 'student-grid';
             
-            // 添加搜索结果统计
-            const infoDiv = document.createElement('div');
-            infoDiv.className = 'search-info';
-            infoDiv.style.gridColumn = '1 / -1';
-            infoDiv.innerHTML = `<strong>${students.length}</strong> student(s) found ${currentSearchTerm ? `matching "<em>${currentSearchTerm}</em>"` : ''}`;
-            grid.appendChild(infoDiv);
+            // 按出勤率从高到低排序
+            students.sort((a, b) => b.attendanceRate - a.attendanceRate);
             
             students.forEach(student => {
                 const card = document.createElement('div');
                 card.className = 'student-card-enhanced';
                 
                 // 根据出勤率确定进度条颜色
-                let progressClass = 'progress-fill';
-                let badgeClass = 'attendance-b
-                                    // 根据出勤率确定进度条颜色
                 let progressClass = 'progress-fill';
                 let badgeClass = 'attendance-badge';
                 const rate = parseFloat(student.attendanceRate);

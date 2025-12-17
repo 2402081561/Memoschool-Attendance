@@ -2533,13 +2533,11 @@
             }
         }
 
-        // 找到原本的 recordAttendance 函数，替换成这个：
-        async function recordAttendance() {
-            const dateInput = document.getElementById('classDate');
-            const date = dateInput.value;
-            const timeSlot = document.getElementById('classTimeSlot').value; // 假设您的下拉菜单ID是这个，请核对
+                async function recordAttendance() {
+            const date = document.getElementById('classDate').value;
+            const timeSlot = document.getElementById('classTimeSlot').value;
             
-            // 获取所有被勾选的学生
+            // 获取当前勾选的学生
             const selectedCheckboxes = document.querySelectorAll('input[name="studentAttendance"]:checked');
             const selectedStudentIds = Array.from(selectedCheckboxes).map(cb => cb.value);
         
@@ -2555,57 +2553,73 @@
         
             const btn = document.querySelector('button[onclick="recordAttendance()"]');
             btn.disabled = true;
-            btn.innerHTML = '⏳ Saving...';
+            btn.innerHTML = '⏳ Checking...';
         
             try {
-                // 1. 创建课堂记录 (Class Record)
                 const recordId = `${date}_${timeSlot.replace(/[: ]/g, '')}`;
-                await db.collection('users').doc(system.userId).collection('class_attendance').doc(recordId).set({
-                    date: date,
-                    timeSlot: timeSlot,
-                    studentIds: selectedStudentIds,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                const recordRef = db.collection('users').doc(system.userId).collection('class_attendance').doc(recordId);
         
-                // 2. 批量更新学生的个人记录
-                const batch = db.batch();
+                // 1. 先读取现有的记录
+                const docSnap = await recordRef.get();
                 
-                // 这里的逻辑稍微简化，为了速度，直接更新每个学生的 attendanceDates
-                // 注意：在大批量补录时，这种方法比一个个更新更安全
-                for (const studentId of selectedStudentIds) {
+                let studentsToUpdateStats = []; // 真正需要 +1 的学生列表
+        
+                if (docSnap.exists) {
+                    // === 情况 A：记录已存在（补录模式） ===
+                    const existingData = docSnap.data();
+                    const existingStudentIds = existingData.studentIds || [];
+        
+                    // 🔍 核心逻辑：筛选出“真正的新人”
+                    // 只有那些“不在原有名单里”的学生，才需要处理
+                    studentsToUpdateStats = selectedStudentIds.filter(id => !existingStudentIds.includes(id));
+        
+                    if (studentsToUpdateStats.length === 0) {
+                        showToast('⚠️ 这些学生都已经点过名了，没有新数据！', 'warning');
+                        btn.disabled = false;
+                        btn.innerHTML = 'Record Attendance';
+                        return; // 如果全是旧人，直接停止，保护数据不重复计算
+                    }
+        
+                    // 更新课堂记录（只添加新人）
+                    await recordRef.update({
+                        studentIds: firebase.firestore.FieldValue.arrayUnion(...studentsToUpdateStats)
+                    });
+        
+                } else {
+                    // === 情况 B：全新记录 ===
+                    studentsToUpdateStats = selectedStudentIds; // 所有勾选的都是新人
+                    
+                    await recordRef.set({
+                        date: date,
+                        timeSlot: timeSlot,
+                        studentIds: selectedStudentIds,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+        
+                // 2. 只有对“studentsToUpdateStats”里的新人，才执行 +1 操作
+                const batch = db.batch();
+                for (const studentId of studentsToUpdateStats) {
                     const studentRef = db.collection('users').doc(system.userId).collection('students').doc(studentId);
-                    // 使用 arrayUnion 确保不会覆盖之前的日期，而是追加
                     batch.update(studentRef, {
                         attendanceDates: firebase.firestore.FieldValue.arrayUnion(date),
-                        attendanceCount: firebase.firestore.FieldValue.increment(1),
+                        attendanceCount: firebase.firestore.FieldValue.increment(1), // 只有新人会加分
                         lastAttended: date
                     });
                 }
                 
-                await batch.commit();
+                // 只有当有数据更新时才提交
+                if (studentsToUpdateStats.length > 0) {
+                    await batch.commit();
+                    showToast(`✅ 成功添加 ${studentsToUpdateStats.length} 位新学生！(旧记录未受影响)`, 'success');
+                }
         
-                // 3. 成功后的关键修改：自动跳到下一周
-                showToast(`Saved! Jumping to next week...`, 'success');
-                
-                // 刷新UI显示刚才的记录
-                updateClassAttendanceRecords(); 
+                // 刷新界面
+                updateClassAttendanceRecords();
                 updateStats();
         
-                // --- 核心修改开始 ---
-                // 1. 计算7天后的日期
-                const currentObj = new Date(date);
-                currentObj.setDate(currentObj.getDate() + 7); 
-                const nextWeekISO = currentObj.toISOString().split('T')[0];
-                
-                // 2. 更新日期输入框
-                dateInput.value = nextWeekISO;
-                
-                // 3. 注意：这里故意不重置勾选框 (不调用 form.reset)
-                // 这样您只需要把没来的人取消勾选即可
-                // --- 核心修改结束 ---
-        
             } catch (error) {
-                console.error("Error recording attendance:", error);
+                console.error("Error:", error);
                 showToast('Error: ' + error.message, 'error');
             } finally {
                 btn.disabled = false;

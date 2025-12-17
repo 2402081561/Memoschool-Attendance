@@ -2533,42 +2533,83 @@
             }
         }
 
+        // 找到原本的 recordAttendance 函数，替换成这个：
         async function recordAttendance() {
-            const timeSlot = document.getElementById('timeSlotSelect').value;
-            const date = document.getElementById('classDate').value;
-            const topic = document.getElementById('sessionTopic').value.trim();
-            const checkboxes = document.querySelectorAll('#studentsCheckboxes input:checked');
-            const presentStudentIds = Array.from(checkboxes).map(cb => cb.value);
+            const dateInput = document.getElementById('classDate');
+            const date = dateInput.value;
+            const timeSlot = document.getElementById('classTimeSlot').value; // 假设您的下拉菜单ID是这个，请核对
             
-            if (!timeSlot) {
-                showToast('Please select a time slot', 'error');
+            // 获取所有被勾选的学生
+            const selectedCheckboxes = document.querySelectorAll('input[name="studentAttendance"]:checked');
+            const selectedStudentIds = Array.from(selectedCheckboxes).map(cb => cb.value);
+        
+            if (!date || !timeSlot) {
+                showToast('Please select date and time slot', 'error');
                 return;
             }
-            
-            if (!date) {
-                showToast('Please select a date', 'error');
-                return;
-            }
-            
-            if (presentStudentIds.length === 0) {
+        
+            if (selectedStudentIds.length === 0) {
                 showToast('Please select at least one student', 'error');
                 return;
             }
-            
+        
+            const btn = document.querySelector('button[onclick="recordAttendance()"]');
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Saving...';
+        
             try {
-                const result = await system.recordAttendance(timeSlot, date, topic, presentStudentIds);
-                if (result) {
-                    updateClassAttendanceRecords();
-                    updateStats();
-                    updateDashboard();
-                    showToast(`Attendance recorded successfully for ${timeSlot} on ${date}`, 'success');
-                    
-                    // Clear selection
-                    checkboxes.forEach(cb => cb.checked = false);
-                    document.getElementById('sessionTopic').value = '';
+                // 1. 创建课堂记录 (Class Record)
+                const recordId = `${date}_${timeSlot.replace(/[: ]/g, '')}`;
+                await db.collection('users').doc(system.userId).collection('class_attendance').doc(recordId).set({
+                    date: date,
+                    timeSlot: timeSlot,
+                    studentIds: selectedStudentIds,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+        
+                // 2. 批量更新学生的个人记录
+                const batch = db.batch();
+                
+                // 这里的逻辑稍微简化，为了速度，直接更新每个学生的 attendanceDates
+                // 注意：在大批量补录时，这种方法比一个个更新更安全
+                for (const studentId of selectedStudentIds) {
+                    const studentRef = db.collection('users').doc(system.userId).collection('students').doc(studentId);
+                    // 使用 arrayUnion 确保不会覆盖之前的日期，而是追加
+                    batch.update(studentRef, {
+                        attendanceDates: firebase.firestore.FieldValue.arrayUnion(date),
+                        attendanceCount: firebase.firestore.FieldValue.increment(1),
+                        lastAttended: date
+                    });
                 }
+                
+                await batch.commit();
+        
+                // 3. 成功后的关键修改：自动跳到下一周
+                showToast(`Saved! Jumping to next week...`, 'success');
+                
+                // 刷新UI显示刚才的记录
+                updateClassAttendanceRecords(); 
+                updateStats();
+        
+                // --- 核心修改开始 ---
+                // 1. 计算7天后的日期
+                const currentObj = new Date(date);
+                currentObj.setDate(currentObj.getDate() + 7); 
+                const nextWeekISO = currentObj.toISOString().split('T')[0];
+                
+                // 2. 更新日期输入框
+                dateInput.value = nextWeekISO;
+                
+                // 3. 注意：这里故意不重置勾选框 (不调用 form.reset)
+                // 这样您只需要把没来的人取消勾选即可
+                // --- 核心修改结束 ---
+        
             } catch (error) {
+                console.error("Error recording attendance:", error);
                 showToast('Error: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Record Attendance';
             }
         }
 

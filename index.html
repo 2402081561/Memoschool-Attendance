@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Memoschool Kuching Attendance</title>
     
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK --> 
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
@@ -2558,7 +2558,7 @@
             try {
                 const result = await system.recordAttendance(timeSlot, date, topic, presentStudentIds);
                 if (result) {
-                    updateAttendanceRecords();
+                    updateClassAttendanceRecords();
                     updateStats();
                     updateDashboard();
                     showToast(`Attendance recorded successfully for ${timeSlot} on ${date}`, 'success');

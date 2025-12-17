@@ -2533,130 +2533,129 @@
             }
         }
 
-                // ==========================================
-        // 📋 最终智能点名功能 (复制这段替换测试代码)
+        // ==========================================
+        // 🛡️ 最终完美版：智能防重 + 补录功能
         // ==========================================
         async function recordAttendance() {
-            console.log("开始执行智能点名..."); 
+            console.log("🚀 开始执行智能点名..."); 
         
             // 1. 获取输入框
             const dateInput = document.getElementById('classDate');
             const timeSlotInput = document.getElementById('classTimeSlot');
         
+            // 安全检查：防止找不到元素报错
             if (!dateInput || !timeSlotInput) {
-                alert("错误：找不到日期或时间选项，请刷新页面。");
+                alert("系统错误：找不到日期或时间选择框，请刷新页面重试。");
                 return;
             }
         
             const date = dateInput.value;
             const timeSlot = timeSlotInput.value;
-        
-            // 2. 获取勾选的学生
+            
+            // 2. 获取当前勾选的学生
             const selectedCheckboxes = document.querySelectorAll('input[name="studentAttendance"]:checked');
             const selectedStudentIds = Array.from(selectedCheckboxes).map(cb => cb.value);
         
-            // 3. 检查输入
+            // 3. 基础验证
             if (!date || !timeSlot) {
-                showToast('请选择日期和时间 (Please select date and time)', 'error');
-                return;
-            }
-            if (selectedStudentIds.length === 0) {
-                showToast('请至少勾选一位学生 (Select at least one student)', 'error');
+                showToast('Please select date and time slot', 'error');
                 return;
             }
         
-            // 4. 锁定按钮，防止重复点击
+            if (selectedStudentIds.length === 0) {
+                showToast('Please select at least one student', 'error');
+                return;
+            }
+        
+            // 4. 锁定按钮
             const btn = document.querySelector('button[onclick*="recordAttendance"]');
-            const originalBtnText = btn ? btn.innerHTML : 'Record Attendance';
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = '⏳ Saving...';
+                btn.innerHTML = '⏳ Checking...';
             }
         
             try {
                 const recordId = `${date}_${timeSlot.replace(/[: ]/g, '')}`;
                 const recordRef = db.collection('users').doc(system.userId).collection('class_attendance').doc(recordId);
         
-                // --- 核心逻辑：智能检查 ---
+                // 1. 先读取现有的记录
                 const docSnap = await recordRef.get();
-                let studentsToAdd = []; // 真正要加分的新学生
+                
+                let studentsToUpdateStats = []; // 真正需要 +1 的学生列表（新人）
         
                 if (docSnap.exists) {
-                    // === 补录模式 ===
+                    // === 情况 A：记录已存在（补录模式） ===
                     const existingData = docSnap.data();
-                    const existingIds = existingData.studentIds || [];
-                    
-                    // 筛选出不在名单里的新人
-                    studentsToAdd = selectedStudentIds.filter(id => !existingIds.includes(id));
+                    const existingStudentIds = existingData.studentIds || [];
         
-                    if (studentsToAdd.length === 0) {
-                        showToast('⚠️ 这些学生都已经在名单里了，没有新数据！', 'warning');
-                        // 恢复按钮并结束
-                        if(btn) { btn.disabled = false; btn.innerHTML = originalBtnText; }
-                        return;
+                    // 🔍 核心逻辑：筛选出“真正的新人”
+                    // 只有那些“不在原有名单里”的学生，才需要处理
+                    studentsToUpdateStats = selectedStudentIds.filter(id => !existingStudentIds.includes(id));
+        
+                    if (studentsToUpdateStats.length === 0) {
+                        showToast('⚠️ 这些学生都已经点过名了，没有新数据！', 'warning');
+                        // 恢复按钮并退出
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = 'Record Attendance';
+                        }
+                        return; // 如果全是旧人，直接停止，保护数据不重复计算
                     }
         
-                    // 更新课堂记录 (只加新人)
+                    // 更新课堂记录（只添加新人）
                     await recordRef.update({
-                        studentIds: firebase.firestore.FieldValue.arrayUnion(...studentsToAdd)
+                        studentIds: firebase.firestore.FieldValue.arrayUnion(...studentsToUpdateStats)
                     });
-                    console.log(`补录了 ${studentsToAdd.length} 人`);
         
                 } else {
-                    // === 新建模式 ===
-                    studentsToAdd = selectedStudentIds;
+                    // === 情况 B：全新记录 ===
+                    studentsToUpdateStats = selectedStudentIds; // 所有勾选的都是新人
+                    
                     await recordRef.set({
                         date: date,
                         timeSlot: timeSlot,
                         studentIds: selectedStudentIds,
                         timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    console.log(`新建记录，共 ${studentsToAdd.length} 人`);
                 }
         
-                // 5. 更新个人档案 (+1)
+                // 2. 只有对“studentsToUpdateStats”里的新人，才执行 +1 操作
                 const batch = db.batch();
-                studentsToAdd.forEach(studentId => {
+                for (const studentId of studentsToUpdateStats) {
                     const studentRef = db.collection('users').doc(system.userId).collection('students').doc(studentId);
                     batch.update(studentRef, {
                         attendanceDates: firebase.firestore.FieldValue.arrayUnion(date),
-                        attendanceCount: firebase.firestore.FieldValue.increment(1),
+                        attendanceCount: firebase.firestore.FieldValue.increment(1), // 只有新人会加分
                         lastAttended: date
                     });
-                });
+                }
                 
-                // 只有有新数据才提交
-                if (studentsToAdd.length > 0) {
+                // 只有当有数据更新时才提交
+                if (studentsToUpdateStats.length > 0) {
                     await batch.commit();
+                    showToast(`✅ 成功添加 ${studentsToUpdateStats.length} 位新学生！(旧记录未受影响)`, 'success');
                 }
         
-                // 6. 成功提示
-                showToast(`✅ 成功！添加了 ${studentsToAdd.length} 位学生`, 'success');
-        
-                // 7. 安全刷新界面 (修复之前的报错)
-                // 尝试调用 updateClassAttendanceRecords，如果不存在就尝试 updateAttendanceRecords
+                // 3. 安全刷新界面
                 if (typeof updateClassAttendanceRecords === 'function') {
                     updateClassAttendanceRecords();
                 } else if (typeof updateAttendanceRecords === 'function') {
                     updateAttendanceRecords();
                 }
                 
-                // 刷新统计数据
                 if (typeof updateStats === 'function') updateStats();
-                if (typeof updateDashboard === 'function') updateDashboard();
         
             } catch (error) {
-                console.error("Save Error:", error);
-                alert('保存失败: ' + error.message);
+                console.error("Error:", error);
+                alert('Error: ' + error.message);
             } finally {
-                // 8. 无论成功失败，都恢复按钮
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = originalBtnText;
+                    btn.innerHTML = 'Record Attendance';
                 }
             }
         }
-
+        
         function updateTimeSlots() {
             const container = document.getElementById('timeSlotsContainer');
             container.innerHTML = '';

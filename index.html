@@ -2131,7 +2131,7 @@
         </div>
     </div>
 
-    <!-- View Attendance Dates Modal -->
+        <!-- View Attendance Dates Modal -->
     <div id="viewAttendanceModal" class="student-details-modal" style="display: none;">
         <div class="student-details-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -2187,36 +2187,38 @@
                 <button class="btn btn-secondary" onclick="closeStudentDetails()">Close</button>
             </div>
         </div>
+    </div>
 
-        <div id="dateSelectionModal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="modalStudentName">选择出席日期</h3>
-            <span class="close-modal" onclick="closeDateModal()">&times;</span>
-        </div>
-        
-        <div class="modal-body">
-            <div class="month-nav">
-                <button onclick="changeMonth(-1)" class="btn btn-sm btn-secondary">&lt;</button>
-                <span id="currentMonthLabel" style="font-weight:bold; margin:0 15px;">2023年 10月</span>
-                <button onclick="changeMonth(1)" class="btn btn-sm btn-secondary">&gt;</button>
+    <!-- Date Selection Modal -->
+    <div id="dateSelectionModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalStudentNameForDate">选择出席日期</h3>
+                <span class="close-modal" onclick="closeDateModal()">&times;</span>
             </div>
             
-            <div class="calendar-grid" id="calendarGrid">
+            <div class="modal-body">
+                <div class="month-nav">
+                    <button onclick="changeMonth(-1)" class="btn btn-sm btn-secondary">&lt;</button>
+                    <span id="currentMonthLabel" style="font-weight:bold; margin:0 15px;">2023年 10月</span>
+                    <button onclick="changeMonth(1)" class="btn btn-sm btn-secondary">&gt;</button>
                 </div>
-            
-            <div class="selected-dates-summary">
-                已选: <span id="selectedCount">0</span> 天
+                
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- 日历将通过JavaScript动态生成 -->
+                </div>
+                
+                <div class="selected-dates-summary">
+                    已选: <span id="selectedCountDisplay">0</span> 天
+                </div>
             </div>
-        </div>
 
-        <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeDateModal()">取消</button>
-            <button class="btn btn-success" onclick="confirmBatchAttendance()">确认出席</button>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDateModal()">取消</button>
+                <button class="btn btn-success" onclick="confirmBatchAttendance()">确认出席</button>
+            </div>
         </div>
     </div>
-</div>
-
 
     <script>
         // === 使用你的 Firebase 配置 ===
@@ -2249,6 +2251,12 @@
         // 搜索相关变量
         let currentSearchTerm = '';
         let currentSelectedStudentId = '';
+
+        // === 日期选择功能相关全局变量 ===
+        let currentSelectionStudentId = null;
+        let currentSelectionStudentName = null;
+        let selectedDates = new Set(); // 使用 Set 自动去重
+        let currentCalendarDate = new Date();
 
         // 修正后的系统类
         class MemoschoolAttendanceSystem {
@@ -2710,174 +2718,6 @@
                 return JSON.stringify(data, null, 2);
             }
 
-            // 全局变量
-            let currentSelectionStudentId = null;
-            let currentSelectionStudentName = null;
-            let selectedDates = new Set(); // 使用 Set 自动去重
-            let currentCalendarDate = new Date();
-            
-            // 1. 打开模态框的主函数 (请在点击学生卡片时调用此函数)
-            function openDateSelectionModal(studentId, studentName) {
-                currentSelectionStudentId = studentId;
-                currentSelectionStudentName = studentName;
-                selectedDates.clear(); // 清空之前的选择
-                
-                document.getElementById('modalStudentName').textContent = `为 ${studentName} 选择日期`;
-                document.getElementById('selectedCount').textContent = '0';
-                document.getElementById('dateSelectionModal').style.display = 'flex';
-                
-                renderCalendar();
-            }
-            
-            // 2. 关闭模态框
-            function closeDateModal() {
-                document.getElementById('dateSelectionModal').style.display = 'none';
-            }
-            
-            // 3. 渲染日历核心逻辑
-            function renderCalendar() {
-                const grid = document.getElementById('calendarGrid');
-                const label = document.getElementById('currentMonthLabel');
-                grid.innerHTML = ''; // 清空
-                
-                const year = currentCalendarDate.getFullYear();
-                const month = currentCalendarDate.getMonth();
-                
-                // 更新标题
-                const monthNames = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
-                label.textContent = `${year}年 ${monthNames[month]}`;
-                
-                // 添加星期头
-                const days = ['日', '一', '二', '三', '四', '五', '六'];
-                days.forEach(d => {
-                    const div = document.createElement('div');
-                    div.className = 'calendar-day-header';
-                    div.textContent = d;
-                    grid.appendChild(div);
-                });
-            
-                // 计算当月第一天是星期几
-                const firstDay = new Date(year, month, 1).getDay();
-                // 计算当月有多少天
-                const daysInMonth = new Date(year, month + 1, 0).getDate();
-                
-                // 填充空白
-                for (let i = 0; i < firstDay; i++) {
-                    const div = document.createElement('div');
-                    div.className = 'calendar-date empty';
-                    grid.appendChild(div);
-                }
-                
-                // 填充日期
-                const today = new Date();
-                for (let d = 1; d <= daysInMonth; d++) {
-                    const div = document.createElement('div');
-                    div.className = 'calendar-date';
-                    div.textContent = d;
-                    
-                    // 构建日期字符串 YYYY-MM-DD
-                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-                    
-                    // 检查是否是今天
-                    if (year === today.getFullYear() && month === today.getMonth() && d === today.getDate()) {
-                        div.classList.add('today');
-                    }
-                    
-                    // 检查是否已选中
-                    if (selectedDates.has(dateStr)) {
-                        div.classList.add('selected');
-                    }
-                    
-                    // 点击事件
-                    div.onclick = () => toggleDateSelection(dateStr, div);
-                    
-                    grid.appendChild(div);
-                }
-            }
-            
-            // 4. 切换日期选中状态
-            function toggleDateSelection(dateStr, element) {
-                if (selectedDates.has(dateStr)) {
-                    selectedDates.delete(dateStr);
-                    element.classList.remove('selected');
-                } else {
-                    selectedDates.add(dateStr);
-                    element.classList.add('selected');
-                }
-                document.getElementById('selectedCount').textContent = selectedDates.size;
-            }
-            
-            // 5. 切换月份
-            function changeMonth(delta) {
-                currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
-                renderCalendar();
-            }
-            
-            // 6. 最终确认提交 (核心部分)
-            async function confirmBatchAttendance() {
-                if (selectedDates.size === 0) {
-                    alert('请至少选择一个日期');
-                    return;
-                }
-                
-                const confirmBtn = document.querySelector('.modal-footer .btn-success');
-                const originalText = confirmBtn.textContent;
-                confirmBtn.textContent = '提交中...';
-                confirmBtn.disabled = true;
-            
-                try {
-                    const batch = db.batch(); // 使用 Firestore 批处理
-                    
-                    // 遍历所有选中的日期
-                    selectedDates.forEach(dateStr => {
-                        // 这里假设您的数据结构是 attendance -> date_studentId
-                        // 或者您可以用您现有的 addDoc 逻辑
-                        const docRef = db.collection('attendance').doc(); 
-                        
-                        batch.set(docRef, {
-                            studentId: currentSelectionStudentId,
-                            studentName: currentSelectionStudentName,
-                            date: dateStr,
-                            status: 'Present', // 默认为出席
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                            // 如果需要时间段，可以从当前上下文获取，例如：
-                            // timeSlot: currentTimeSlot 
-                        });
-                    });
-            
-                    await batch.commit();
-                    
-                    // 成功后的UI反馈
-                    showToast(`成功记录 ${selectedDates.size} 天出席！`);
-                    closeDateModal();
-                    
-                    // 刷新界面 (如果需要)
-                    if (typeof updateUI === 'function') updateUI();
-                    
-                } catch (error) {
-                    console.error("Batch save error:", error);
-                    alert("提交失败: " + error.message);
-                } finally {
-                    confirmBtn.textContent = originalText;
-                    confirmBtn.disabled = false;
-                }
-            }
-            
-            // 简单的提示框工具
-            function showToast(message) {
-                const toast = document.createElement('div');
-                toast.className = 'toast';
-                toast.style.cssText = `
-                    position: fixed; top: 20px; right: 20px; 
-                    background: #27ae60; color: white; padding: 15px 25px; 
-                    border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
-                    z-index: 2000; animation: fadeIn 0.5s;
-                `;
-                toast.textContent = message;
-                document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 3000);
-            }
-            
             // 时间槽管理方法
             async addTimeSlot(name) {
                 if (!name) {
@@ -2929,8 +2769,188 @@
             }
         }
 
-        // Create system instance
+        // 创建系统实例
         const system = new MemoschoolAttendanceSystem();
+
+        // === 日期选择功能相关函数 ===
+        
+        // 1. 打开模态框的主函数
+        function openDateSelectionModal(studentId, studentName) {
+            currentSelectionStudentId = studentId;
+            currentSelectionStudentName = studentName;
+            selectedDates.clear(); // 清空之前的选择
+            
+            document.getElementById('modalStudentNameForDate').textContent = `为 ${studentName} 选择日期`;
+            document.getElementById('selectedCountDisplay').textContent = '0';
+            document.getElementById('dateSelectionModal').style.display = 'flex';
+            
+            renderCalendar();
+        }
+        
+        // 2. 关闭模态框
+        function closeDateModal() {
+            document.getElementById('dateSelectionModal').style.display = 'none';
+        }
+        
+        // 3. 渲染日历核心逻辑
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const label = document.getElementById('currentMonthLabel');
+            grid.innerHTML = ''; // 清空
+            
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+            
+            // 更新标题
+            const monthNames = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+            label.textContent = `${year}年 ${monthNames[month]}`;
+            
+            // 添加星期头
+            const days = ['日', '一', '二', '三', '四', '五', '六'];
+            days.forEach(d => {
+                const div = document.createElement('div');
+                div.className = 'calendar-day-header';
+                div.textContent = d;
+                grid.appendChild(div);
+            });
+        
+            // 计算当月第一天是星期几
+            const firstDay = new Date(year, month, 1).getDay();
+            // 计算当月有多少天
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            // 填充空白
+            for (let i = 0; i < firstDay; i++) {
+                const div = document.createElement('div');
+                div.className = 'calendar-date empty';
+                grid.appendChild(div);
+            }
+            
+            // 填充日期
+            const today = new Date();
+            for (let d = 1; d <= daysInMonth; d++) {
+                const div = document.createElement('div');
+                div.className = 'calendar-date';
+                div.textContent = d;
+                
+                // 构建日期字符串 YYYY-MM-DD
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                
+                // 检查是否是今天
+                if (year === today.getFullYear() && month === today.getMonth() && d === today.getDate()) {
+                    div.classList.add('today');
+                }
+                
+                // 检查是否已选中
+                if (selectedDates.has(dateStr)) {
+                    div.classList.add('selected');
+                }
+                
+                // 点击事件
+                div.onclick = () => toggleDateSelection(dateStr, div);
+                
+                grid.appendChild(div);
+            }
+        }
+        
+        // 4. 切换日期选中状态
+        function toggleDateSelection(dateStr, element) {
+            if (selectedDates.has(dateStr)) {
+                selectedDates.delete(dateStr);
+                element.classList.remove('selected');
+            } else {
+                selectedDates.add(dateStr);
+                element.classList.add('selected');
+            }
+            document.getElementById('selectedCountDisplay').textContent = selectedDates.size;
+        }
+        
+        // 5. 切换月份
+        function changeMonth(delta) {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
+            renderCalendar();
+        }
+        
+        // 6. 最终确认提交
+        async function confirmBatchAttendance() {
+            if (selectedDates.size === 0) {
+                showToast('请至少选择一个日期', 'error');
+                return;
+            }
+            
+            const confirmBtn = document.querySelector('.modal-footer .btn-success');
+            const originalText = confirmBtn.textContent;
+            confirmBtn.textContent = '提交中...';
+            confirmBtn.disabled = true;
+        
+            try {
+                // 更新学生的考勤数据
+                const studentRef = db.collection('users').doc(system.userId).collection('students').doc(currentSelectionStudentId);
+                
+                // 获取学生现有的考勤日期
+                const student = system.students.get(currentSelectionStudentId);
+                const existingDates = student.attendanceDates || [];
+                
+                // 合并现有的和新选择的日期（去重）
+                const allDates = [...new Set([...existingDates, ...Array.from(selectedDates)])];
+                
+                // 更新学生信息
+                await studentRef.update({
+                    attendanceDates: allDates,
+                    attendanceCount: allDates.length,
+                    lastAttended: allDates[allDates.length - 1] || student.enrolledDate
+                });
+                
+                // 为每个选中的日期创建考勤记录
+                const batch = db.batch();
+                selectedDates.forEach(dateStr => {
+                    // 检查是否已经有这个时间槽的这天的记录
+                    const studentTimeSlot = student.timeSlot;
+                    const recordId = `${studentTimeSlot}-${dateStr}`.replace(/[^a-zA-Z0-9]/g, '-');
+                    const recordRef = db.collection('users').doc(system.userId).collection('attendance').doc(recordId);
+                    
+                    // 检查是否已存在记录
+                    const existingRecord = system.attendanceRecords.find(record => 
+                        record.timeSlot === studentTimeSlot && record.date === dateStr
+                    );
+                    
+                    if (existingRecord) {
+                        // 如果记录已存在，添加学生到presentStudents数组（如果不在的话）
+                        if (!existingRecord.presentStudents.includes(currentSelectionStudentId)) {
+                            batch.update(recordRef, {
+                                presentStudents: firebase.firestore.FieldValue.arrayUnion(currentSelectionStudentId)
+                            });
+                        }
+                    } else {
+                        // 创建新记录
+                        batch.set(recordRef, {
+                            id: recordId,
+                            timeSlot: studentTimeSlot,
+                            date: dateStr,
+                            topic: '批量添加',
+                            presentStudents: [currentSelectionStudentId],
+                            recordedAt: new Date().toISOString()
+                        });
+                    }
+                });
+                
+                await batch.commit();
+                
+                // 成功后的UI反馈
+                showToast(`成功记录 ${selectedDates.size} 天出席！`);
+                closeDateModal();
+                
+                // 刷新界面
+                updateUI();
+                
+            } catch (error) {
+                console.error("Batch save error:", error);
+                showToast("提交失败: " + error.message, 'error');
+            } finally {
+                confirmBtn.textContent = originalText;
+                confirmBtn.disabled = false;
+            }
+        }
 
         // Firebase Authentication Functions
         async function login() {
@@ -3727,8 +3747,8 @@
                 tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: var(--gray);">No attendance records found</td></tr>';
             }
         }
-        
-        // 更新学生考勤摘要
+
+                // 更新学生考勤摘要
         function updateStudentAttendanceSummary() {
             const tbody = document.getElementById('studentAttendanceSummary');
             tbody.innerHTML = '';

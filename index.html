@@ -749,7 +749,7 @@
             to { transform: rotate(360deg); }
         }
         
-        /* 自定义时间槽样式 */
+        /* Custom Time Slot Styles */
         .time-slots-management {
             background: white;
             border-radius: 12px;
@@ -779,7 +779,7 @@
             font-size: 12px;
         }
         
-        /* 日期选择日历样式 */
+        /* Date Selection Calendar Styles */
         .calendar-modal {
             position: fixed;
             top: 0;
@@ -945,11 +945,11 @@
                     Don't have an account? Click Sign Up to create one
                 </p>
                 
-                <!-- 测试模式按钮 -->
+                <!-- Test Mode Button -->
                 <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid var(--border);">
-                    <p style="margin-bottom: 10px; color: var(--gray); font-size: 14px;">⚠️ 如果登录有问题，可以使用测试模式：</p>
+                    <p style="margin-bottom: 10px; color: var(--gray); font-size: 14px;">⚠️ If having login issues, use test mode:</p>
                     <button onclick="skipLoginForTesting()" style="background: var(--info); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; width: 100%;">
-                        测试模式（跳过登录）
+                        Test Mode (Skip Login)
                     </button>
                 </div>
             </div>
@@ -1045,29 +1045,29 @@
                 <div id="students" class="section">
                     <h2>👥 Student Management</h2>
                     
-                    <!-- 批量操作按钮组 -->
+                    <!-- Batch Operations Button Group -->
                     <div class="batch-actions" style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
                         <button class="btn btn-secondary" onclick="selectAllStudents()">
-                            <span>📋 全选</span>
+                            <span>📋 Select All</span>
                         </button>
                         <button class="btn btn-secondary" onclick="deselectAllStudents()">
-                            <span>📋 取消全选</span>
+                            <span>📋 Deselect All</span>
                         </button>
                         <button class="btn btn-info" onclick="openDateSelectionForBatch()">
-                            <span>📅 批量添加考勤日期</span>
+                            <span>📅 Batch Add Attendance Dates</span>
                         </button>
                         <div class="batch-info" style="margin-left: auto; color: var(--primary); font-weight: bold;">
-                            <span id="selectedCount">已选择: 0 名学生</span>
+                            <span id="selectedCount">Selected: 0 students</span>
                         </div>
                     </div>
                     
-                    <!-- 搜索框 -->
+                    <!-- Search Box -->
                     <div class="form-group search-box">
                         <label class="form-label">🔍 Search Students</label>
                         <input type="text" id="searchStudents" class="form-input" placeholder="Search by name, age, gender, or time slot...">
                     </div>
                     
-                    <!-- 添加学生表单 -->
+                    <!-- Add Student Form -->
                     <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 30px;">
                         <h3 style="margin-bottom: 20px; color: var(--dark);">Add New Student</h3>
                         <div class="form-group">
@@ -1090,7 +1090,7 @@
                             <label class="form-label">Time Slot</label>
                             <select id="studentTimeSlot" class="form-input">
                                 <option value="">Select Time Slot</option>
-                                <!-- 时间槽将通过JavaScript动态加载 -->
+                                <!-- Time slots will be loaded dynamically via JavaScript -->
                             </select>
                         </div>
                         <div class="form-group">
@@ -1106,7 +1106,7 @@
                         </button>
                     </div>
                     
-                    <!-- 编辑学生表单 -->
+                    <!-- Edit Student Form -->
                     <div id="editStudentForm" style="display: none; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 30px; border-left: 4px solid var(--info);">
                         <h3 style="margin-bottom: 20px; color: var(--dark);">✏️ Edit Student</h3>
                         
@@ -1130,7 +1130,7 @@
                             <label class="form-label">Time Slot</label>
                             <select id="editStudentTimeSlot" class="form-input">
                                 <option value="">Select Time Slot</option>
-                                <!-- 时间槽将通过JavaScript动态加载 -->
+                                <!-- Time slots will be loaded dynamically via JavaScript -->
                             </select>
                         </div>
                         <div class="form-group">
@@ -1160,7 +1160,7 @@
                             <label class="form-label">Select Time Slot</label>
                             <select id="timeSlotSelect" class="form-input" onchange="updateStudentsCheckboxes()">
                                 <option value="">Select Time Slot</option>
-                                <!-- 时间槽将通过JavaScript动态加载 -->
+                                <!-- Time slots will be loaded dynamically via JavaScript -->
                             </select>
                         </div>
                         <div class="form-group">
@@ -1199,7 +1199,7 @@
                             <label class="form-label">Filter by Time Slot</label>
                             <select id="classFilterTimeSlot" class="form-input" onchange="updateClassAttendanceRecords()">
                                 <option value="all">All Time Slots</option>
-                                <!-- 时间槽将通过JavaScript动态加载 -->
+                                <!-- Time slots will be loaded dynamically via JavaScript -->
                             </select>
                         </div>
                         
@@ -1226,7 +1226,7 @@
                             <label class="form-label">Filter by Time Slot</label>
                             <select id="studentFilterTimeSlot" class="form-input" onchange="updateStudentAttendanceSummary()">
                                 <option value="all">All Time Slots</option>
-                                <!-- 时间槽将通过JavaScript动态加载 -->
+                                <!-- Time slots will be loaded dynamically via JavaScript -->
                             </select>
                         </div>
                         <div class="form-group">
@@ -1282,7 +1282,7 @@
                     <div class="time-slots-management">
                         <h3>Current Time Slots</h3>
                         <div class="time-slots-list" id="timeSlotsList">
-                            <!-- 时间槽列表将通过JavaScript动态加载 -->
+                            <!-- Time slots list will be loaded dynamically via JavaScript -->
                         </div>
                     </div>
                 </div>
@@ -1370,34 +1370,34 @@
     <div id="dateSelectionModal" class="calendar-modal" style="display: none;">
         <div class="calendar-container">
             <div class="calendar-header">
-                <h3 id="dateSelectionTitle">选择考勤日期</h3>
+                <h3 id="dateSelectionTitle">Select Attendance Dates</h3>
                 <button class="btn" onclick="closeDateSelectionModal()" style="padding: 8px 16px; background: var(--gray);">×</button>
             </div>
             
             <div class="calendar-month-nav">
-                <button class="btn btn-secondary" onclick="changeCalendarMonth(-1)">‹ 上个月</button>
-                <span id="currentMonthLabel" style="font-weight: bold; font-size: 1.2em;">2024年 1月</span>
-                <button class="btn btn-secondary" onclick="changeCalendarMonth(1)">下个月 ›</button>
+                <button class="btn btn-secondary" onclick="changeCalendarMonth(-1)">‹ Previous Month</button>
+                <span id="currentMonthLabel" style="font-weight: bold; font-size: 1.2em;">January 2024</span>
+                <button class="btn btn-secondary" onclick="changeCalendarMonth(1)">Next Month ›</button>
             </div>
             
             <div class="calendar-grid" id="calendarGrid">
-                <!-- 日历将通过JavaScript动态生成 -->
+                <!-- Calendar will be generated dynamically via JavaScript -->
             </div>
             
             <div class="selected-dates-summary">
-                <p><strong>已选择日期:</strong> <span id="selectedDatesCount">0</span> 天</p>
+                <p><strong>Selected Dates:</strong> <span id="selectedDatesCount">0</span> days</p>
                 <div id="selectedDatesList" style="margin-top: 10px; max-height: 100px; overflow-y: auto;"></div>
             </div>
             
             <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
-                <button class="btn btn-secondary" onclick="closeDateSelectionModal()">取消</button>
-                <button class="btn btn-success" onclick="saveSelectedDates()">保存选择</button>
+                <button class="btn btn-secondary" onclick="closeDateSelectionModal()">Cancel</button>
+                <button class="btn btn-success" onclick="saveSelectedDates()">Save Selection</button>
             </div>
         </div>
     </div>
 
     <script>
-        // === 使用你的 Firebase 配置 ===
+        // === Use your Firebase configuration ===
         const firebaseConfig = {
             apiKey: "AIzaSyB-enIolDzqs9sVcbB2Rxu7o86L5q7Kd7E",
             authDomain: "memoschool-kuching.firebaseapp.com",
@@ -1413,7 +1413,7 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
 
-        // 默认时间槽配置 - 按时间顺序排列
+        // Default time slot configuration - ordered chronologically
         const DEFAULT_TIME_SLOTS = [
             "Friday 2pm-3:30pm",
             "Saturday 9am-10:30am", 
@@ -1424,18 +1424,18 @@
             "Sunday 4pm-5:30pm"
         ];
 
-        // 搜索相关变量
+        // Search related variables
         let currentSearchTerm = '';
         let currentSelectedStudentId = '';
         
-        // 日期选择相关变量
+        // Date selection related variables
         let selectedDates = new Set();
         let currentCalendarDate = new Date();
-        let dateSelectionMode = ''; // 'single' 或 'batch'
+        let dateSelectionMode = ''; // 'single' or 'batch'
         let dateSelectionStudentId = '';
         let dateSelectionStudentIds = [];
 
-        // 修正后的系统类 - 添加时间槽排序功能和日期格式化
+        // Fixed system class - added time slot sorting function and date formatting
         class MemoschoolAttendanceSystem {
             constructor() {
                 this.students = new Map();
@@ -1481,13 +1481,13 @@
                     
                     this.timeSlots = [];
                     if (timeSlotsSnapshot.empty) {
-                        // 如果没有时间槽，创建默认时间槽
+                        // If no time slots, create default ones
                         await this.initializeDefaultTimeSlots();
                     } else {
                         timeSlotsSnapshot.forEach(doc => {
                             this.timeSlots.push(doc.data());
                         });
-                        // 加载后立即排序
+                        // Sort immediately after loading
                         this.sortTimeSlots();
                     }
                     
@@ -1501,16 +1501,16 @@
                 }
             }
             
-            // 时间槽排序方法
+            // Time slot sorting method
             sortTimeSlots() {
                 this.timeSlots.sort((a, b) => {
                     return this.getTimeSlotOrder(a.name) - this.getTimeSlotOrder(b.name);
                 });
             }
             
-            // 获取时间槽的排序值
+            // Get time slot order value
             getTimeSlotOrder(timeSlotName) {
-                // 定义星期顺序
+                // Define day order
                 const dayOrder = {
                     'Monday': 1,
                     'Tuesday': 2,
@@ -1521,18 +1521,18 @@
                     'Sunday': 7
                 };
                 
-                // 提取星期几
+                // Extract day of week
                 const dayMatch = timeSlotName.match(/(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)/i);
                 const day = dayMatch ? dayMatch[0] : '';
                 
-                // 提取开始时间
+                // Extract start time
                 const timeMatch = timeSlotName.match(/(\d{1,2}(?::\d{2})?(?:am|pm))/i);
                 let time = timeMatch ? timeMatch[0] : '';
                 
-                // 转换时间为24小时格式以便排序
+                // Convert time to 24-hour format for sorting
                 let timeValue = 0;
                 if (time) {
-                    // 处理时间格式
+                    // Process time format
                     time = time.toLowerCase();
                     let [hour, minute = '0'] = time.replace(/[ap]m/, '').split(':');
                     hour = parseInt(hour);
@@ -1548,25 +1548,25 @@
                     timeValue = hour * 60 + minute;
                 }
                 
-                // 计算排序值：星期 * 10000 + 时间（分钟）
+                // Calculate sort value: day * 10000 + time (minutes)
                 return (dayOrder[day] || 99) * 10000 + timeValue;
             }
             
-            // 格式化日期为 DD/MM/YYYY
+            // Format date as DD/MM/YYYY
             formatDate(dateString) {
                 if (!dateString) return 'N/A';
                 
                 try {
-                    // 如果是 YYYY-MM-DD 格式
+                    // If in YYYY-MM-DD format
                     if (dateString.includes('-')) {
                         const [year, month, day] = dateString.split('-');
                         return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
                     }
                     
-                    // 如果是其他格式，尝试解析
+                    // If in other format, try to parse
                     const date = new Date(dateString);
                     if (isNaN(date.getTime())) {
-                        return dateString; // 如果无法解析，返回原字符串
+                        return dateString; // If cannot parse, return original string
                     }
                     
                     const day = date.getDate().toString().padStart(2, '0');
@@ -1580,7 +1580,7 @@
                 }
             }
             
-            // 解析 DD/MM/YYYY 格式的日期为 YYYY-MM-DD
+            // Parse DD/MM/YYYY format date to YYYY-MM-DD
             parseDate(dateString) {
                 if (!dateString) return null;
                 
@@ -1592,7 +1592,7 @@
                         }
                     }
                     
-                    // 如果是 YYYY-MM-DD 格式，直接返回
+                    // If already in YYYY-MM-DD format, return directly
                     if (dateString.includes('-')) {
                         return dateString;
                     }
@@ -1600,7 +1600,7 @@
                     console.error('Error parsing date:', error);
                 }
                 
-                // 如果无法解析，返回原字符串
+                // If cannot parse, return original string
                 return dateString;
             }
             
@@ -1619,7 +1619,7 @@
                     
                     this.timeSlots.push(timeSlotData);
                 }
-                // 初始化后排序
+                // Sort after initialization
                 this.sortTimeSlots();
             }
             
@@ -1655,7 +1655,7 @@
                         snapshot.forEach(doc => {
                             this.timeSlots.push(doc.data());
                         });
-                        // 每次更新后排序
+                        // Sort after each update
                         this.sortTimeSlots();
                         updateUI();
                         updateSyncStatus('✅ Real-time sync active', 'synced');
@@ -1719,7 +1719,7 @@
                 
                 const recordId = `${timeSlot}-${date}`.replace(/[^a-zA-Z0-9]/g, '-');
                 
-                // 检查是否已经记录过这天的考勤
+                // Check if attendance for this day has already been recorded
                 const existingRecord = this.attendanceRecords.find(record => 
                     record.timeSlot === timeSlot && record.date === date
                 );
@@ -1737,22 +1737,22 @@
                     recordedAt: new Date().toISOString()
                 };
                 
-                // 更新学生考勤数据 - 修正后的逻辑
+                // Update student attendance data - fixed logic
                 for (const studentId of presentStudentIds) {
                     const student = this.students.get(studentId);
                     if (student && date >= student.enrolledDate) {
                         
-                        // 检查是否已经记录过这天的考勤
+                        // Check if attendance for this day has already been recorded
                         const alreadyRecorded = student.attendanceDates && 
                                               student.attendanceDates.includes(date);
                         
                         if (!alreadyRecorded) {
-                            // 初始化数组如果不存在
+                            // Initialize array if it doesn't exist
                             if (!student.attendanceDates) {
                                 student.attendanceDates = [];
                             }
                             
-                            // 安全地更新考勤数据
+                            // Safely update attendance data
                             student.attendanceCount = (student.attendanceCount || 0) + 1;
                             student.attendanceDates.push(date);
                             
@@ -1767,7 +1767,7 @@
                     }
                 }
                 
-                // 保存考勤记录
+                // Save attendance record
                 if (this.isOnline) {
                     await db.collection('users').doc(this.userId).collection('attendance')
                         .doc(recordId).set(record);
@@ -1782,16 +1782,16 @@
                 const student = this.students.get(studentId);
                 if (!student) return null;
                 
-                // 确保考勤数据存在
+                // Ensure attendance data exists
                 const attendanceDates = student.attendanceDates || [];
                 
-                // 只计算入学日期之后的出席（去重）
+                // Only count attendance after enrollment date (deduplicated)
                 const validAttendanceDates = attendanceDates.filter(date => 
                     date >= student.enrolledDate
                 );
-                const validAttendanceCount = [...new Set(validAttendanceDates)].length; // 去重
+                const validAttendanceCount = [...new Set(validAttendanceDates)].length; // Deduplicate
                 
-                // 使用学生自定义的总课堂数，默认为48
+                // Use student's custom total sessions, default to 48
                 const totalSessions = student.totalSessions || 48;
                 
                 const attendanceRate = totalSessions > 0 ? 
@@ -1812,7 +1812,7 @@
                     if (timeSlot === 'all' || student.timeSlot === timeSlot) {
                         const studentWithAttendance = this.getStudentAttendance(student.id);
                         
-                        // 如果没有搜索词或者匹配搜索，就包含这个学生
+                        // Include student if no search term or if matches search
                         if (!searchTerm || this.doesStudentMatchSearch(studentWithAttendance, searchTerm)) {
                             students.push(studentWithAttendance);
                         }
@@ -1821,7 +1821,7 @@
                 return students;
             }
 
-            // 添加搜索匹配方法
+            // Add search matching method
             doesStudentMatchSearch(student, searchTerm) {
                 if (!searchTerm) return true;
                 
@@ -1889,7 +1889,7 @@
                 return JSON.stringify(data, null, 2);
             }
             
-            // 时间槽管理方法
+            // Time slot management methods
             async addTimeSlot(name) {
                 if (!name) {
                     throw new Error('Time slot name is required');
@@ -1915,7 +1915,7 @@
             }
             
             async deleteTimeSlot(timeSlotId) {
-                // 检查是否有学生使用这个时间槽
+                // Check if any students are using this time slot
                 const studentsInTimeSlot = Array.from(this.students.values()).filter(
                     student => student.timeSlot === this.getTimeSlotNameById(timeSlotId)
                 );
@@ -1943,9 +1943,9 @@
         // Create system instance
         const system = new MemoschoolAttendanceSystem();
 
-        // ==================== 日期选择功能 ====================
+        // ==================== Date Selection Functionality ====================
         
-        // 渲染日历
+        // Render calendar
         function renderCalendar() {
             const grid = document.getElementById('calendarGrid');
             const label = document.getElementById('currentMonthLabel');
@@ -1954,12 +1954,12 @@
             const year = currentCalendarDate.getFullYear();
             const month = currentCalendarDate.getMonth();
             
-            // 更新月份标题
-            const monthNames = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
-            label.textContent = `${year}年 ${monthNames[month]}`;
+            // Update month title
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            label.textContent = `${monthNames[month]} ${year}`;
             
-            // 添加星期标题
-            const days = ['日', '一', '二', '三', '四', '五', '六'];
+            // Add day headers
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             days.forEach(day => {
                 const dayElement = document.createElement('div');
                 dayElement.className = 'calendar-day-header';
@@ -1967,14 +1967,14 @@
                 grid.appendChild(dayElement);
             });
             
-            // 获取当月第一天和最后一天
+            // Get first and last day of month
             const firstDay = new Date(year, month, 1);
             const lastDay = new Date(year, month + 1, 0);
             
-            // 计算第一天是星期几 (0 = 星期日, 1 = 星期一, ...)
+            // Calculate which day of week the first day is (0 = Sunday, 1 = Monday, ...)
             const firstDayIndex = firstDay.getDay();
             
-            // 添加空白格子（上个月的日期）
+            // Add empty cells (previous month dates)
             for (let i = 0; i < firstDayIndex; i++) {
                 const emptyDay = document.createElement('div');
                 emptyDay.className = 'calendar-day other-month';
@@ -1982,7 +1982,7 @@
                 grid.appendChild(emptyDay);
             }
             
-            // 添加本月的日期
+            // Add dates for current month
             const today = new Date();
             const todayStr = today.toISOString().split('T')[0];
             
@@ -1995,27 +1995,27 @@
                 dayElement.textContent = day;
                 dayElement.dataset.date = dateStr;
                 
-                // 如果是今天
+                // If today
                 if (dateStr === todayStr) {
                     dayElement.classList.add('today');
                 }
                 
-                // 如果已经选中
+                // If already selected
                 if (selectedDates.has(dateStr)) {
                     dayElement.classList.add('selected');
                 }
                 
-                // 点击事件
+                // Click event
                 dayElement.addEventListener('click', () => toggleDateSelection(dateStr, dayElement));
                 
                 grid.appendChild(dayElement);
             }
             
-            // 更新已选择日期列表
+            // Update selected dates list
             updateSelectedDatesList();
         }
         
-        // 切换日期选择状态
+        // Toggle date selection status
         function toggleDateSelection(dateStr, element) {
             if (selectedDates.has(dateStr)) {
                 selectedDates.delete(dateStr);
@@ -2027,7 +2027,7 @@
             updateSelectedDatesList();
         }
         
-        // 更新已选择日期列表
+        // Update selected dates list
         function updateSelectedDatesList() {
             const countElement = document.getElementById('selectedDatesCount');
             const listElement = document.getElementById('selectedDatesList');
@@ -2035,7 +2035,7 @@
             countElement.textContent = selectedDates.size;
             
             if (selectedDates.size === 0) {
-                listElement.innerHTML = '<p style="color: var(--gray); font-style: italic;">没有选择任何日期</p>';
+                listElement.innerHTML = '<p style="color: var(--gray); font-style: italic;">No dates selected</p>';
             } else {
                 const datesArray = Array.from(selectedDates).sort();
                 listElement.innerHTML = datesArray.map(date => {
@@ -2045,22 +2045,22 @@
             }
         }
         
-        // 更改月份
+        // Change month
         function changeCalendarMonth(delta) {
             currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
             renderCalendar();
         }
         
-        // 打开日期选择模态框（单个学生）
+        // Open date selection modal (single student)
         function openDateSelectionForSingleStudent() {
             if (!currentSelectedStudentId) {
-                showToast('请先选择一个学生', 'error');
+                showToast('Please select a student first', 'error');
                 return;
             }
             
             const student = system.students.get(currentSelectedStudentId);
             if (!student) {
-                showToast('学生信息不存在', 'error');
+                showToast('Student information not found', 'error');
                 return;
             }
             
@@ -2068,24 +2068,24 @@
             dateSelectionStudentId = currentSelectedStudentId;
             selectedDates.clear();
             
-            // 预选学生已有的考勤日期
+            // Pre-select student's existing attendance dates
             if (student.attendanceDates && student.attendanceDates.length > 0) {
                 student.attendanceDates.forEach(date => {
                     selectedDates.add(date);
                 });
             }
             
-            document.getElementById('dateSelectionTitle').textContent = `为 ${student.name} 选择考勤日期`;
+            document.getElementById('dateSelectionTitle').textContent = `Select Attendance Dates for ${student.name}`;
             document.getElementById('dateSelectionModal').style.display = 'flex';
             
             renderCalendar();
         }
         
-        // 打开日期选择模态框（批量操作）
+        // Open date selection modal (batch operation)
         function openDateSelectionForBatch() {
             const selectedCheckboxes = document.querySelectorAll('.student-select-checkbox:checked');
             if (selectedCheckboxes.length === 0) {
-                showToast('请先选择至少一名学生', 'error');
+                showToast('Please select at least one student first', 'error');
                 return;
             }
             
@@ -2093,13 +2093,13 @@
             dateSelectionStudentIds = Array.from(selectedCheckboxes).map(cb => cb.value);
             selectedDates.clear();
             
-            document.getElementById('dateSelectionTitle').textContent = `为 ${dateSelectionStudentIds.length} 名学生选择考勤日期`;
+            document.getElementById('dateSelectionTitle').textContent = `Select Attendance Dates for ${dateSelectionStudentIds.length} students`;
             document.getElementById('dateSelectionModal').style.display = 'flex';
             
             renderCalendar();
         }
         
-        // 关闭日期选择模态框
+        // Close date selection modal
         function closeDateSelectionModal() {
             document.getElementById('dateSelectionModal').style.display = 'none';
             selectedDates.clear();
@@ -2108,135 +2108,216 @@
             dateSelectionStudentIds = [];
         }
         
-        // 保存选择的日期
+                // 保存选择的日期
         async function saveSelectedDates() {
             if (selectedDates.size === 0) {
-                showToast('请至少选择一个日期', 'error');
+                showToast('Please select at least one date', 'error');
                 return;
             }
             
             try {
+                let result;
+                
                 if (dateSelectionMode === 'single') {
-                    await saveDatesForSingleStudent();
+                    const processedCount = await saveDatesForSingleStudent();
+                    result = `Successfully added ${processedCount} attendance date(s)`;
                 } else if (dateSelectionMode === 'batch') {
-                    await saveDatesForBatchStudents();
+                    const batchResult = await saveDatesForBatchStudents();
+                    result = `Successfully processed ${batchResult.processedStudents} students across ${selectedDates.size} date(s)`;
                 }
                 
                 closeDateSelectionModal();
-                showToast(`成功添加 ${selectedDates.size} 个考勤日期`, 'success');
+                showToast(result, 'success');
                 
                 // 刷新界面
                 updateUI();
                 
             } catch (error) {
-                console.error('保存日期时出错:', error);
-                showToast('保存失败: ' + error.message, 'error');
+                console.error('Error saving dates:', error);
+                showToast('Save failed: ' + error.message, 'error');
             }
         }
         
-        // 为单个学生保存日期
+                // 为单个学生保存日期
         async function saveDatesForSingleStudent() {
             const student = system.students.get(dateSelectionStudentId);
             if (!student) {
-                throw new Error('学生不存在');
+                throw new Error('Student does not exist');
             }
             
-            // 获取现有的考勤日期
-            const existingDates = student.attendanceDates || [];
-            
-            // 合并现有日期和新选择的日期（去重）
-            const allDates = [...new Set([...existingDates, ...Array.from(selectedDates)])];
-            
-            // 更新学生信息
-            if (system.isOnline) {
-                await db.collection('users').doc(system.userId).collection('students')
-                    .doc(dateSelectionStudentId).update({
-                        attendanceDates: allDates,
-                        attendanceCount: allDates.length,
-                        lastAttended: allDates[allDates.length - 1] || student.enrolledDate
-                    });
-            } else {
-                student.attendanceDates = allDates;
-                student.attendanceCount = allDates.length;
-                student.lastAttended = allDates[allDates.length - 1] || student.enrolledDate;
-            }
+            const timeSlot = student.timeSlot;
+            let processedCount = 0;
             
             // 为每个选中的日期创建考勤记录
-            const timeSlot = student.timeSlot;
             for (const dateStr of selectedDates) {
-                await createAttendanceRecordIfNeeded(timeSlot, dateStr, [dateSelectionStudentId]);
+                // 检查是否在入学日期之后
+                if (dateStr < student.enrolledDate) {
+                    console.log(`跳过日期 ${dateStr}，在入学日期 ${student.enrolledDate} 之前`);
+                    continue;
+                }
+                
+                // 检查学生是否已经有这个日期的考勤
+                const alreadyAttended = student.attendanceDates && 
+                                      student.attendanceDates.includes(dateStr);
+                
+                if (!alreadyAttended) {
+                    // 创建考勤记录
+                    const recordId = `${timeSlot.replace(/\s+/g, '-')}-${dateStr}`.replace(/[^a-zA-Z0-9\-]/g, '');
+                    const recordRef = db.collection('users').doc(system.userId).collection('attendance').doc(recordId);
+                    
+                    try {
+                        const doc = await recordRef.get();
+                        
+                        if (doc.exists) {
+                            // 如果记录已存在，添加学生到presentStudents数组
+                            await recordRef.update({
+                                presentStudents: firebase.firestore.FieldValue.arrayUnion(dateSelectionStudentId)
+                            });
+                        } else {
+                            // 创建新记录
+                            await recordRef.set({
+                                id: recordId,
+                                timeSlot: timeSlot,
+                                date: dateStr,
+                                topic: 'Batch Added',
+                                presentStudents: [dateSelectionStudentId],
+                                recordedAt: new Date().toISOString()
+                            });
+                        }
+                        
+                        // 更新学生考勤数据
+                        if (!student.attendanceDates) student.attendanceDates = [];
+                        student.attendanceDates.push(dateStr);
+                        student.attendanceCount = student.attendanceDates.length;
+                        
+                        if (system.isOnline) {
+                            await db.collection('users').doc(system.userId).collection('students')
+                                .doc(dateSelectionStudentId).update({
+                                    attendanceDates: student.attendanceDates,
+                                    attendanceCount: student.attendanceCount,
+                                    lastAttended: dateStr
+                                });
+                        }
+                        
+                        processedCount++;
+                        
+                    } catch (error) {
+                        console.error('Error processing date:', dateStr, error);
+                    }
+                }
             }
+            
+            return processedCount;
         }
         
         // 为批量学生保存日期
         async function saveDatesForBatchStudents() {
             const batch = db.batch();
+            const studentUpdates = [];
+            const attendanceRecords = new Map(); // 按日期和时间槽分组记录
             
+            // 准备学生更新
             for (const studentId of dateSelectionStudentIds) {
                 const student = system.students.get(studentId);
                 if (!student) continue;
                 
-                // 获取现有的考勤日期
-                const existingDates = student.attendanceDates || [];
-                
-                // 合并现有日期和新选择的日期（去重）
-                const allDates = [...new Set([...existingDates, ...Array.from(selectedDates)])];
-                
-                // 更新学生信息
-                const studentRef = db.collection('users').doc(system.userId).collection('students').doc(studentId);
-                batch.update(studentRef, {
-                    attendanceDates: allDates,
-                    attendanceCount: allDates.length,
-                    lastAttended: allDates[allDates.length - 1] || student.enrolledDate
-                });
+                for (const dateStr of selectedDates) {
+                    // 检查是否在入学日期之后
+                    if (dateStr < student.enrolledDate) {
+                        continue;
+                    }
+                    
+                    // 检查学生是否已经有这个日期的考勤
+                    const alreadyAttended = student.attendanceDates && 
+                                          student.attendanceDates.includes(dateStr);
+                    
+                    if (!alreadyAttended) {
+                        // 记录需要添加的考勤日期
+                        const key = `${student.timeSlot}-${dateStr}`;
+                        if (!attendanceRecords.has(key)) {
+                            attendanceRecords.set(key, {
+                                timeSlot: student.timeSlot,
+                                date: dateStr,
+                                studentIds: []
+                            });
+                        }
+                        attendanceRecords.get(key).studentIds.push(studentId);
+                        
+                        // 记录学生更新
+                        studentUpdates.push({
+                            studentId: studentId,
+                            date: dateStr
+                        });
+                    }
+                }
             }
             
+            // 创建/更新考勤记录
+            for (const [key, recordData] of attendanceRecords) {
+                const recordId = `${recordData.timeSlot.replace(/\s+/g, '-')}-${recordData.date}`.replace(/[^a-zA-Z0-9\-]/g, '');
+                const recordRef = db.collection('users').doc(system.userId).collection('attendance').doc(recordId);
+                
+                // 检查记录是否存在
+                const doc = await recordRef.get();
+                
+                if (doc.exists) {
+                    // 更新现有记录
+                    batch.update(recordRef, {
+                        presentStudents: firebase.firestore.FieldValue.arrayUnion(...recordData.studentIds)
+                    });
+                } else {
+                    // 创建新记录
+                    batch.set(recordRef, {
+                        id: recordId,
+                        timeSlot: recordData.timeSlot,
+                        date: recordData.date,
+                        topic: 'Batch Added',
+                        presentStudents: recordData.studentIds,
+                        recordedAt: new Date().toISOString()
+                    });
+                }
+            }
+            
+            // 更新学生数据
+            for (const update of studentUpdates) {
+                const student = system.students.get(update.studentId);
+                if (student) {
+                    const studentRef = db.collection('users').doc(system.userId).collection('students').doc(update.studentId);
+                    
+                    // 获取当前数据以计算新数组
+                    const studentDoc = await studentRef.get();
+                    const currentData = studentDoc.data();
+                    const currentDates = currentData.attendanceDates || [];
+                    
+                    if (!currentDates.includes(update.date)) {
+                        batch.update(studentRef, {
+                            attendanceDates: firebase.firestore.FieldValue.arrayUnion(update.date),
+                            attendanceCount: firebase.firestore.FieldValue.increment(1),
+                            lastAttended: update.date
+                        });
+                    }
+                }
+            }
+            
+            // 提交所有更改
             await batch.commit();
             
-            // 为每个选中的日期创建考勤记录
+            return {
+                processedDates: selectedDates.size,
+                processedStudents: dateSelectionStudentIds.length,
+                attendanceRecordsCreated: attendanceRecords.size
+            };
+        }
+            
+            // Create attendance record for each selected date
             for (const dateStr of selectedDates) {
                 await createAttendanceRecordForBatch(dateStr, dateSelectionStudentIds);
             }
         }
         
-        // 创建考勤记录（如果不存在）
-        async function createAttendanceRecordIfNeeded(timeSlot, dateStr, studentIds) {
-            const recordId = `${timeSlot}-${dateStr}`.replace(/[^a-zA-Z0-9]/g, '-');
-            const recordRef = db.collection('users').doc(system.userId).collection('attendance').doc(recordId);
-            
-            try {
-                const doc = await recordRef.get();
-                
-                if (doc.exists) {
-                    // 如果记录已存在，添加学生到presentStudents数组
-                    const existingData = doc.data();
-                    const existingStudents = existingData.presentStudents || [];
-                    const newStudents = studentIds.filter(id => !existingStudents.includes(id));
-                    
-                    if (newStudents.length > 0) {
-                        await recordRef.update({
-                            presentStudents: firebase.firestore.FieldValue.arrayUnion(...newStudents)
-                        });
-                    }
-                } else {
-                    // 创建新记录
-                    await recordRef.set({
-                        id: recordId,
-                        timeSlot: timeSlot,
-                        date: dateStr,
-                        topic: '批量添加',
-                        presentStudents: studentIds,
-                        recordedAt: new Date().toISOString()
-                    });
-                }
-            } catch (error) {
-                console.error('创建考勤记录时出错:', error);
-            }
-        }
-        
-        // 为批量学生创建考勤记录
+        // Create attendance record for batch students
         async function createAttendanceRecordForBatch(dateStr, studentIds) {
-            // 按时间槽分组学生
+            // Group students by time slot
             const studentsByTimeSlot = {};
             
             for (const studentId of studentIds) {
@@ -2250,15 +2331,15 @@
                 studentsByTimeSlot[timeSlot].push(studentId);
             }
             
-            // 为每个时间槽创建考勤记录
+            // Create attendance record for each time slot
             for (const [timeSlot, slotStudentIds] of Object.entries(studentsByTimeSlot)) {
                 await createAttendanceRecordIfNeeded(timeSlot, dateStr, slotStudentIds);
             }
         }
         
-        // ==================== 学生详情功能 ====================
+        // ==================== Student Details Functionality ====================
         
-        // 查看学生详情
+        // View student details
         function viewStudentDetails(studentId) {
             const student = system.students.get(studentId);
             if (!student) {
@@ -2268,10 +2349,10 @@
             
             currentSelectedStudentId = studentId;
             
-            // 获取学生考勤信息
+            // Get student attendance information
             const attendanceInfo = system.getStudentAttendance(studentId);
             
-            // 填充模态框信息
+            // Fill modal information
             document.getElementById('detailStudentName').textContent = student.name;
             document.getElementById('detailStudentAge').textContent = student.age || 'N/A';
             document.getElementById('detailStudentGender').textContent = student.gender || 'N/A';
@@ -2282,13 +2363,13 @@
             document.getElementById('detailAttendanceCount').textContent = attendanceInfo.attendanceCount;
             document.getElementById('detailAttendanceRate').textContent = attendanceInfo.attendanceRate;
             
-            // 获取最后出席日期
+            // Get last attended date
             const lastAttended = student.attendanceDates && student.attendanceDates.length > 0 
                 ? system.formatDate(student.attendanceDates[student.attendanceDates.length - 1])
-                : '从未出席';
+                : 'Never attended';
             document.getElementById('detailLastAttended').textContent = lastAttended;
             
-            // 填充考勤日期
+            // Fill attendance dates
             const datesContainer = document.getElementById('detailAttendanceDates');
             datesContainer.innerHTML = '';
             
@@ -2297,7 +2378,7 @@
             if (attendanceDates.length === 0) {
                 datesContainer.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--gray);">No attendance records found</p>';
             } else {
-                // 按日期排序（最新的在前）
+                // Sort by date (newest first)
                 const sortedDates = [...attendanceDates].sort((a, b) => new Date(b) - new Date(a));
                 
                 sortedDates.forEach(date => {
@@ -2310,17 +2391,17 @@
                 });
             }
             
-            // 显示模态框
+            // Show modal
             document.getElementById('studentDetailsModal').style.display = 'flex';
         }
         
-        // 关闭学生详情
+        // Close student details
         function closeStudentDetails() {
             document.getElementById('studentDetailsModal').style.display = 'none';
             currentSelectedStudentId = '';
         }
         
-        // 编辑当前查看的学生
+        // Edit currently viewed student
         function editCurrentStudent() {
             if (currentSelectedStudentId) {
                 editStudent(currentSelectedStudentId);
@@ -2328,36 +2409,36 @@
             }
         }
         
-        // ==================== 批量操作功能 ====================
+        // ==================== Batch Operations Functionality ====================
         
-        // 更新选中计数
+        // Update selected count
         function updateSelectedCount() {
             const checkboxes = document.querySelectorAll('.student-select-checkbox:checked');
             const countElement = document.getElementById('selectedCount');
-            countElement.textContent = `已选择: ${checkboxes.length} 名学生`;
+            countElement.textContent = `Selected: ${checkboxes.length} student(s)`;
         }
         
-        // 全选学生
+        // Select all students
         function selectAllStudents() {
             const checkboxes = document.querySelectorAll('.student-select-checkbox');
             checkboxes.forEach(checkbox => {
                 checkbox.checked = true;
             });
             updateSelectedCount();
-            showToast(`已全选 ${checkboxes.length} 名学生`, 'info');
+            showToast(`Selected all ${checkboxes.length} students`, 'info');
         }
         
-        // 取消全选
+        // Deselect all students
         function deselectAllStudents() {
             const checkboxes = document.querySelectorAll('.student-select-checkbox');
             checkboxes.forEach(checkbox => {
                 checkbox.checked = false;
             });
             updateSelectedCount();
-            showToast('已取消全选', 'info');
+            showToast('Deselected all', 'info');
         }
         
-        // ==================== 其他功能 ====================
+        // ==================== Other Functions ====================
         
         // Firebase Authentication Functions
         async function login() {
@@ -2424,26 +2505,26 @@
             system.initialize(user.uid);
         }
 
-        // 测试模式：跳过登录直接进入系统
+        // Test Mode: Skip login and enter system directly
         function skipLoginForTesting() {
-            console.log("⚠️ 进入测试模式（跳过登录）");
+            console.log("⚠️ Entering test mode (skip login)");
             
-            // 模拟用户对象
+            // Mock user object
             const mockUser = {
                 uid: 'test-user-' + Date.now(),
                 email: 'test@example.com'
             };
             
-            // 显示主界面
+            // Show main interface
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('appSection').style.display = 'block';
-            document.getElementById('userEmail').textContent = '测试用户（离线模式）';
+            document.getElementById('userEmail').textContent = 'Test User (Offline Mode)';
             
-            // 初始化系统（离线模式）
+            // Initialize system (offline mode)
             system.userId = mockUser.uid;
             system.isOnline = false;
             
-            // 加载默认时间槽
+            // Load default time slots
             system.timeSlots = DEFAULT_TIME_SLOTS.map(slot => ({
                 id: slot.replace(/\s+/g, '-').toLowerCase(),
                 name: slot,
@@ -2451,27 +2532,27 @@
                 createdAt: new Date().toISOString()
             }));
             
-            // 清空现有数据
+            // Clear existing data
             system.students.clear();
             system.attendanceRecords = [];
             
-            // 添加一些测试数据
+            // Add some test data
             addSampleData();
             
-            // 更新UI
+            // Update UI
             updateUI();
-            updateSyncStatus('✅ 进入测试模式（离线）', 'synced');
-            showToast('已进入测试模式，所有数据仅保存在本地', 'info');
+            updateSyncStatus('✅ Entered test mode (offline)', 'synced');
+            showToast('Entered test mode, all data saved locally only', 'info');
         }
 
-        // 添加示例数据
+        // Add sample data
         function addSampleData() {
-            // 添加一些示例学生
+            // Add some sample students
             const sampleStudents = [
-                { name: '张三', age: 12, gender: 'Male', timeSlot: 'Friday 2pm-3:30pm' },
-                { name: '李四', age: 13, gender: 'Female', timeSlot: 'Saturday 9am-10:30am' },
-                { name: '王五', age: 11, gender: 'Male', timeSlot: 'Saturday 11am-12:30pm' },
-                { name: '赵六', age: 14, gender: 'Female', timeSlot: 'Sunday 9am-10:30am' }
+                { name: 'John Doe', age: 12, gender: 'Male', timeSlot: 'Friday 2pm-3:30pm' },
+                { name: 'Jane Smith', age: 13, gender: 'Female', timeSlot: 'Saturday 9am-10:30am' },
+                { name: 'Michael Brown', age: 11, gender: 'Male', timeSlot: 'Saturday 11am-12:30pm' },
+                { name: 'Emily Johnson', age: 14, gender: 'Female', timeSlot: 'Sunday 9am-10:30am' }
             ];
             
             sampleStudents.forEach((student, index) => {
@@ -2491,17 +2572,17 @@
                 system.students.set(studentId, studentData);
             });
             
-            // 添加示例考勤记录
+            // Add sample attendance records
             const today = new Date();
             for (let i = 0; i < 5; i++) {
                 const date = new Date(today);
-                date.setDate(today.getDate() - i * 7); // 过去几周
+                date.setDate(today.getDate() - i * 7); // Past few weeks
                 
                 const record = {
                     id: `record-${i}`,
                     timeSlot: DEFAULT_TIME_SLOTS[i % DEFAULT_TIME_SLOTS.length],
                     date: date.toISOString().split('T')[0],
-                    topic: `示例课程 ${i + 1}`,
+                    topic: `Sample Class ${i + 1}`,
                     presentStudents: Array.from(system.students.keys()).slice(0, 3),
                     recordedAt: new Date().toISOString()
                 };
@@ -2509,13 +2590,13 @@
             }
         }
 
-        // 生成示例考勤日期
+        // Generate sample attendance dates
         function generateSampleDates(count) {
             const dates = [];
             const today = new Date();
             for (let i = 0; i < count; i++) {
                 const date = new Date(today);
-                date.setDate(today.getDate() - i * 2); // 每两天一次
+                date.setDate(today.getDate() - i * 2); // Every two days
                 dates.push(date.toISOString().split('T')[0]);
             }
             return dates;
@@ -2561,29 +2642,29 @@
             document.getElementById(sectionId).classList.add('active');
         }
 
-        // 更新所有时间槽选择框
+        // Update all time slot dropdowns
         function updateTimeSlotSelects() {
-            // 更新添加学生表单的时间槽选择框
+            // Update add student form time slot dropdown
             const studentTimeSlotSelect = document.getElementById('studentTimeSlot');
             studentTimeSlotSelect.innerHTML = '<option value="">Select Time Slot</option>';
             
-            // 更新编辑学生表单的时间槽选择框
+            // Update edit student form time slot dropdown
             const editStudentTimeSlotSelect = document.getElementById('editStudentTimeSlot');
             editStudentTimeSlotSelect.innerHTML = '<option value="">Select Time Slot</option>';
             
-            // 更新考勤记录的时间槽选择框
+            // Update attendance recording time slot dropdown
             const timeSlotSelect = document.getElementById('timeSlotSelect');
             timeSlotSelect.innerHTML = '<option value="">Select Time Slot</option>';
             
-            // 更新课程考勤记录筛选的时间槽选择框
+            // Update class attendance records filter time slot dropdown
             const classFilterTimeSlotSelect = document.getElementById('classFilterTimeSlot');
             classFilterTimeSlotSelect.innerHTML = '<option value="all">All Time Slots</option>';
             
-            // 更新学生考勤摘要筛选的时间槽选择框
+            // Update student attendance summary filter time slot dropdown
             const studentFilterTimeSlotSelect = document.getElementById('studentFilterTimeSlot');
             studentFilterTimeSlotSelect.innerHTML = '<option value="all">All Time Slots</option>';
             
-            // 填充所有选择框（系统已经排序了时间槽）
+            // Fill all dropdowns (system has already sorted time slots)
             system.timeSlots.forEach(timeSlot => {
                 const option = document.createElement('option');
                 option.value = timeSlot.name;
@@ -2601,7 +2682,7 @@
             });
         }
 
-        // 更新时间槽列表
+        // Update time slots list
         function updateTimeSlotsList() {
             const timeSlotsList = document.getElementById('timeSlotsList');
             timeSlotsList.innerHTML = '';
@@ -2611,7 +2692,7 @@
                 return;
             }
             
-            // 系统已经排序了时间槽，直接使用
+            // System has already sorted time slots, use directly
             system.timeSlots.forEach(timeSlot => {
                 const timeSlotItem = document.createElement('div');
                 timeSlotItem.className = 'time-slot-item';
@@ -2630,7 +2711,7 @@
             });
         }
 
-        // 添加时间槽
+        // Add time slot
         async function addTimeSlot() {
             const name = document.getElementById('newTimeSlotName').value.trim();
             
@@ -2648,7 +2729,7 @@
             }
         }
 
-        // 删除时间槽
+        // Delete time slot
         async function deleteTimeSlot(timeSlotId) {
             if (confirm('Are you sure you want to delete this time slot? This action cannot be undone.')) {
                 try {
@@ -2673,7 +2754,7 @@
                 return;
             }
             
-            // 如果没有选择入学日期，默认使用今天
+            // If no enrollment date selected, default to today
             const finalEnrolledDate = enrolledDate || new Date().toISOString().split('T')[0];
             
             try {
@@ -2690,7 +2771,7 @@
             }
         }
 
-        // 编辑学生函数
+        // Edit student function
         function editStudent(studentId) {
             const student = system.students.get(studentId);
             if (!student) {
@@ -2698,7 +2779,7 @@
                 return;
             }
             
-            // 填充编辑表单
+            // Fill edit form
             document.getElementById('editStudentName').value = student.name;
             document.getElementById('editStudentAge').value = student.age || '';
             document.getElementById('editStudentGender').value = student.gender || '';
@@ -2707,14 +2788,14 @@
             document.getElementById('editStudentTotalSessions').value = student.totalSessions || 48;
             document.getElementById('editStudentId').value = studentId;
             
-            // 显示编辑表单，隐藏添加表单
+            // Show edit form, hide add form
             document.getElementById('editStudentForm').style.display = 'block';
             
-            // 滚动到编辑表单
+            // Scroll to edit form
             document.getElementById('editStudentForm').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // 更新学生函数
+        // Update student function
         async function updateStudent() {
             const studentId = document.getElementById('editStudentId').value;
             const name = document.getElementById('editStudentName').value.trim();
@@ -2741,7 +2822,7 @@
                 
                 await system.updateStudent(studentId, updatedData);
                 
-                // 隐藏编辑表单
+                // Hide edit form
                 document.getElementById('editStudentForm').style.display = 'none';
                 
                 showToast('Student updated successfully!', 'success');
@@ -2751,10 +2832,10 @@
             }
         }
 
-        // 取消编辑函数
+        // Cancel edit function
         function cancelEdit() {
             document.getElementById('editStudentForm').style.display = 'none';
-            // 清空表单
+            // Clear form
             document.getElementById('editStudentName').value = '';
             document.getElementById('editStudentAge').value = '';
             document.getElementById('editStudentGender').value = '';
@@ -2789,7 +2870,7 @@
             tabsContainer.innerHTML = '';
             contentsContainer.innerHTML = '';
             
-            // 添加"All Students"标签
+            // Add "All Students" tab
             const allTab = document.createElement('div');
             allTab.className = `time-slot-tab active`;
             allTab.textContent = 'All Students';
@@ -2808,7 +2889,7 @@
             
             let firstTab = true;
             
-            // 系统已经排序了时间槽，直接使用
+            // System has already sorted time slots, use directly
             for (const timeSlot of system.timeSlots) {
                 // Create tab
                 const tab = document.createElement('div');
@@ -2854,7 +2935,7 @@
                 firstTab = false;
             }
             
-            // 创建"All Students"内容
+            // Create "All Students" content
             const allContent = document.createElement('div');
             allContent.id = 'content-all';
             allContent.className = 'time-slot-content active';
@@ -2874,12 +2955,12 @@
             contentsContainer.appendChild(allContent);
         }
 
-        // 创建学生卡片网格
+        // Create student card grid
         function createStudentGrid(students) {
             const grid = document.createElement('div');
             grid.className = 'student-grid';
             
-            // 添加搜索结果统计
+            // Add search results statistics
             const infoDiv = document.createElement('div');
             infoDiv.className = 'search-info';
             infoDiv.style.gridColumn = '1 / -1';
@@ -2890,7 +2971,7 @@
                 const card = document.createElement('div');
                 card.className = 'student-card-enhanced';
                 
-                // 根据出勤率确定进度条颜色
+                // Determine progress bar color based on attendance rate
                 let progressClass = 'progress-fill';
                 let badgeClass = 'attendance-badge';
                 if (student.attendanceRate < 60) {
@@ -2901,7 +2982,7 @@
                     badgeClass += ' attendance-medium';
                 }
                 
-                // 使用新的日期格式化函数
+                // Use new date formatting function
                 const enrolledDate = system.formatDate(student.enrolledDate);
                 
                 card.innerHTML = `
@@ -2933,9 +3014,9 @@
                     </div>
                 `;
                 
-                // 添加点击事件查看详情
+                // Add click event to view details
                 card.addEventListener('click', function(e) {
-                    // 如果点击的是checkbox，不触发详情查看
+                    // If checkbox is clicked, don't trigger detail view
                     if (e.target.type === 'checkbox') return;
                     viewStudentDetails(student.id);
                 });
@@ -2975,7 +3056,7 @@
         }
 
         function updateFilterStudent() {
-            // 更新学生考勤摘要的学生筛选框
+            // Update student attendance summary filter dropdown
             const studentFilterSelect = document.getElementById('studentFilterStudent');
             // Keep the "All Students" option
             const allOption = studentFilterSelect.querySelector('option[value="all"]');
@@ -2990,30 +3071,30 @@
             }
         }
 
-        // Update课程考勤记录
+        // Update class attendance records
         function updateClassAttendanceRecords() {
             const tbody = document.getElementById('classAttendanceRecords');
             tbody.innerHTML = '';
             
             const timeSlotFilter = document.getElementById('classFilterTimeSlot').value;
             
-            // 复制并排序考勤记录（按日期降序）
+            // Copy and sort attendance records (by date descending)
             const sortedRecords = [...system.attendanceRecords].sort((a, b) => 
                 new Date(b.date) - new Date(a.date)
             );
             
             sortedRecords.forEach(record => {
-                // 应用时间槽筛选
+                // Apply time slot filter
                 if (timeSlotFilter !== 'all' && record.timeSlot !== timeSlotFilter) {
                     return;
                 }
                 
                 const row = document.createElement('tr');
                 
-                // 格式化日期
+                // Format date
                 const formattedDate = system.formatDate(record.date);
                 
-                // 获取出席学生的姓名
+                // Get present student names
                 const presentStudentNames = record.presentStudents.map(studentId => {
                     const student = system.students.get(studentId);
                     return student ? student.name : 'Unknown Student';
@@ -3037,7 +3118,7 @@
             }
         }
         
-        // 更新学生考勤摘要
+        // Update student attendance summary
         function updateStudentAttendanceSummary() {
             const tbody = document.getElementById('studentAttendanceSummary');
             tbody.innerHTML = '';
@@ -3058,7 +3139,7 @@
                 
                 const row = document.createElement('tr');
                 
-                // 使用新的日期格式化函数
+                // Use new date formatting function
                 const enrolledDate = system.formatDate(student.enrolledDate);
                 
                 // Format recent attendance
@@ -3088,7 +3169,7 @@
             }
         }
         
-        // 查看课程考勤详情
+        // View class attendance details
         function viewClassAttendanceDetails(recordId) {
             const record = system.attendanceRecords.find(r => r.id === recordId);
             if (!record) {
@@ -3096,12 +3177,12 @@
                 return;
             }
             
-            // 创建详情模态框
+            // Create details modal
             const modal = document.createElement('div');
             modal.id = 'classAttendanceDetailsModal';
             modal.style = 'display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;';
             
-            // 获取出席学生的详细信息
+            // Get present student details
             const presentStudents = record.presentStudents.map(studentId => {
                 const student = system.students.get(studentId);
                 return student ? `
@@ -3142,7 +3223,7 @@
             document.body.appendChild(modal);
         }
         
-        // 关闭课程考勤详情模态框
+        // Close class attendance details modal
         function closeClassAttendanceDetailsModal() {
             const modal = document.getElementById('classAttendanceDetailsModal');
             if (modal) {
@@ -3150,7 +3231,7 @@
             }
         }
         
-        // 从考勤记录中移除学生
+        // Remove student from attendance record
         async function removeStudentFromAttendance(recordId, studentId) {
             try {
                 const record = system.attendanceRecords.find(r => r.id === recordId);
@@ -3163,10 +3244,10 @@
                     throw new Error('Student not found');
                 }
                 
-                // 从考勤记录中移除学生
+                // Remove student from attendance record
                 record.presentStudents = record.presentStudents.filter(id => id !== studentId);
                 
-                // 更新Firestore中的考勤记录
+                // Update attendance record in Firestore
                 if (system.isOnline) {
                     await db.collection('users').doc(system.userId).collection('attendance')
                         .doc(recordId).update({
@@ -3174,12 +3255,12 @@
                         });
                 }
                 
-                // 从学生的考勤日期中移除该日期
+                // Remove date from student's attendance dates
                 if (student.attendanceDates && student.attendanceDates.includes(record.date)) {
                     student.attendanceDates = student.attendanceDates.filter(date => date !== record.date);
                     student.attendanceCount = student.attendanceDates.length;
                     
-                    // 更新Firestore中的学生信息
+                    // Update student information in Firestore
                     if (system.isOnline) {
                         await db.collection('users').doc(system.userId).collection('students')
                             .doc(studentId).update({
@@ -3189,9 +3270,9 @@
                     }
                 }
                 
-                // 更新UI
+                // Update UI
                 closeClassAttendanceDetailsModal();
-                viewClassAttendanceDetails(recordId); // 重新打开模态框以显示更新后的数据
+                viewClassAttendanceDetails(recordId); // Reopen modal to show updated data
                 updateUI();
                 
                 showToast(`Successfully removed ${student.name} from attendance record`, 'success');
@@ -3200,7 +3281,7 @@
             }
         }
         
-        // 删除课程考勤记录
+        // Delete class attendance record
         async function deleteClassAttendanceRecord(recordId) {
             if (!confirm('Are you sure you want to delete this attendance record? This will remove the attendance for all students in this class.')) {
                 return;
@@ -3212,14 +3293,14 @@
                     throw new Error('Attendance record not found');
                 }
                 
-                // 从所有学生的考勤日期中移除该日期
+                // Remove date from all students' attendance dates
                 for (const studentId of record.presentStudents) {
                     const student = system.students.get(studentId);
                     if (student && student.attendanceDates && student.attendanceDates.includes(record.date)) {
                         student.attendanceDates = student.attendanceDates.filter(date => date !== record.date);
                         student.attendanceCount = student.attendanceDates.length;
                         
-                        // 更新Firestore中的学生信息
+                        // Update student information in Firestore
                         if (system.isOnline) {
                             await db.collection('users').doc(system.userId).collection('students')
                                 .doc(studentId).update({
@@ -3230,19 +3311,19 @@
                     }
                 }
                 
-                // 删除Firestore中的考勤记录
+                // Delete attendance record from Firestore
                 if (system.isOnline) {
                     await db.collection('users').doc(system.userId).collection('attendance')
                         .doc(recordId).delete();
                 } else {
-                    // 如果离线，从本地数组中移除
+                    // If offline, remove from local array
                     system.attendanceRecords = system.attendanceRecords.filter(r => r.id !== recordId);
                 }
                 
-                // 关闭模态框（如果打开）
+                // Close modal (if open)
                 closeClassAttendanceDetailsModal();
                 
-                // 更新UI
+                // Update UI
                 updateUI();
                 
                 showToast('Attendance record deleted successfully', 'success');
@@ -3251,35 +3332,29 @@
             }
         }
 
-        async function recordAttendance() {
-            console.log("🚀 开始执行智能点名..."); 
+                async function recordAttendance() {
+            console.log("🚀 Starting attendance recording..."); 
         
-            // 1. 获取输入框 (修正了 ID)
+            // 1. Get input fields
             const dateInput = document.getElementById('classDate');
-            
-            // ⚠️ 关键修改：这里改成了 timeSlotSelect
             const timeSlotInput = document.getElementById('timeSlotSelect'); 
+            const topicInput = document.getElementById('sessionTopic');
         
-            // 安全检查
+            // Safety check
             if (!dateInput || !timeSlotInput) {
-                alert("❌ 依然报错？请检查您的 HTML 里 <select> 的 ID 是不是 'timeSlotSelect'");
+                alert("❌ System error: Missing required input fields");
                 return;
             }
         
             const date = dateInput.value;
             const timeSlot = timeSlotInput.value;
+            const topic = topicInput.value || '';
             
-            // 2. 获取勾选的学生 (修正了选择器，适配您的旧代码)
-            // 尝试两种方式获取，确保能抓到人
-            let selectedCheckboxes = document.querySelectorAll('#studentsCheckboxes input:checked');
-            if (selectedCheckboxes.length === 0) {
-                // 备用方案
-                selectedCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-            }
-            
+            // 2. Get checked students
+            const selectedCheckboxes = document.querySelectorAll('#studentsCheckboxes input:checked');
             const selectedStudentIds = Array.from(selectedCheckboxes).map(cb => cb.value);
         
-            // 3. 基础验证
+            // 3. Basic validation
             if (!date || !timeSlot) {
                 showToast('Please select date and time slot', 'error');
                 return;
@@ -3290,90 +3365,125 @@
                 return;
             }
         
-            // 4. 锁定按钮
+            // 4. Lock button
             const btn = document.querySelector('button[onclick*="recordAttendance"]');
             const originalBtnText = btn ? btn.innerHTML : 'Record Attendance';
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = '⏳ Checking...';
+                btn.innerHTML = '⏳ Recording...';
             }
         
             try {
-                const recordId = `${date}_${timeSlot.replace(/[: ]/g, '')}`;
-                const recordRef = db.collection('users').doc(system.userId).collection('class_attendance').doc(recordId);
-        
-                // 1. 先读取现有的记录
-                const docSnap = await recordRef.get();
+                // Create record ID - 使用与系统相同的ID格式
+                const recordId = `${timeSlot.replace(/\s+/g, '-')}-${date}`.replace(/[^a-zA-Z0-9\-]/g, '');
                 
-                let studentsToUpdateStats = []; // 真正需要 +1 的学生列表（新人）
-        
-                if (docSnap.exists) {
-                    // === 补录模式 ===
-                    const existingData = docSnap.data();
-                    const existingStudentIds = existingData.studentIds || [];
-        
-                    // 筛选出"真正的新人"
-                    studentsToUpdateStats = selectedStudentIds.filter(id => !existingStudentIds.includes(id));
-        
-                    if (studentsToUpdateStats.length === 0) {
-                        showToast('⚠️ 这些学生都已经点过名了，没有新数据！', 'warning');
+                // Check if record already exists in system
+                const existingRecord = system.attendanceRecords.find(record => 
+                    record.timeSlot === timeSlot && record.date === date
+                );
+                
+                if (existingRecord) {
+                    if (confirm(`Attendance for ${timeSlot} on ${date} already exists. Update it?`)) {
+                        // Update existing record
+                        const updatedPresentStudents = [...new Set([...existingRecord.presentStudents, ...selectedStudentIds])];
+                        
+                        if (system.isOnline) {
+                            await db.collection('users').doc(system.userId).collection('attendance')
+                                .doc(recordId).update({
+                                    presentStudents: updatedPresentStudents,
+                                    topic: topic || existingRecord.topic
+                                });
+                        } else {
+                            existingRecord.presentStudents = updatedPresentStudents;
+                            existingRecord.topic = topic || existingRecord.topic;
+                        }
+                        
+                        // Update student attendance counts for newly added students only
+                        for (const studentId of selectedStudentIds) {
+                            if (!existingRecord.presentStudents.includes(studentId)) {
+                                const student = system.students.get(studentId);
+                                if (student && student.enrolledDate <= date) {
+                                    if (!student.attendanceDates) student.attendanceDates = [];
+                                    if (!student.attendanceDates.includes(date)) {
+                                        student.attendanceDates.push(date);
+                                        student.attendanceCount = student.attendanceDates.length;
+                                        
+                                        if (system.isOnline) {
+                                            await db.collection('users').doc(system.userId).collection('students')
+                                                .doc(studentId).update({
+                                                    attendanceDates: student.attendanceDates,
+                                                    attendanceCount: student.attendanceCount,
+                                                    lastAttended: date
+                                                });
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        showToast(`✅ Updated attendance for ${timeSlot} on ${date}`, 'success');
+                    } else {
+                        showToast('Operation cancelled', 'info');
                         if (btn) {
                             btn.disabled = false;
                             btn.innerHTML = originalBtnText;
                         }
-                        return; 
+                        return;
                     }
-        
-                    // 更新课堂记录
-                    await recordRef.update({
-                        studentIds: firebase.firestore.FieldValue.arrayUnion(...studentsToUpdateStats)
-                    });
-        
                 } else {
-                    // === 新建模式 ===
-                    studentsToUpdateStats = selectedStudentIds;
-                    
-                    await recordRef.set({
-                        date: date,
+                    // Create new record - 使用与系统相同的结构
+                    const record = {
+                        id: recordId,
                         timeSlot: timeSlot,
-                        studentIds: selectedStudentIds,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                        date: date,
+                        topic: topic,
+                        presentStudents: selectedStudentIds,
+                        recordedAt: new Date().toISOString()
+                    };
+                    
+                    if (system.isOnline) {
+                        await db.collection('users').doc(system.userId).collection('attendance')
+                            .doc(recordId).set(record);
+                    } else {
+                        system.attendanceRecords.push(record);
+                    }
+                    
+                    // Update student attendance counts
+                    for (const studentId of selectedStudentIds) {
+                        const student = system.students.get(studentId);
+                        if (student && student.enrolledDate <= date) {
+                            if (!student.attendanceDates) student.attendanceDates = [];
+                            if (!student.attendanceDates.includes(date)) {
+                                student.attendanceDates.push(date);
+                                student.attendanceCount = student.attendanceDates.length;
+                                
+                                if (system.isOnline) {
+                                    await db.collection('users').doc(system.userId).collection('students')
+                                        .doc(studentId).update({
+                                            attendanceDates: student.attendanceDates,
+                                            attendanceCount: student.attendanceCount,
+                                            lastAttended: date
+                                        });
+                                }
+                            }
+                        }
+                    }
+                    
+                    showToast(`✅ Attendance recorded for ${selectedStudentIds.length} student(s)`, 'success');
                 }
         
-                // 2. 更新个人统计 (+1)
-                const batch = db.batch();
-                for (const studentId of studentsToUpdateStats) {
-                    const studentRef = db.collection('users').doc(system.userId).collection('students').doc(studentId);
-                    batch.update(studentRef, {
-                        attendanceDates: firebase.firestore.FieldValue.arrayUnion(date),
-                        attendanceCount: firebase.firestore.FieldValue.increment(1), 
-                        lastAttended: date
-                    });
-                }
-                
-                if (studentsToUpdateStats.length > 0) {
-                    await batch.commit();
-                    showToast(`✅ 成功添加 ${studentsToUpdateStats.length} 位新学生！`, 'success');
-                }
+                // Refresh interface
+                updateClassAttendanceRecords();
+                updateStudentAttendanceSummary();
+                updateUI();
         
-                // 3. 刷新界面
-                // 自动查找可用的刷新函数
-                if (typeof updateClassAttendanceRecords === 'function') {
-                    updateClassAttendanceRecords();
-                } else if (typeof updateAttendanceRecords === 'function') {
-                    updateAttendanceRecords();
-                }
-                
-                if (typeof updateStats === 'function') updateStats();
-                if (typeof updateDashboard === 'function') updateDashboard();
-        
-                // 4. 清空勾选 (可选)
-                // selectedCheckboxes.forEach(cb => cb.checked = false);
+                // Clear checkboxes
+                selectedCheckboxes.forEach(cb => cb.checked = false);
+                document.getElementById('sessionTopic').value = '';
         
             } catch (error) {
                 console.error("Error:", error);
-                alert('Error: ' + error.message);
+                showToast('Error: ' + error.message, 'error');
             } finally {
                 if (btn) {
                     btn.disabled = false;
@@ -3386,7 +3496,7 @@
             const container = document.getElementById('timeSlotsContainer');
             container.innerHTML = '';
             
-            // 系统已经排序了时间槽，直接使用
+            // System has already sorted time slots, use directly
             for (const timeSlot of system.timeSlots) {
                 const students = system.getStudentsByTimeSlot(timeSlot.name);
                 
@@ -3417,7 +3527,7 @@
                         const studentCard = document.createElement('div');
                         studentCard.className = 'student-card';
                         
-                        // 使用新的日期格式化函数
+                        // Use new date formatting function
                         const enrolledDate = system.formatDate(student.enrolledDate);
                         
                         studentCard.innerHTML = `
@@ -3505,9 +3615,9 @@
             URL.revokeObjectURL(url);
         }
 
-        // Toast通知函数
+        // Toast notification function
         function showToast(message, type = 'success') {
-            // 移除现有的toast
+            // Remove existing toasts
             const existingToasts = document.querySelectorAll('.toast');
             existingToasts.forEach(toast => toast.remove());
             
@@ -3529,7 +3639,7 @@
             
             document.body.appendChild(toast);
             
-            // 3秒后自动移除
+            // Automatically remove after 3 seconds
             setTimeout(() => {
                 if (toast.parentElement) {
                     toast.remove();
@@ -3634,7 +3744,7 @@
             document.getElementById('studentEnrolledDate').valueAsDate = new Date();
             updateSyncStatus('🔵 Ready to connect', 'syncing');
             
-            // 添加搜索功能
+            // Add search functionality
             const searchInput = document.getElementById('searchStudents');
             if (searchInput) {
                 searchInput.addEventListener('input', function(e) {

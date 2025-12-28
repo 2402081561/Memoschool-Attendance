@@ -871,6 +871,92 @@
             border-left: 4px solid var(--info);
         }
         
+        /* Improved Attendance Dates Display */
+        .attendance-dates-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+        
+        .attendance-date-item {
+            background: #f0f9ff;
+            border: 1px solid #cfe2ff;
+            border-radius: 6px;
+            padding: 8px 4px;
+            text-align: center;
+            font-size: 12px;
+            color: #0d6efd;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .attendance-date-item:hover {
+            background: #e7f5ff;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .attendance-date-item.duplicate {
+            background: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+        }
+        
+        .attendance-date-item.duplicate:hover {
+            background: #ffe8a1;
+        }
+        
+        .date-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .duplicate-warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .duplicate-warning strong {
+            color: #d39e00;
+        }
+        
+        /* Tools Section */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .tool-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--info);
+        }
+        
+        .tool-card h3 {
+            color: var(--dark);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .tool-card p {
+            color: var(--gray);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
         @media (max-width: 768px) {
             .nav {
                 flex-direction: column;
@@ -916,6 +1002,18 @@
                 margin-top: 10px;
                 width: 100%;
                 justify-content: flex-end;
+            }
+            .attendance-dates-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .attendance-dates-grid {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
     </style>
@@ -968,8 +1066,8 @@
                 <button onclick="showSection('records')">📈 Records</button>
                 <button onclick="showSection('timeslots')">⏰ Time Slots</button>
                 <button onclick="showSection('timeSlotsManagement')">➕ Manage Time Slots</button>
+                <button onclick="showSection('tools')">🛠️ Tools</button>
                 <button onclick="showSection('exports')">📤 Export</button>
-                <button onclick="showSection('stats')">📊 Statistics</button>
             </div>
             
             <div class="content">
@@ -1033,10 +1131,10 @@
                             <button class="btn" onclick="showSection('timeslots')">View Time Slots</button>
                         </div>
                         <div class="feature-card">
-                            <div class="icon">➕</div>
-                            <h3>Manage Time Slots</h3>
-                            <p>Add, edit or remove time slots to match your class schedule.</p>
-                            <button class="btn" onclick="showSection('timeSlotsManagement')">Manage Time Slots</button>
+                            <div class="icon">🛠️</div>
+                            <h3>System Tools</h3>
+                            <p>Fix data issues, clean duplicates, and optimize system performance.</p>
+                            <button class="btn" onclick="showSection('tools')">Open Tools</button>
                         </div>
                     </div>
                 </div>
@@ -1220,7 +1318,7 @@
                     <!-- Student Attendance Summary -->
                     <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
                         <h3 style="margin-bottom: 20px; color: var(--dark);">👥 Student Attendance Summary</h3>
-                        <p style="margin-bottom: 15px; color: var(--grey);">View attendance summary for each student. Click on "View Dates" to see all attended dates.</p>
+                        <p style="margin-bottom: 15px; color: var(--grey);">View attendance summary for each student. Click on "View Details" to see all attended dates.</p>
                         
                         <div class="form-group">
                             <label class="form-label">Filter by Time Slot</label>
@@ -1287,6 +1385,50 @@
                     </div>
                 </div>
 
+                <!-- Tools Section -->
+                <div id="tools" class="section">
+                    <h2>🛠️ System Tools</h2>
+                    <p>Use these tools to fix data issues and optimize system performance.</p>
+                    
+                    <div class="tools-grid">
+                        <div class="tool-card">
+                            <h3>🔧 Fix Duplicate Attendance</h3>
+                            <p>Scan and remove duplicate attendance dates for all students. This will clean up data and fix attendance count calculations.</p>
+                            <button class="btn btn-warning" onclick="fixDuplicateAttendance()">
+                                Scan & Fix Duplicates
+                            </button>
+                            <p style="margin-top: 10px; font-size: 0.9em; color: var(--gray);">
+                                Last checked: <span id="lastDuplicateCheck">Never</span>
+                            </p>
+                        </div>
+                        
+                        <div class="tool-card">
+                            <h3>📊 Recalculate All Attendance</h3>
+                            <p>Recalculate attendance counts based on actual attendance records. Useful if attendance numbers seem incorrect.</p>
+                            <button class="btn" onclick="recalculateAllAttendance()">
+                                Recalculate Attendance
+                            </button>
+                        </div>
+                        
+                        <div class="tool-card">
+                            <h3>🧹 Clean Orphaned Data</h3>
+                            <p>Remove attendance records that have no corresponding students. This helps keep the database clean.</p>
+                            <button class="btn btn-secondary" onclick="cleanOrphanedData()">
+                                Clean Data
+                            </button>
+                        </div>
+                        
+                        <div class="tool-card">
+                            <h3>📈 System Health Check</h3>
+                            <p>Run a comprehensive check of system data integrity and performance.</p>
+                            <button class="btn btn-info" onclick="runSystemHealthCheck()">
+                                Run Health Check
+                            </button>
+                            <div id="healthCheckResult" style="margin-top: 10px;"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Data Export -->
                 <div id="exports" class="section">
                     <h2>📤 Data Export</h2>
@@ -1299,32 +1441,6 @@
                         <div id="exportResult" style="margin-top: 20px;"></div>
                     </div>
                 </div>
-
-                <!-- Statistics -->
-                <div id="stats" class="section">
-                    <h2>📈 Statistics</h2>
-                    <div class="stats-grid" id="statsGrid"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- View Attendance Dates Modal -->
-    <div id="viewAttendanceModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
-        <div style="background-color: white; padding: 30px; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 style="margin: 0; font-size: 1.5em; color: var(--dark);">Attendance Dates for <span id="modalStudentName" style="color: var(--primary);"></span></h3>
-                <button class="btn" onclick="closeAttendanceModal()" style="padding: 8px 16px; background: var(--gray);">×</button>
-            </div>
-            <div style="margin-bottom: 20px;">
-                <p><strong>Time Slot:</strong> <span id="modalStudentTimeSlot"></span></p>
-                <p><strong>Enrolled Date:</strong> <span id="modalStudentEnrolledDate"></span></p>
-                <p><strong>Sessions Attended:</strong> <span id="modalStudentAttendanceCount"></span> of <span id="modalStudentTotalSessions"></span></p>
-                <p><strong>Attendance Rate:</strong> <span id="modalStudentAttendanceRate"></span></p>
-            </div>
-            <div id="attendanceDatesContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 20px;"></div>
-            <div style="margin-top: 30px; text-align: center;">
-                <button class="btn btn-secondary" onclick="closeAttendanceModal()">Close</button>
             </div>
         </div>
     </div>
@@ -1355,12 +1471,23 @@
                 </div>
             </div>
             
-            <h3 style="color: var(--dark); margin-bottom: 15px;">📅 All Attendance Dates</h3>
-            <div id="detailAttendanceDates" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-bottom: 25px;"></div>
+            <div class="date-header">
+                <h3 style="color: var(--dark); margin: 0;">📅 All Attendance Dates</h3>
+                <span id="detailTotalDates" style="color: var(--gray); font-size: 0.9em;"></span>
+            </div>
             
-            <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div id="duplicateWarning" class="duplicate-warning" style="display: none;">
+                ⚠️ <strong>Found duplicate dates!</strong> Some dates appear multiple times.
+            </div>
+            
+            <div id="detailAttendanceDates" class="attendance-dates-grid">
+                <!-- 日期将动态插入 -->
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 25px;">
                 <button class="btn btn-info" onclick="editCurrentStudent()">✏️ Edit Student</button>
                 <button class="btn" onclick="openDateSelectionForSingleStudent()" style="background: var(--success);">📅 Add Attendance Dates</button>
+                <button class="btn btn-warning" onclick="fixStudentDuplicates()" style="background: var(--warning);">🔄 Fix Duplicate Dates</button>
                 <button class="btn btn-secondary" onclick="closeStudentDetails()">Close</button>
             </div>
         </div>
@@ -1435,7 +1562,7 @@
         let dateSelectionStudentId = '';
         let dateSelectionStudentIds = [];
 
-        // Fixed system class - added time slot sorting function and date formatting
+        // Fixed system class with improved attendance calculation
         class MemoschoolAttendanceSystem {
             constructor() {
                 this.students = new Map();
@@ -1737,7 +1864,7 @@
                     recordedAt: new Date().toISOString()
                 };
                 
-                // Update student attendance data - fixed logic
+                // Update student attendance data with duplicate prevention
                 for (const studentId of presentStudentIds) {
                     const student = this.students.get(studentId);
                     if (student && date >= student.enrolledDate) {
@@ -1752,15 +1879,19 @@
                                 student.attendanceDates = [];
                             }
                             
-                            // Safely update attendance data
-                            student.attendanceCount = (student.attendanceCount || 0) + 1;
+                            // Add date and remove duplicates
                             student.attendanceDates.push(date);
+                            
+                            // Remove duplicates
+                            const uniqueDates = [...new Set(student.attendanceDates)];
+                            student.attendanceDates = uniqueDates;
+                            student.attendanceCount = uniqueDates.length;
                             
                             if (this.isOnline) {
                                 await db.collection('users').doc(this.userId).collection('students')
                                     .doc(studentId).update({
-                                        attendanceCount: student.attendanceCount,
-                                        attendanceDates: student.attendanceDates
+                                        attendanceDates: uniqueDates,
+                                        attendanceCount: uniqueDates.length
                                     });
                             }
                         }
@@ -1785,11 +1916,30 @@
                 // Ensure attendance data exists
                 const attendanceDates = student.attendanceDates || [];
                 
-                // Only count attendance after enrollment date (deduplicated)
-                const validAttendanceDates = attendanceDates.filter(date => 
+                // Remove duplicates if any
+                const uniqueDates = [...new Set(attendanceDates)];
+                
+                // Only count attendance after enrollment date
+                const validAttendanceDates = uniqueDates.filter(date => 
                     date >= student.enrolledDate
                 );
-                const validAttendanceCount = [...new Set(validAttendanceDates)].length; // Deduplicate
+                
+                // Update student data if duplicates were found
+                if (uniqueDates.length !== attendanceDates.length) {
+                    student.attendanceDates = uniqueDates;
+                    student.attendanceCount = uniqueDates.length;
+                    
+                    // Async update to database
+                    if (this.isOnline) {
+                        db.collection('users').doc(this.userId).collection('students')
+                            .doc(studentId).update({
+                                attendanceDates: uniqueDates,
+                                attendanceCount: uniqueDates.length
+                            }).catch(console.error);
+                    }
+                }
+                
+                const validAttendanceCount = validAttendanceDates.length;
                 
                 // Use student's custom total sessions, default to 48
                 const totalSessions = student.totalSessions || 48;
@@ -1937,6 +2087,87 @@
             getTimeSlotNameById(timeSlotId) {
                 const timeSlot = this.timeSlots.find(slot => slot.id === timeSlotId);
                 return timeSlot ? timeSlot.name : '';
+            }
+            
+            // Fix duplicate attendance dates for all students
+            async fixDuplicateAttendance() {
+                let fixedCount = 0;
+                
+                for (const [studentId, student] of this.students.entries()) {
+                    if (!student.attendanceDates || student.attendanceDates.length === 0) {
+                        continue;
+                    }
+                    
+                    // Remove duplicates
+                    const uniqueDates = [...new Set(student.attendanceDates)];
+                    
+                    // If duplicates were found
+                    if (uniqueDates.length !== student.attendanceDates.length) {
+                        // Update student data
+                        student.attendanceDates = uniqueDates;
+                        student.attendanceCount = uniqueDates.length;
+                        
+                        // Update database
+                        if (this.isOnline) {
+                            try {
+                                await db.collection('users').doc(this.userId).collection('students')
+                                    .doc(studentId).update({
+                                        attendanceDates: uniqueDates,
+                                        attendanceCount: uniqueDates.length
+                                    });
+                                fixedCount++;
+                            } catch (error) {
+                                console.error(`Error fixing student ${student.name}:`, error);
+                            }
+                        }
+                    }
+                }
+                
+                return fixedCount;
+            }
+            
+            // Recalculate attendance based on actual records
+            async recalculateAllAttendance() {
+                let recalculatedCount = 0;
+                
+                // Create a map of attendance by student
+                const attendanceByStudent = new Map();
+                
+                // Group attendance by student
+                for (const record of this.attendanceRecords) {
+                    for (const studentId of record.presentStudents) {
+                        if (!attendanceByStudent.has(studentId)) {
+                            attendanceByStudent.set(studentId, new Set());
+                        }
+                        attendanceByStudent.get(studentId).add(record.date);
+                    }
+                }
+                
+                // Update each student
+                for (const [studentId, student] of this.students.entries()) {
+                    const attendedDates = attendanceByStudent.get(studentId) || new Set();
+                    const uniqueDates = [...attendedDates];
+                    
+                    // Update student data
+                    student.attendanceDates = uniqueDates;
+                    student.attendanceCount = uniqueDates.length;
+                    
+                    // Update database
+                    if (this.isOnline) {
+                        try {
+                            await db.collection('users').doc(this.userId).collection('students')
+                                .doc(studentId).update({
+                                    attendanceDates: uniqueDates,
+                                    attendanceCount: uniqueDates.length
+                                });
+                            recalculatedCount++;
+                        } catch (error) {
+                            console.error(`Error recalculating student ${student.name}:`, error);
+                        }
+                    }
+                }
+                
+                return recalculatedCount;
             }
         }
 
@@ -2108,7 +2339,7 @@
             dateSelectionStudentIds = [];
         }
         
-                // 保存选择的日期
+        // Save selected dates
         async function saveSelectedDates() {
             if (selectedDates.size === 0) {
                 showToast('Please select at least one date', 'error');
@@ -2129,7 +2360,7 @@
                 closeDateSelectionModal();
                 showToast(result, 'success');
                 
-                // 刷新界面
+                // Refresh interface
                 updateUI();
                 
             } catch (error) {
@@ -2138,7 +2369,7 @@
             }
         }
         
-                // 为单个学生保存日期
+        // Save dates for single student
         async function saveDatesForSingleStudent() {
             const student = system.students.get(dateSelectionStudentId);
             if (!student) {
@@ -2148,20 +2379,20 @@
             const timeSlot = student.timeSlot;
             let processedCount = 0;
             
-            // 为每个选中的日期创建考勤记录
+            // Create attendance records for each selected date
             for (const dateStr of selectedDates) {
-                // 检查是否在入学日期之后
+                // Check if after enrollment date
                 if (dateStr < student.enrolledDate) {
-                    console.log(`跳过日期 ${dateStr}，在入学日期 ${student.enrolledDate} 之前`);
+                    console.log(`Skip date ${dateStr}, before enrollment date ${student.enrolledDate}`);
                     continue;
                 }
                 
-                // 检查学生是否已经有这个日期的考勤
+                // Check if student already has attendance for this date
                 const alreadyAttended = student.attendanceDates && 
                                       student.attendanceDates.includes(dateStr);
                 
                 if (!alreadyAttended) {
-                    // 创建考勤记录
+                    // Create attendance record
                     const recordId = `${timeSlot.replace(/\s+/g, '-')}-${dateStr}`.replace(/[^a-zA-Z0-9\-]/g, '');
                     const recordRef = db.collection('users').doc(system.userId).collection('attendance').doc(recordId);
                     
@@ -2169,12 +2400,12 @@
                         const doc = await recordRef.get();
                         
                         if (doc.exists) {
-                            // 如果记录已存在，添加学生到presentStudents数组
+                            // If record exists, add student to presentStudents array
                             await recordRef.update({
                                 presentStudents: firebase.firestore.FieldValue.arrayUnion(dateSelectionStudentId)
                             });
                         } else {
-                            // 创建新记录
+                            // Create new record
                             await recordRef.set({
                                 id: recordId,
                                 timeSlot: timeSlot,
@@ -2185,16 +2416,20 @@
                             });
                         }
                         
-                        // 更新学生考勤数据
+                        // Update student attendance data
                         if (!student.attendanceDates) student.attendanceDates = [];
                         student.attendanceDates.push(dateStr);
-                        student.attendanceCount = student.attendanceDates.length;
+                        
+                        // Remove duplicates
+                        const uniqueDates = [...new Set(student.attendanceDates)];
+                        student.attendanceDates = uniqueDates;
+                        student.attendanceCount = uniqueDates.length;
                         
                         if (system.isOnline) {
                             await db.collection('users').doc(system.userId).collection('students')
                                 .doc(dateSelectionStudentId).update({
-                                    attendanceDates: student.attendanceDates,
-                                    attendanceCount: student.attendanceCount,
+                                    attendanceDates: uniqueDates,
+                                    attendanceCount: uniqueDates.length,
                                     lastAttended: dateStr
                                 });
                         }
@@ -2210,29 +2445,29 @@
             return processedCount;
         }
         
-        // 为批量学生保存日期
+        // Save dates for batch students
         async function saveDatesForBatchStudents() {
             const batch = db.batch();
             const studentUpdates = [];
-            const attendanceRecords = new Map(); // 按日期和时间槽分组记录
+            const attendanceRecords = new Map(); // Group records by date and time slot
             
-            // 准备学生更新
+            // Prepare student updates
             for (const studentId of dateSelectionStudentIds) {
                 const student = system.students.get(studentId);
                 if (!student) continue;
                 
                 for (const dateStr of selectedDates) {
-                    // 检查是否在入学日期之后
+                    // Check if after enrollment date
                     if (dateStr < student.enrolledDate) {
                         continue;
                     }
                     
-                    // 检查学生是否已经有这个日期的考勤
+                    // Check if student already has attendance for this date
                     const alreadyAttended = student.attendanceDates && 
                                           student.attendanceDates.includes(dateStr);
                     
                     if (!alreadyAttended) {
-                        // 记录需要添加的考勤日期
+                        // Record attendance to be added
                         const key = `${student.timeSlot}-${dateStr}`;
                         if (!attendanceRecords.has(key)) {
                             attendanceRecords.set(key, {
@@ -2243,7 +2478,7 @@
                         }
                         attendanceRecords.get(key).studentIds.push(studentId);
                         
-                        // 记录学生更新
+                        // Record student updates
                         studentUpdates.push({
                             studentId: studentId,
                             date: dateStr
@@ -2252,21 +2487,21 @@
                 }
             }
             
-            // 创建/更新考勤记录
+            // Create/update attendance records
             for (const [key, recordData] of attendanceRecords) {
                 const recordId = `${recordData.timeSlot.replace(/\s+/g, '-')}-${recordData.date}`.replace(/[^a-zA-Z0-9\-]/g, '');
                 const recordRef = db.collection('users').doc(system.userId).collection('attendance').doc(recordId);
                 
-                // 检查记录是否存在
+                // Check if record exists
                 const doc = await recordRef.get();
                 
                 if (doc.exists) {
-                    // 更新现有记录
+                    // Update existing record
                     batch.update(recordRef, {
                         presentStudents: firebase.firestore.FieldValue.arrayUnion(...recordData.studentIds)
                     });
                 } else {
-                    // 创建新记录
+                    // Create new record
                     batch.set(recordRef, {
                         id: recordId,
                         timeSlot: recordData.timeSlot,
@@ -2278,13 +2513,13 @@
                 }
             }
             
-            // 更新学生数据
+            // Update student data
             for (const update of studentUpdates) {
                 const student = system.students.get(update.studentId);
                 if (student) {
                     const studentRef = db.collection('users').doc(system.userId).collection('students').doc(update.studentId);
                     
-                    // 获取当前数据以计算新数组
+                    // Get current data to calculate new array
                     const studentDoc = await studentRef.get();
                     const currentData = studentDoc.data();
                     const currentDates = currentData.attendanceDates || [];
@@ -2299,7 +2534,7 @@
                 }
             }
             
-            // 提交所有更改
+            // Commit all changes
             await batch.commit();
             
             return {
@@ -2307,34 +2542,6 @@
                 processedStudents: dateSelectionStudentIds.length,
                 attendanceRecordsCreated: attendanceRecords.size
             };
-        }
-            
-            // Create attendance record for each selected date
-            for (const dateStr of selectedDates) {
-                await createAttendanceRecordForBatch(dateStr, dateSelectionStudentIds);
-            }
-        }
-        
-        // Create attendance record for batch students
-        async function createAttendanceRecordForBatch(dateStr, studentIds) {
-            // Group students by time slot
-            const studentsByTimeSlot = {};
-            
-            for (const studentId of studentIds) {
-                const student = system.students.get(studentId);
-                if (!student) continue;
-                
-                const timeSlot = student.timeSlot;
-                if (!studentsByTimeSlot[timeSlot]) {
-                    studentsByTimeSlot[timeSlot] = [];
-                }
-                studentsByTimeSlot[timeSlot].push(studentId);
-            }
-            
-            // Create attendance record for each time slot
-            for (const [timeSlot, slotStudentIds] of Object.entries(studentsByTimeSlot)) {
-                await createAttendanceRecordIfNeeded(timeSlot, dateStr, slotStudentIds);
-            }
         }
         
         // ==================== Student Details Functionality ====================
@@ -2362,6 +2569,7 @@
             
             document.getElementById('detailAttendanceCount').textContent = attendanceInfo.attendanceCount;
             document.getElementById('detailAttendanceRate').textContent = attendanceInfo.attendanceRate;
+            document.getElementById('detailTotalDates').textContent = `${attendanceInfo.attendanceCount} dates`;
             
             // Get last attended date
             const lastAttended = student.attendanceDates && student.attendanceDates.length > 0 
@@ -2371,22 +2579,57 @@
             
             // Fill attendance dates
             const datesContainer = document.getElementById('detailAttendanceDates');
+            const warningContainer = document.getElementById('duplicateWarning');
             datesContainer.innerHTML = '';
             
             const attendanceDates = student.attendanceDates || [];
             
             if (attendanceDates.length === 0) {
-                datesContainer.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--gray);">No attendance records found</p>';
+                datesContainer.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--gray); padding: 20px;">No attendance records found</p>';
+                warningContainer.style.display = 'none';
             } else {
-                // Sort by date (newest first)
+                // Sort (newest first)
                 const sortedDates = [...attendanceDates].sort((a, b) => new Date(b) - new Date(a));
                 
+                // Check for duplicate dates
+                const dateCounts = {};
+                sortedDates.forEach(date => {
+                    dateCounts[date] = (dateCounts[date] || 0) + 1;
+                });
+                
+                const hasDuplicates = Object.values(dateCounts).some(count => count > 1);
+                
+                // Show duplicate warning
+                if (hasDuplicates) {
+                    warningContainer.style.display = 'block';
+                    const duplicateCount = Object.values(dateCounts).filter(count => count > 1).length;
+                    warningContainer.innerHTML = `⚠️ <strong>Found ${duplicateCount} duplicate date(s)!</strong> Click "Fix Duplicate Dates" to clean up.`;
+                } else {
+                    warningContainer.style.display = 'none';
+                }
+                
+                // Generate date cards
                 sortedDates.forEach(date => {
                     const dateElement = document.createElement('div');
-                    dateElement.className = 'attendance-dot present';
-                    dateElement.textContent = system.formatDate(date);
-                    dateElement.title = `Attended on ${system.formatDate(date)}`;
-                    dateElement.style.cursor = 'default';
+                    dateElement.className = 'attendance-date-item';
+                    
+                    // Add special style for duplicate dates
+                    if (dateCounts[date] > 1) {
+                        dateElement.classList.add('duplicate');
+                    }
+                    
+                    const formattedDate = system.formatDate(date);
+                    dateElement.textContent = formattedDate;
+                    dateElement.title = `Attended on ${formattedDate}${dateCounts[date] > 1 ? ` (${dateCounts[date]} times)` : ''}`;
+                    
+                    // Add click event to view details
+                    dateElement.style.cursor = 'pointer';
+                    dateElement.addEventListener('click', function() {
+                        if (confirm(`Remove attendance for ${formattedDate}?`)) {
+                            deleteAttendanceRecord(studentId, date);
+                        }
+                    });
+                    
                     datesContainer.appendChild(dateElement);
                 });
             }
@@ -2406,6 +2649,86 @@
             if (currentSelectedStudentId) {
                 editStudent(currentSelectedStudentId);
                 closeStudentDetails();
+            }
+        }
+        
+        // Fix duplicate dates for single student
+        async function fixStudentDuplicates() {
+            if (!currentSelectedStudentId) {
+                showToast('Please select a student first', 'error');
+                return;
+            }
+            
+            const student = system.students.get(currentSelectedStudentId);
+            if (!student) {
+                showToast('Student not found', 'error');
+                return;
+            }
+            
+            if (!confirm('Remove duplicate attendance dates for this student?')) {
+                return;
+            }
+            
+            try {
+                const attendanceDates = student.attendanceDates || [];
+                const uniqueDates = [...new Set(attendanceDates)].sort();
+                
+                // Update student data
+                student.attendanceDates = uniqueDates;
+                student.attendanceCount = uniqueDates.length;
+                
+                if (system.isOnline) {
+                    await db.collection('users').doc(system.userId).collection('students')
+                        .doc(currentSelectedStudentId).update({
+                            attendanceDates: uniqueDates,
+                            attendanceCount: uniqueDates.length
+                        });
+                }
+                
+                // Refresh display
+                viewStudentDetails(currentSelectedStudentId);
+                updateUI();
+                
+                showToast(`Removed ${attendanceDates.length - uniqueDates.length} duplicate dates`, 'success');
+                
+            } catch (error) {
+                console.error('Error fixing duplicates:', error);
+                showToast('Error fixing duplicates: ' + error.message, 'error');
+            }
+        }
+        
+        // Delete attendance record
+        async function deleteAttendanceRecord(studentId, date) {
+            try {
+                const student = system.students.get(studentId);
+                if (!student) {
+                    throw new Error('Student not found');
+                }
+                
+                // Remove date from student's attendanceDates array
+                if (student.attendanceDates && student.attendanceDates.includes(date)) {
+                    student.attendanceDates = student.attendanceDates.filter(d => d !== date);
+                    student.attendanceCount = student.attendanceDates.length;
+                    
+                    // Update in Firestore
+                    if (system.isOnline) {
+                        await db.collection('users').doc(system.userId).collection('students')
+                            .doc(studentId).update({
+                                attendanceDates: student.attendanceDates,
+                                attendanceCount: student.attendanceCount
+                            });
+                    }
+                    
+                    // Refresh UI
+                    viewStudentDetails(studentId);
+                    updateUI();
+                    
+                    showToast(`Attendance record for ${system.formatDate(date)} deleted successfully`, 'success');
+                } else {
+                    throw new Error('Attendance record not found');
+                }
+            } catch (error) {
+                showToast('Error deleting attendance record: ' + error.message, 'error');
             }
         }
         
@@ -2438,9 +2761,8 @@
             showToast('Deselected all', 'info');
         }
         
-        // ==================== Other Functions ====================
+        // ==================== Firebase Authentication Functions ====================
         
-        // Firebase Authentication Functions
         async function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -2627,7 +2949,6 @@
             updateStudentsCheckboxes();
             updateClassAttendanceRecords();
             updateStudentAttendanceSummary();
-            updateStats();
             updateTimeSlots();
             updateFilterStudent();
             updateTimeSlotsList();
@@ -2741,6 +3062,7 @@
             }
         }
 
+        // Add student
         async function addStudent() {
             const name = document.getElementById('studentName').value.trim();
             const age = document.getElementById('studentAge').value;
@@ -2846,6 +3168,7 @@
             showToast('Edit cancelled', 'info');
         }
 
+        // Delete student
         async function deleteStudent(studentId) {
             if (confirm('Are you sure you want to delete this student?')) {
                 try {
@@ -2863,6 +3186,7 @@
             }
         }
 
+        // Update time slot tabs
         function updateTimeSlotTabs() {
             const tabsContainer = document.getElementById('timeSlotTabs');
             const contentsContainer = document.getElementById('timeSlotContents');
@@ -3027,6 +3351,7 @@
             return grid;
         }
 
+        // Update student checkboxes for attendance recording
         function updateStudentsCheckboxes() {
             const timeSlot = document.getElementById('timeSlotSelect').value;
             const container = document.getElementById('studentsCheckboxes');
@@ -3055,10 +3380,9 @@
             }
         }
 
+        // Update student filter dropdown
         function updateFilterStudent() {
-            // Update student attendance summary filter dropdown
             const studentFilterSelect = document.getElementById('studentFilterStudent');
-            // Keep the "All Students" option
             const allOption = studentFilterSelect.querySelector('option[value="all"]');
             studentFilterSelect.innerHTML = '';
             studentFilterSelect.appendChild(allOption);
@@ -3332,10 +3656,11 @@
             }
         }
 
-                async function recordAttendance() {
+        // Record attendance
+        async function recordAttendance() {
             console.log("🚀 Starting attendance recording..."); 
         
-            // 1. Get input fields
+            // Get input fields
             const dateInput = document.getElementById('classDate');
             const timeSlotInput = document.getElementById('timeSlotSelect'); 
             const topicInput = document.getElementById('sessionTopic');
@@ -3350,11 +3675,11 @@
             const timeSlot = timeSlotInput.value;
             const topic = topicInput.value || '';
             
-            // 2. Get checked students
+            // Get checked students
             const selectedCheckboxes = document.querySelectorAll('#studentsCheckboxes input:checked');
             const selectedStudentIds = Array.from(selectedCheckboxes).map(cb => cb.value);
         
-            // 3. Basic validation
+            // Basic validation
             if (!date || !timeSlot) {
                 showToast('Please select date and time slot', 'error');
                 return;
@@ -3365,7 +3690,7 @@
                 return;
             }
         
-            // 4. Lock button
+            // Lock button
             const btn = document.querySelector('button[onclick*="recordAttendance"]');
             const originalBtnText = btn ? btn.innerHTML : 'Record Attendance';
             if (btn) {
@@ -3374,7 +3699,7 @@
             }
         
             try {
-                // Create record ID - 使用与系统相同的ID格式
+                // Create record ID
                 const recordId = `${timeSlot.replace(/\s+/g, '-')}-${date}`.replace(/[^a-zA-Z0-9\-]/g, '');
                 
                 // Check if record already exists in system
@@ -3406,13 +3731,17 @@
                                     if (!student.attendanceDates) student.attendanceDates = [];
                                     if (!student.attendanceDates.includes(date)) {
                                         student.attendanceDates.push(date);
-                                        student.attendanceCount = student.attendanceDates.length;
+                                        
+                                        // Remove duplicates
+                                        const uniqueDates = [...new Set(student.attendanceDates)];
+                                        student.attendanceDates = uniqueDates;
+                                        student.attendanceCount = uniqueDates.length;
                                         
                                         if (system.isOnline) {
                                             await db.collection('users').doc(system.userId).collection('students')
                                                 .doc(studentId).update({
-                                                    attendanceDates: student.attendanceDates,
-                                                    attendanceCount: student.attendanceCount,
+                                                    attendanceDates: uniqueDates,
+                                                    attendanceCount: uniqueDates.length,
                                                     lastAttended: date
                                                 });
                                         }
@@ -3431,7 +3760,7 @@
                         return;
                     }
                 } else {
-                    // Create new record - 使用与系统相同的结构
+                    // Create new record
                     const record = {
                         id: recordId,
                         timeSlot: timeSlot,
@@ -3455,13 +3784,17 @@
                             if (!student.attendanceDates) student.attendanceDates = [];
                             if (!student.attendanceDates.includes(date)) {
                                 student.attendanceDates.push(date);
-                                student.attendanceCount = student.attendanceDates.length;
+                                
+                                // Remove duplicates
+                                const uniqueDates = [...new Set(student.attendanceDates)];
+                                student.attendanceDates = uniqueDates;
+                                student.attendanceCount = uniqueDates.length;
                                 
                                 if (system.isOnline) {
                                     await db.collection('users').doc(system.userId).collection('students')
                                         .doc(studentId).update({
-                                            attendanceDates: student.attendanceDates,
-                                            attendanceCount: student.attendanceCount,
+                                            attendanceDates: uniqueDates,
+                                            attendanceCount: uniqueDates.length,
                                             lastAttended: date
                                         });
                                 }
@@ -3492,6 +3825,7 @@
             }
         }
         
+        // Update time slots display
         function updateTimeSlots() {
             const container = document.getElementById('timeSlotsContainer');
             container.innerHTML = '';
@@ -3547,34 +3881,7 @@
             }
         }
 
-        function updateStats() {
-            const statsGrid = document.getElementById('statsGrid');
-            const summary = system.getSummary();
-            
-            statsGrid.innerHTML = `
-                <div class="stat-card">
-                    <h3>Total Students</h3>
-                    <div class="number">${summary.totalStudents}</div>
-                    <div class="trend positive">Active tracking</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Total Sessions</h3>
-                    <div class="number">${summary.totalSessions}</div>
-                    <div class="trend positive">All recorded</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Average Attendance</h3>
-                    <div class="number">${summary.averageAttendanceRate}%</div>
-                    <div class="trend positive">Good performance</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Time Slots</h3>
-                    <div class="number">${summary.timeSlots}</div>
-                    <div class="trend">All active</div>
-                </div>
-            `;
-        }
-
+        // Update dashboard
         function updateDashboard() {
             const summary = system.getSummary();
             
@@ -3584,6 +3891,180 @@
             document.getElementById('timeSlotsCount').textContent = summary.timeSlots;
             document.getElementById('timeSlotsCountDashboard').textContent = summary.timeSlots;
             document.getElementById('recordedSessionsCount').textContent = summary.totalSessions;
+        }
+
+        // ==================== Tools Section Functions ====================
+        
+        // Fix duplicate attendance for all students
+        async function fixDuplicateAttendance() {
+            if (!confirm('This will scan all students and remove duplicate attendance dates. Continue?')) {
+                return;
+            }
+            
+            try {
+                updateSyncStatus('🔧 Scanning for duplicate attendance...', 'syncing');
+                
+                const fixedCount = await system.fixDuplicateAttendance();
+                
+                // Update last checked time
+                const now = new Date();
+                document.getElementById('lastDuplicateCheck').textContent = now.toLocaleString();
+                
+                updateSyncStatus('✅ System synchronized', 'synced');
+                showToast(`Fixed duplicate attendance for ${fixedCount} student(s)`, 'success');
+                
+                // Refresh UI
+                updateUI();
+                
+            } catch (error) {
+                console.error('Error fixing duplicates:', error);
+                showToast('Error fixing duplicates: ' + error.message, 'error');
+                updateSyncStatus('❌ Error fixing duplicates', 'error');
+            }
+        }
+        
+        // Recalculate all attendance
+        async function recalculateAllAttendance() {
+            if (!confirm('Recalculate attendance for all students based on actual records? This may take a moment.')) {
+                return;
+            }
+            
+            try {
+                updateSyncStatus('📊 Recalculating attendance...', 'syncing');
+                
+                const recalculatedCount = await system.recalculateAllAttendance();
+                
+                updateSyncStatus('✅ System synchronized', 'synced');
+                showToast(`Recalculated attendance for ${recalculatedCount} student(s)`, 'success');
+                
+                // Refresh UI
+                updateUI();
+                
+            } catch (error) {
+                console.error('Error recalculating attendance:', error);
+                showToast('Error recalculating attendance: ' + error.message, 'error');
+                updateSyncStatus('❌ Error recalculating attendance', 'error');
+            }
+        }
+        
+        // Clean orphaned data
+        async function cleanOrphanedData() {
+            if (!confirm('Clean orphaned attendance records (records with no corresponding students)?')) {
+                return;
+            }
+            
+            try {
+                updateSyncStatus('🧹 Cleaning orphaned data...', 'syncing');
+                
+                let cleanedCount = 0;
+                
+                // Find and remove attendance records with no corresponding students
+                for (let i = system.attendanceRecords.length - 1; i >= 0; i--) {
+                    const record = system.attendanceRecords[i];
+                    let hasValidStudents = false;
+                    
+                    for (const studentId of record.presentStudents) {
+                        if (system.students.has(studentId)) {
+                            hasValidStudents = true;
+                            break;
+                        }
+                    }
+                    
+                    // If no valid students, remove the record
+                    if (!hasValidStudents) {
+                        if (system.isOnline) {
+                            await db.collection('users').doc(system.userId).collection('attendance')
+                                .doc(record.id).delete();
+                        }
+                        
+                        system.attendanceRecords.splice(i, 1);
+                        cleanedCount++;
+                    }
+                }
+                
+                updateSyncStatus('✅ System synchronized', 'synced');
+                showToast(`Cleaned ${cleanedCount} orphaned attendance records`, 'success');
+                
+                // Refresh UI
+                updateUI();
+                
+            } catch (error) {
+                console.error('Error cleaning orphaned data:', error);
+                showToast('Error cleaning data: ' + error.message, 'error');
+                updateSyncStatus('❌ Error cleaning data', 'error');
+            }
+        }
+        
+        // Run system health check
+        async function runSystemHealthCheck() {
+            const resultElement = document.getElementById('healthCheckResult');
+            resultElement.innerHTML = '<div class="loading"></div> Running health check...';
+            
+            try {
+                let issues = [];
+                
+                // Check 1: Duplicate attendance dates
+                let duplicateCount = 0;
+                for (const student of system.students.values()) {
+                    if (student.attendanceDates) {
+                        const uniqueDates = [...new Set(student.attendanceDates)];
+                        if (uniqueDates.length !== student.attendanceDates.length) {
+                            duplicateCount++;
+                        }
+                    }
+                }
+                
+                if (duplicateCount > 0) {
+                    issues.push(`Found ${duplicateCount} student(s) with duplicate attendance dates`);
+                }
+                
+                // Check 2: Orphaned attendance records
+                let orphanedCount = 0;
+                for (const record of system.attendanceRecords) {
+                    let hasValidStudents = false;
+                    for (const studentId of record.presentStudents) {
+                        if (system.students.has(studentId)) {
+                            hasValidStudents = true;
+                            break;
+                        }
+                    }
+                    if (!hasValidStudents) {
+                        orphanedCount++;
+                    }
+                }
+                
+                if (orphanedCount > 0) {
+                    issues.push(`Found ${orphanedCount} orphaned attendance records`);
+                }
+                
+                // Check 3: Students without time slots
+                let noTimeSlotCount = 0;
+                for (const student of system.students.values()) {
+                    if (!student.timeSlot || student.timeSlot.trim() === '') {
+                        noTimeSlotCount++;
+                    }
+                }
+                
+                if (noTimeSlotCount > 0) {
+                    issues.push(`Found ${noTimeSlotCount} student(s) without time slot assignment`);
+                }
+                
+                // Display results
+                if (issues.length === 0) {
+                    resultElement.innerHTML = '<div style="color: var(--success);">✅ System health is good. No issues found.</div>';
+                } else {
+                    let html = '<div style="color: var(--warning);">⚠️ Found ' + issues.length + ' issue(s):</div><ul style="margin-top: 10px;">';
+                    issues.forEach(issue => {
+                        html += `<li style="margin-bottom: 5px;">${issue}</li>`;
+                    });
+                    html += '</ul>';
+                    resultElement.innerHTML = html;
+                }
+                
+            } catch (error) {
+                console.error('Error running health check:', error);
+                resultElement.innerHTML = '<div style="color: var(--danger);">❌ Error running health check: ' + error.message + '</div>';
+            }
         }
 
         // Export Functions
@@ -3603,6 +4084,7 @@
             window.print();
         }
 
+        // Download file utility
         function downloadFile(content, fileName, contentType) {
             const blob = new Blob([content], { type: contentType });
             const url = URL.createObjectURL(blob);
@@ -3647,97 +4129,6 @@
             }, 3000);
         }
 
-        // View Attendance Dates Functions
-        function viewAttendanceDates(studentId) {
-            const student = system.students.get(studentId);
-            if (!student) {
-                showToast('Student not found!', 'error');
-                return;
-            }
-            
-            // Get student attendance info
-            const attendanceInfo = system.getStudentAttendance(studentId);
-            
-            // Populate modal with student info
-            document.getElementById('modalStudentName').textContent = student.name;
-            document.getElementById('modalStudentTimeSlot').textContent = student.timeSlot;
-            document.getElementById('modalStudentEnrolledDate').textContent = system.formatDate(student.enrolledDate);
-            document.getElementById('modalStudentAttendanceCount').textContent = attendanceInfo.attendanceCount;
-            document.getElementById('modalStudentTotalSessions').textContent = attendanceInfo.totalSessions;
-            document.getElementById('modalStudentAttendanceRate').textContent = attendanceInfo.attendanceRate + '%';
-            
-            // Populate attendance dates
-            const datesContainer = document.getElementById('attendanceDatesContainer');
-            datesContainer.innerHTML = '';
-            
-            // Get attendance dates (sorted in descending order)
-            const attendanceDates = [...(student.attendanceDates || [])]
-                .filter(date => date >= student.enrolledDate)
-                .sort((a, b) => new Date(b) - new Date(a));
-            
-            if (attendanceDates.length === 0) {
-                datesContainer.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--gray);">No attendance records found</p>';
-            } else {
-                attendanceDates.forEach(date => {
-                    const dateCard = document.createElement('div');
-                    dateCard.className = 'attendance-dot present';
-                    dateCard.textContent = system.formatDate(date);
-                    dateCard.title = `Attended on ${system.formatDate(date)}`;
-                    
-                    // Add click event to delete attendance
-                    dateCard.style.cursor = 'pointer';
-                    dateCard.addEventListener('click', function() {
-                        if (confirm(`Are you sure you want to delete the attendance record for ${system.formatDate(date)}?`)) {
-                            deleteAttendanceRecord(studentId, date);
-                        }
-                    });
-                    
-                    datesContainer.appendChild(dateCard);
-                });
-            }
-            
-            // Show modal
-            document.getElementById('viewAttendanceModal').style.display = 'flex';
-        }
-        
-        function closeAttendanceModal() {
-            document.getElementById('viewAttendanceModal').style.display = 'none';
-        }
-        
-        async function deleteAttendanceRecord(studentId, date) {
-            try {
-                const student = system.students.get(studentId);
-                if (!student) {
-                    throw new Error('Student not found');
-                }
-                
-                // Remove date from student's attendanceDates array
-                if (student.attendanceDates && student.attendanceDates.includes(date)) {
-                    student.attendanceDates = student.attendanceDates.filter(d => d !== date);
-                    student.attendanceCount = student.attendanceDates.length;
-                    
-                    // Update in Firestore
-                    if (system.isOnline) {
-                        await db.collection('users').doc(system.userId).collection('students')
-                            .doc(studentId).update({
-                                attendanceDates: student.attendanceDates,
-                                attendanceCount: student.attendanceCount
-                            });
-                    }
-                    
-                    // Update UI
-                    viewAttendanceDates(studentId);
-                    updateUI();
-                    
-                    showToast(`Attendance record for ${system.formatDate(date)} deleted successfully`, 'success');
-                } else {
-                    throw new Error('Attendance record not found');
-                }
-            } catch (error) {
-                showToast('Error deleting attendance record: ' + error.message, 'error');
-            }
-        }
-        
         // Initialize the system when the page loads
         window.onload = function() {
             document.getElementById('classDate').valueAsDate = new Date();
@@ -3752,6 +4143,9 @@
                     updateTimeSlotTabs();
                 });
             }
+            
+            // Set last duplicate check time
+            document.getElementById('lastDuplicateCheck').textContent = 'Never';
         };
     </script>
 </body>

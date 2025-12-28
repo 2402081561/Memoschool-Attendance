@@ -1061,6 +1061,113 @@
             color: #856404;
             border-left: 3px solid var(--warning);
         }
+
+                /* 模态框背景 */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        /* 模态框内容 */
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            overflow: hidden;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-header {
+            background: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .close-modal {
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            background: #f8f9fa;
+        }
+        
+        /* 日历样式 */
+        .month-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .calendar-day-header {
+            text-align: center;
+            font-size: 0.8em;
+            color: var(--gray);
+            font-weight: bold;
+        }
+        
+        .calendar-date {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        
+        .calendar-date:hover {
+            background-color: #f0f0f0;
+        }
+        
+        /* 选中的日期样式 - 类似订机票选中效果 */
+        .calendar-date.selected {
+            background-color: var(--primary);
+            color: white;
+            font-weight: bold;
+            transform: scale(1.1);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        }
+        
+        .calendar-date.today {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .calendar-date.empty {
+            pointer-events: none;
+        }
         @media (min-width: 768px) {
             .accuracy-note {
                 border-radius: 8px;
@@ -2080,7 +2187,36 @@
                 <button class="btn btn-secondary" onclick="closeStudentDetails()">Close</button>
             </div>
         </div>
+
+        <div id="dateSelectionModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalStudentName">选择出席日期</h3>
+            <span class="close-modal" onclick="closeDateModal()">&times;</span>
+        </div>
+        
+        <div class="modal-body">
+            <div class="month-nav">
+                <button onclick="changeMonth(-1)" class="btn btn-sm btn-secondary">&lt;</button>
+                <span id="currentMonthLabel" style="font-weight:bold; margin:0 15px;">2023年 10月</span>
+                <button onclick="changeMonth(1)" class="btn btn-sm btn-secondary">&gt;</button>
+            </div>
+            
+            <div class="calendar-grid" id="calendarGrid">
+                </div>
+            
+            <div class="selected-dates-summary">
+                已选: <span id="selectedCount">0</span> 天
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeDateModal()">取消</button>
+            <button class="btn btn-success" onclick="confirmBatchAttendance()">确认出席</button>
+        </div>
     </div>
+</div>
+
 
     <script>
         // === 使用你的 Firebase 配置 ===
@@ -2572,6 +2708,174 @@
                     attendanceRecords: this.attendanceRecords
                 };
                 return JSON.stringify(data, null, 2);
+            }
+
+            // 全局变量
+            let currentSelectionStudentId = null;
+            let currentSelectionStudentName = null;
+            let selectedDates = new Set(); // 使用 Set 自动去重
+            let currentCalendarDate = new Date();
+            
+            // 1. 打开模态框的主函数 (请在点击学生卡片时调用此函数)
+            function openDateSelectionModal(studentId, studentName) {
+                currentSelectionStudentId = studentId;
+                currentSelectionStudentName = studentName;
+                selectedDates.clear(); // 清空之前的选择
+                
+                document.getElementById('modalStudentName').textContent = `为 ${studentName} 选择日期`;
+                document.getElementById('selectedCount').textContent = '0';
+                document.getElementById('dateSelectionModal').style.display = 'flex';
+                
+                renderCalendar();
+            }
+            
+            // 2. 关闭模态框
+            function closeDateModal() {
+                document.getElementById('dateSelectionModal').style.display = 'none';
+            }
+            
+            // 3. 渲染日历核心逻辑
+            function renderCalendar() {
+                const grid = document.getElementById('calendarGrid');
+                const label = document.getElementById('currentMonthLabel');
+                grid.innerHTML = ''; // 清空
+                
+                const year = currentCalendarDate.getFullYear();
+                const month = currentCalendarDate.getMonth();
+                
+                // 更新标题
+                const monthNames = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+                label.textContent = `${year}年 ${monthNames[month]}`;
+                
+                // 添加星期头
+                const days = ['日', '一', '二', '三', '四', '五', '六'];
+                days.forEach(d => {
+                    const div = document.createElement('div');
+                    div.className = 'calendar-day-header';
+                    div.textContent = d;
+                    grid.appendChild(div);
+                });
+            
+                // 计算当月第一天是星期几
+                const firstDay = new Date(year, month, 1).getDay();
+                // 计算当月有多少天
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                
+                // 填充空白
+                for (let i = 0; i < firstDay; i++) {
+                    const div = document.createElement('div');
+                    div.className = 'calendar-date empty';
+                    grid.appendChild(div);
+                }
+                
+                // 填充日期
+                const today = new Date();
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const div = document.createElement('div');
+                    div.className = 'calendar-date';
+                    div.textContent = d;
+                    
+                    // 构建日期字符串 YYYY-MM-DD
+                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                    
+                    // 检查是否是今天
+                    if (year === today.getFullYear() && month === today.getMonth() && d === today.getDate()) {
+                        div.classList.add('today');
+                    }
+                    
+                    // 检查是否已选中
+                    if (selectedDates.has(dateStr)) {
+                        div.classList.add('selected');
+                    }
+                    
+                    // 点击事件
+                    div.onclick = () => toggleDateSelection(dateStr, div);
+                    
+                    grid.appendChild(div);
+                }
+            }
+            
+            // 4. 切换日期选中状态
+            function toggleDateSelection(dateStr, element) {
+                if (selectedDates.has(dateStr)) {
+                    selectedDates.delete(dateStr);
+                    element.classList.remove('selected');
+                } else {
+                    selectedDates.add(dateStr);
+                    element.classList.add('selected');
+                }
+                document.getElementById('selectedCount').textContent = selectedDates.size;
+            }
+            
+            // 5. 切换月份
+            function changeMonth(delta) {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
+                renderCalendar();
+            }
+            
+            // 6. 最终确认提交 (核心部分)
+            async function confirmBatchAttendance() {
+                if (selectedDates.size === 0) {
+                    alert('请至少选择一个日期');
+                    return;
+                }
+                
+                const confirmBtn = document.querySelector('.modal-footer .btn-success');
+                const originalText = confirmBtn.textContent;
+                confirmBtn.textContent = '提交中...';
+                confirmBtn.disabled = true;
+            
+                try {
+                    const batch = db.batch(); // 使用 Firestore 批处理
+                    
+                    // 遍历所有选中的日期
+                    selectedDates.forEach(dateStr => {
+                        // 这里假设您的数据结构是 attendance -> date_studentId
+                        // 或者您可以用您现有的 addDoc 逻辑
+                        const docRef = db.collection('attendance').doc(); 
+                        
+                        batch.set(docRef, {
+                            studentId: currentSelectionStudentId,
+                            studentName: currentSelectionStudentName,
+                            date: dateStr,
+                            status: 'Present', // 默认为出席
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            // 如果需要时间段，可以从当前上下文获取，例如：
+                            // timeSlot: currentTimeSlot 
+                        });
+                    });
+            
+                    await batch.commit();
+                    
+                    // 成功后的UI反馈
+                    showToast(`成功记录 ${selectedDates.size} 天出席！`);
+                    closeDateModal();
+                    
+                    // 刷新界面 (如果需要)
+                    if (typeof updateUI === 'function') updateUI();
+                    
+                } catch (error) {
+                    console.error("Batch save error:", error);
+                    alert("提交失败: " + error.message);
+                } finally {
+                    confirmBtn.textContent = originalText;
+                    confirmBtn.disabled = false;
+                }
+            }
+            
+            // 简单的提示框工具
+            function showToast(message) {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.style.cssText = `
+                    position: fixed; top: 20px; right: 20px; 
+                    background: #27ae60; color: white; padding: 15px 25px; 
+                    border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+                    z-index: 2000; animation: fadeIn 0.5s;
+                `;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
             }
             
             // 时间槽管理方法

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Memoschool Kuching Attendance</title>
     
     <!-- Firebase SDK --> 
@@ -29,50 +29,30 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 10px;
+            padding: 20px;
             color: #333;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        @media (min-width: 768px) {
-            body {
-                padding: 20px;
-            }
         }
         .container {
             max-width: 1400px;
             margin: 0 auto;
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
             overflow: hidden;
             backdrop-filter: blur(10px);
-        }
-        @media (min-width: 768px) {
-            .container {
-                border-radius: 20px;
-                box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-            }
         }
         .header {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
-            padding: 20px 15px;
+            padding: 30px;
             text-align: center;
             position: relative;
             overflow: hidden;
-        }
-        @media (min-width: 768px) {
-            .header {
-                padding: 30px;
-            }
         }
         .header::before {
             content: '';
@@ -84,63 +64,34 @@
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.1"><circle cx="50" cy="50" r="2" fill="white"/></svg>') repeat;
         }
         .header h1 {
-            font-size: 1.5em;
-            margin-bottom: 8px;
+            font-size: 2.5em;
+            margin-bottom: 10px;
             color: white;
             font-weight: 700;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            padding: 0 10px;
-            word-break: break-word;
-        }
-        @media (min-width: 768px) {
-            .header h1 {
-                font-size: 2.5em;
-                margin-bottom: 10px;
-            }
-        }
-        @media (min-width: 480px) and (max-width: 767px) {
-            .header h1 {
-                font-size: 1.8em;
-            }
         }
         .header p {
-            font-size: 0.9em;
+            font-size: 1.2em;
             opacity: 0.9;
             font-weight: 300;
-            padding: 0 10px;
-        }
-        @media (min-width: 768px) {
-            .header p {
-                font-size: 1.2em;
-            }
         }
         .school-logo {
-            position: relative;
-            width: 60px;
-            height: 60px;
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            width: 80px;
+            height: 80px;
             background: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 1em;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-size: 1.5em;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
             overflow: hidden;
             z-index: 2;
             transition: transform 0.3s ease;
-            margin: 0 auto 15px;
-        }
-        @media (min-width: 768px) {
-            .school-logo {
-                position: absolute;
-                top: 20px;
-                left: 30px;
-                width: 80px;
-                height: 80px;
-                margin: 0;
-                font-size: 1.5em;
-            }
         }
         .school-logo:hover {
             transform: scale(1.05);
@@ -152,57 +103,25 @@
         }
         .nav {
             background: var(--primary-dark);
-            padding: 10px;
+            padding: 15px;
             display: flex;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
             flex-wrap: wrap;
-            box-shadow: 0 3px 5px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        @media (min-width: 768px) {
-            .nav {
-                padding: 15px;
-                gap: 8px;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                position: relative;
-                top: auto;
-            }
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .nav button {
             background: rgba(255,255,255,0.15);
             color: white;
             border: none;
-            padding: 8px 12px;
-            border-radius: 25px;
+            padding: 12px 20px;
+            border-radius: 50px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 500;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.2);
-            white-space: nowrap;
-            flex: 1;
-            min-width: 0;
-            max-width: 100px;
-        }
-        @media (min-width: 768px) {
-            .nav button {
-                padding: 12px 20px;
-                font-size: 14px;
-                border-radius: 50px;
-                flex: none;
-                max-width: none;
-            }
-        }
-        @media (min-width: 480px) and (max-width: 767px) {
-            .nav button {
-                padding: 10px 15px;
-                font-size: 13px;
-                max-width: 120px;
-            }
         }
         .nav button:hover {
             background: rgba(255,255,255,0.25);
@@ -213,24 +132,13 @@
             transform: translateY(0);
         }
         .content {
-            padding: 15px;
+            padding: 30px;
             min-height: 500px;
             background: #f8f9fa;
-        }
-        @media (min-width: 768px) {
-            .content {
-                padding: 30px;
-            }
         }
         .section {
             display: none;
             animation: fadeIn 0.5s ease;
-            scroll-margin-top: 20px;
-        }
-        @media (min-width: 768px) {
-            .section {
-                scroll-margin-top: 0;
-            }
         }
         .section.active {
             display: block;
@@ -240,42 +148,24 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .form-group {
-            margin-bottom: 20px;
-        }
-        @media (min-width: 768px) {
-            .form-group {
-                margin-bottom: 25px;
-            }
+            margin-bottom: 25px;
         }
         .form-label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             font-weight: 600;
             color: var(--dark);
-            font-size: 0.9em;
-        }
-        @media (min-width: 768px) {
-            .form-label {
-                font-size: 0.95em;
-                margin-bottom: 8px;
-            }
+            font-size: 0.95em;
         }
         .form-input {
             width: 100%;
-            padding: 12px 14px;
+            padding: 14px 16px;
             border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 15px;
+            border-radius: 10px;
+            font-size: 16px;
             transition: all 0.3s ease;
             background: white;
             font-family: inherit;
-        }
-        @media (min-width: 768px) {
-            .form-input {
-                padding: 14px 16px;
-                border-radius: 10px;
-                font-size: 16px;
-            }
         }
         .form-input:focus {
             outline: none;
@@ -289,33 +179,21 @@
             background: var(--primary);
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 14px;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 6px;
-            box-shadow: 0 3px 5px rgba(0,0,0,0.1);
-            min-width: 44px;
-            min-height: 44px;
-        }
-        @media (min-width: 768px) {
-            .btn {
-                padding: 14px 28px;
-                border-radius: 10px;
-                font-size: 16px;
-                gap: 8px;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            }
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .btn:hover {
             background: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
         .btn:active {
             transform: translateY(0);
@@ -347,48 +225,24 @@
         .table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-radius: 10px;
             overflow: hidden;
             background: white;
-            display: block;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        @media (min-width: 768px) {
-            .table {
-                margin-top: 20px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-                border-radius: 10px;
-                display: table;
-                overflow-x: visible;
-            }
         }
         .table th, .table td {
-            padding: 12px 8px;
+            padding: 16px;
             text-align: left;
             border-bottom: 1px solid var(--border);
-            white-space: nowrap;
-        }
-        @media (min-width: 768px) {
-            .table th, .table td {
-                padding: 16px;
-                white-space: normal;
-            }
         }
         .table th {
             background: var(--primary);
             color: white;
             font-weight: 600;
-            font-size: 0.85em;
+            font-size: 0.9em;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-        }
-        @media (min-width: 768px) {
-            .table th {
-                font-size: 0.9em;
-            }
         }
         .table tr:hover {
             background: rgba(230, 126, 34, 0.05);
@@ -398,35 +252,20 @@
         }
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        @media (min-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 25px;
-                margin-top: 20px;
-            }
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
         }
         .stat-card {
             background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
             text-align: center;
-            border-left: 4px solid var(--primary);
+            border-left: 5px solid var(--primary);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
             overflow: hidden;
-        }
-        @media (min-width: 768px) {
-            .stat-card {
-                padding: 30px;
-                border-radius: 15px;
-                box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-                border-left: 5px solid var(--primary);
-            }
         }
         .stat-card::before {
             content: '';
@@ -434,59 +273,30 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
+            height: 4px;
             background: linear-gradient(90deg, var(--primary), var(--primary-dark));
         }
-        @media (min-width: 768px) {
-            .stat-card::before {
-                height: 4px;
-            }
-        }
         .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-        @media (min-width: 768px) {
-            .stat-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-            }
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
         }
         .stat-card h3 {
             color: var(--dark);
-            margin-bottom: 10px;
-            font-size: 1em;
+            margin-bottom: 15px;
+            font-size: 1.1em;
             font-weight: 600;
         }
-        @media (min-width: 768px) {
-            .stat-card h3 {
-                margin-bottom: 15px;
-                font-size: 1.1em;
-            }
-        }
         .stat-card .number {
-            font-size: 2em;
+            font-size: 3em;
             font-weight: bold;
             color: var(--primary);
             line-height: 1;
-            margin: 8px 0;
-        }
-        @media (min-width: 768px) {
-            .stat-card .number {
-                font-size: 3em;
-                margin: 10px 0;
-            }
+            margin: 10px 0;
         }
         .stat-card .trend {
-            font-size: 0.8em;
+            font-size: 0.85em;
             font-weight: 500;
-            margin-top: 6px;
-        }
-        @media (min-width: 768px) {
-            .stat-card .trend {
-                font-size: 0.85em;
-                margin-top: 8px;
-            }
+            margin-top: 8px;
         }
         .stat-card .trend.positive {
             color: var(--success);
@@ -496,24 +306,14 @@
         }
         .sync-status {
             background: #e8f4fd;
-            border-radius: 8px;
-            padding: 12px;
-            margin: 12px 0;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
             text-align: center;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 500;
-            border-left: 3px solid var(--info);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        @media (min-width: 768px) {
-            .sync-status {
-                border-radius: 10px;
-                padding: 15px;
-                margin: 15px 0;
-                font-size: 14px;
-                border-left: 4px solid var(--info);
-                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            }
+            border-left: 4px solid var(--info);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .sync-status.synced {
             background: #d4edda;
@@ -532,182 +332,91 @@
         }
         .login-panel {
             background: white;
-            border-radius: 12px;
-            padding: 25px 20px;
-            margin: 20px auto;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 30px auto;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            max-width: 90%;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            max-width: 500px;
             border: 1px solid var(--border);
-        }
-        @media (min-width: 768px) {
-            .login-panel {
-                border-radius: 15px;
-                padding: 40px;
-                margin: 30px auto;
-                box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-                max-width: 500px;
-            }
         }
         .user-info {
             background: linear-gradient(135deg, var(--success), #20c997);
             color: white;
-            border-radius: 8px;
-            padding: 12px 15px;
-            margin: 12px 0;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin: 15px 0;
             text-align: center;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        @media (min-width: 768px) {
-            .user-info {
-                border-radius: 10px;
-                padding: 15px 20px;
-                margin: 15px 0;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            }
-        }
-        .user-info span {
-            font-size: 0.9em;
-            flex: 1;
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        @media (min-width: 768px) {
-            .user-info span {
-                font-size: 1em;
-            }
         }
         .quick-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        @media (min-width: 768px) {
-            .quick-stats {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 20px;
-                margin: 30px 0;
-            }
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
         }
         .quick-stat {
             background: white;
-            padding: 15px;
-            border-radius: 10px;
+            padding: 20px;
+            border-radius: 12px;
             text-align: center;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
             transition: transform 0.3s ease;
-        }
-        @media (min-width: 768px) {
-            .quick-stat {
-                padding: 20px;
-                border-radius: 12px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            }
         }
         .quick-stat:hover {
             transform: translateY(-3px);
         }
         .quick-stat .value {
-            font-size: 1.8em;
+            font-size: 2.2em;
             font-weight: bold;
             color: var(--primary);
             line-height: 1;
             margin-bottom: 5px;
         }
-        @media (min-width: 768px) {
-            .quick-stat .value {
-                font-size: 2.2em;
-            }
-        }
         .quick-stat .label {
             color: var(--gray);
-            font-size: 0.85em;
+            font-size: 0.9em;
             font-weight: 500;
-        }
-        @media (min-width: 768px) {
-            .quick-stat .label {
-                font-size: 0.9em;
-            }
         }
         .welcome-panel {
             text-align: center;
-            padding: 25px 15px;
+            padding: 40px 20px;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        @media (min-width: 768px) {
-            .welcome-panel {
-                padding: 40px 20px;
-                border-radius: 15px;
-                box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-                margin-bottom: 30px;
-            }
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
         }
         .welcome-panel h2 {
             color: var(--dark);
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             font-weight: 700;
-            font-size: 1.5em;
-        }
-        @media (min-width: 768px) {
-            .welcome-panel h2 {
-                margin-bottom: 15px;
-                font-size: 2em;
-            }
         }
         .welcome-panel p {
             color: var(--gray);
             max-width: 600px;
-            margin: 0 auto 20px;
-            line-height: 1.5;
-            font-size: 0.95em;
-        }
-        @media (min-width: 768px) {
-            .welcome-panel p {
-                margin-bottom: 30px;
-                line-height: 1.6;
-                font-size: 1.1em;
-            }
+            margin: 0 auto 30px;
+            line-height: 1.6;
+            font-size: 1.1em;
         }
         .feature-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-        @media (min-width: 768px) {
-            .feature-cards {
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 25px;
-                margin-top: 30px;
-            }
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
         }
         .feature-card {
             background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
             text-align: center;
             transition: all 0.3s ease;
             border: 1px solid var(--border);
             position: relative;
             overflow: hidden;
-        }
-        @media (min-width: 768px) {
-            .feature-card {
-                padding: 30px;
-                border-radius: 15px;
-                box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            }
         }
         .feature-card::before {
             content: '';
@@ -715,187 +424,93 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
+            height: 4px;
             background: linear-gradient(90deg, var(--primary), var(--primary-dark));
         }
-        @media (min-width: 768px) {
-            .feature-card::before {
-                height: 4px;
-            }
-        }
         .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-        @media (min-width: 768px) {
-            .feature-card:hover {
-                transform: translateY(-8px);
-                box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-            }
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
         }
         .feature-card .icon {
-            font-size: 2.5em;
-            margin-bottom: 15px;
+            font-size: 3em;
+            margin-bottom: 20px;
             display: block;
-        }
-        @media (min-width: 768px) {
-            .feature-card .icon {
-                font-size: 3em;
-                margin-bottom: 20px;
-            }
         }
         .feature-card h3 {
             color: var(--dark);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             font-weight: 600;
-            font-size: 1.1em;
-        }
-        @media (min-width: 768px) {
-            .feature-card h3 {
-                margin-bottom: 15px;
-                font-size: 1.2em;
-            }
         }
         .feature-card p {
             color: var(--gray);
-            margin-bottom: 15px;
-            line-height: 1.5;
-            font-size: 0.9em;
-        }
-        @media (min-width: 768px) {
-            .feature-card p {
-                margin-bottom: 20px;
-                line-height: 1.6;
-                font-size: 1em;
-            }
+            margin-bottom: 20px;
+            line-height: 1.6;
         }
         .time-slot-card {
             background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 15px 0;
-            border-left: 3px solid var(--primary);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
             transition: transform 0.3s ease;
-        }
-        @media (min-width: 768px) {
-            .time-slot-card {
-                border-radius: 12px;
-                padding: 25px;
-                margin: 20px 0;
-                border-left: 4px solid var(--primary);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            }
         }
         .time-slot-card:hover {
             transform: translateY(-3px);
         }
         .time-slot-header {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        @media (min-width: 768px) {
-            .time-slot-header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                gap: 0;
-                margin-bottom: 20px;
-            }
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
         .time-slot-title {
-            font-size: 1.2em;
+            font-size: 1.3em;
             font-weight: bold;
             color: var(--dark);
-        }
-        @media (min-width: 768px) {
-            .time-slot-title {
-                font-size: 1.3em;
-            }
         }
         .student-count {
             background: var(--primary);
             color: white;
             padding: 6px 12px;
             border-radius: 20px;
-            font-size: 0.85em;
+            font-size: 0.9em;
             font-weight: 600;
-            align-self: flex-start;
-        }
-        @media (min-width: 768px) {
-            .student-count {
-                align-self: center;
-            }
         }
         .time-slot-students {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
-        }
-        @media (min-width: 768px) {
-            .time-slot-students {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                gap: 15px;
-            }
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
         }
         .student-card {
             background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
             border: 1px solid var(--border);
             transition: all 0.3s ease;
         }
-        @media (min-width: 768px) {
-            .student-card {
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-            }
-        }
         .student-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.12);
             transform: translateY(-2px);
         }
         .time-slot-tabs {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 25px;
             border-bottom: 1px solid var(--border);
-            padding-bottom: 12px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        @media (min-width: 768px) {
-            .time-slot-tabs {
-                gap: 10px;
-                margin-bottom: 25px;
-                padding-bottom: 15px;
-                overflow-x: visible;
-            }
+            padding-bottom: 15px;
         }
         .time-slot-tab {
-            padding: 10px 16px;
+            padding: 12px 24px;
             background: white;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 500;
             border: 1px solid var(--border);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            white-space: nowrap;
-            font-size: 0.9em;
-        }
-        @media (min-width: 768px) {
-            .time-slot-tab {
-                padding: 12px 24px;
-                border-radius: 8px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-                font-size: 1em;
-            }
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .time-slot-tab:hover {
             background: rgba(230, 126, 34, 0.1);
@@ -917,52 +532,28 @@
             max-height: 300px;
             overflow-y: auto;
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 15px;
+            border-radius: 10px;
+            padding: 20px;
             background: white;
-        }
-        @media (min-width: 768px) {
-            .checkbox-group {
-                border-radius: 10px;
-                padding: 20px;
-            }
         }
         .checkbox-group label {
             display: block;
-            padding: 10px;
-            margin: 6px 0;
-            border-radius: 6px;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
             transition: background 0.2s;
             cursor: pointer;
-            font-size: 0.9em;
-        }
-        @media (min-width: 768px) {
-            .checkbox-group label {
-                padding: 12px;
-                margin: 8px 0;
-                border-radius: 8px;
-                font-size: 1em;
-            }
         }
         .checkbox-group label:hover {
             background: rgba(230, 126, 34, 0.1);
         }
         .semester-info {
             background: white;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
-            border-left: 3px solid var(--primary);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-        }
-        @media (min-width: 768px) {
-            .semester-info {
-                border-radius: 12px;
-                padding: 20px;
-                margin: 20px 0;
-                border-left: 4px solid var(--primary);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            }
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         }
         .attendance-record {
             display: flex;
@@ -971,24 +562,16 @@
             margin-top: 10px;
         }
         .attendance-dot {
-            width: 70px;
-            height: 35px;
-            border-radius: 8px;
+            width: 75px;
+            height: 40px;
+            border-radius: 90%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 11px;
+            font-size: 12px;
             cursor: pointer;
             transition: transform 0.2s ease;
-        }
-        @media (min-width: 768px) {
-            .attendance-dot {
-                width: 75px;
-                height: 40px;
-                border-radius: 90%;
-                font-size: 12px;
-            }
         }
         .attendance-dot:hover {
             transform: scale(1.1);
@@ -1003,275 +586,81 @@
         }
         .export-options {
             display: flex;
-            gap: 12px;
-            margin: 20px 0;
+            gap: 15px;
+            margin: 25px 0;
             flex-wrap: wrap;
         }
-        @media (min-width: 768px) {
-            .export-options {
-                gap: 15px;
-                margin: 25px 0;
-            }
-        }
         .search-box {
-            max-width: 100%;
-            margin-bottom: 20px;
-        }
-        @media (min-width: 768px) {
-            .search-box {
-                max-width: 400px;
-                margin-bottom: 30px;
-            }
+            max-width: 400px;
+            margin-bottom: 30px;
         }
         .search-box input {
-            border-radius: 20px;
-            padding: 12px 16px;
-            font-size: 13px;
+            border-radius: 25px;
+            padding: 14px 20px;
+            font-size: 14px;
             border: 2px solid var(--border);
-        }
-        @media (min-width: 768px) {
-            .search-box input {
-                border-radius: 25px;
-                padding: 14px 20px;
-                font-size: 14px;
-            }
         }
         .search-info {
             background: #e8f4fd;
-            border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 15px;
-            border-left: 3px solid var(--info);
-        }
-        @media (min-width: 768px) {
-            .search-info {
-                border-radius: 8px;
-                padding: 15px;
-                margin-bottom: 20px;
-                border-left: 4px solid var(--info);
-            }
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--info);
         }
         .accuracy-note {
             background: #fff3cd;
             border: 1px solid #ffeaa7;
-            border-radius: 6px;
-            padding: 12px;
-            margin: 15px 0;
-            font-size: 13px;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 14px;
             color: #856404;
-            border-left: 3px solid var(--warning);
-        }
-
-                /* 模态框背景 */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
-        
-        /* 模态框内容 */
-        .modal-content {
-            background: white;
-            width: 90%;
-            max-width: 400px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            overflow: hidden;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .modal-header {
-            background: var(--primary);
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .close-modal {
-            font-size: 24px;
-            cursor: pointer;
-            line-height: 1;
-        }
-        
-        .modal-body {
-            padding: 20px;
-        }
-        
-        .modal-footer {
-            padding: 15px 20px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            background: #f8f9fa;
-        }
-        
-        /* 日历样式 */
-        .month-nav {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-        
-        .calendar-day-header {
-            text-align: center;
-            font-size: 0.8em;
-            color: var(--gray);
-            font-weight: bold;
-        }
-        
-        .calendar-date {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-        }
-        
-        .calendar-date:hover {
-            background-color: #f0f0f0;
-        }
-        
-        /* 选中的日期样式 - 类似订机票选中效果 */
-        .calendar-date.selected {
-            background-color: var(--primary);
-            color: white;
-            font-weight: bold;
-            transform: scale(1.1);
-            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-        }
-        
-        .calendar-date.today {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        
-        .calendar-date.empty {
-            pointer-events: none;
-        }
-        @media (min-width: 768px) {
-            .accuracy-note {
-                border-radius: 8px;
-                padding: 15px;
-                margin: 20px 0;
-                font-size: 14px;
-                border-left: 4px solid var(--warning);
-            }
+            border-left: 4px solid var(--warning);
         }
         .student-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-        @media (min-width: 768px) {
-            .student-grid {
-                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-                gap: 20px;
-                margin-top: 25px;
-            }
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
         }
         .student-card-enhanced {
             background: white;
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-            border-left: 3px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--primary);
             transition: all 0.3s ease;
             position: relative;
             cursor: pointer;
         }
-        @media (min-width: 768px) {
-            .student-card-enhanced {
-                border-radius: 12px;
-                padding: 20px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-                border-left: 4px solid var(--primary);
-            }
-        }
         .student-card-enhanced:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
-        @media (min-width: 768px) {
-            .student-card-enhanced:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            }
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
         .student-header {
             display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-        @media (min-width: 768px) {
-            .student-header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: flex-start;
-                gap: 0;
-                margin-bottom: 15px;
-            }
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
         }
         .student-name {
-            font-size: 1.1em;
+            font-size: 1.2em;
             font-weight: bold;
             color: var(--dark);
             margin: 0;
-            word-break: break-word;
-        }
-        @media (min-width: 768px) {
-            .student-name {
-                font-size: 1.2em;
-            }
         }
         .student-meta {
             color: var(--gray);
-            font-size: 0.85em;
-            margin: 4px 0;
-        }
-        @media (min-width: 768px) {
-            .student-meta {
-                font-size: 0.9em;
-                margin: 5px 0;
-            }
+            font-size: 0.9em;
+            margin: 5px 0;
         }
         .attendance-badge {
             background: var(--success);
             color: white;
-            padding: 4px 8px;
-            border-radius: 10px;
-            font-size: 0.75em;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
             font-weight: bold;
-            align-self: flex-start;
-        }
-        @media (min-width: 768px) {
-            .attendance-badge {
-                padding: 4px 10px;
-                border-radius: 12px;
-                font-size: 0.8em;
-                align-self: center;
-            }
         }
         .attendance-low {
             background: var(--danger);
@@ -1282,56 +671,29 @@
         .student-actions {
             display: flex;
             gap: 8px;
-            margin-top: 12px;
-        }
-        @media (min-width: 768px) {
-            .student-actions {
-                margin-top: 15px;
-            }
+            margin-top: 15px;
         }
         .progress-container {
-            margin: 12px 0;
-        }
-        @media (min-width: 768px) {
-            .progress-container {
-                margin: 15px 0;
-            }
+            margin: 15px 0;
         }
         .progress-label {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 6px;
-            font-size: 0.85em;
+            margin-bottom: 8px;
+            font-size: 0.9em;
             font-weight: 500;
         }
-        @media (min-width: 768px) {
-            .progress-label {
-                font-size: 0.9em;
-                margin-bottom: 8px;
-            }
-        }
         .progress-bar {
-            height: 6px;
+            height: 8px;
             background: #e9ecef;
-            border-radius: 3px;
+            border-radius: 4px;
             overflow: hidden;
-        }
-        @media (min-width: 768px) {
-            .progress-bar {
-                height: 8px;
-                border-radius: 4px;
-            }
         }
         .progress-fill {
             height: 100%;
             background: var(--success);
             transition: width 0.5s ease;
-            border-radius: 3px;
-        }
-        @media (min-width: 768px) {
-            .progress-fill {
-                border-radius: 4px;
-            }
+            border-radius: 4px;
         }
         .progress-fill.medium {
             background: var(--warning);
@@ -1341,32 +703,19 @@
         }
         .toast {
             position: fixed;
-            top: 15px;
-            right: 15px;
+            top: 20px;
+            right: 20px;
             background: white;
-            padding: 12px 16px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-            border-left: 3px solid var(--success);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-left: 4px solid var(--success);
             z-index: 1000;
             animation: slideInRight 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
-            max-width: 90%;
-            font-size: 0.9em;
-        }
-        @media (min-width: 768px) {
-            .toast {
-                top: 20px;
-                right: 20px;
-                padding: 15px 20px;
-                border-radius: 10px;
-                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-                border-left: 4px solid var(--success);
-                max-width: 350px;
-                font-size: 1em;
-            }
+            gap: 10px;
+            max-width: 350px;
         }
         .toast.error {
             border-left-color: var(--danger);
@@ -1389,19 +738,12 @@
         }
         .loading {
             display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 2px solid rgba(255,255,255,.3);
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
             border-radius: 50%;
             border-top-color: #fff;
             animation: spin 1s ease-in-out infinite;
-        }
-        @media (min-width: 768px) {
-            .loading {
-                width: 20px;
-                height: 20px;
-                border: 3px solid rgba(255,255,255,.3);
-            }
         }
         @keyframes spin {
             to { transform: rotate(360deg); }
@@ -1410,115 +752,35 @@
         /* 自定义时间槽样式 */
         .time-slots-management {
             background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-        }
-        @media (min-width: 768px) {
-            .time-slots-management {
-                border-radius: 12px;
-                padding: 25px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-                margin-bottom: 30px;
-            }
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
         }
         .time-slots-list {
-            margin-top: 15px;
-        }
-        @media (min-width: 768px) {
-            .time-slots-list {
-                margin-top: 20px;
-            }
+            margin-top: 20px;
         }
         .time-slot-item {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 12px;
-            margin-bottom: 8px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
             background: #f8f9fa;
-            border-radius: 6px;
-            border-left: 3px solid var(--primary);
-        }
-        @media (min-width: 768px) {
-            .time-slot-item {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                gap: 0;
-                padding: 15px;
-                margin-bottom: 10px;
-                border-radius: 8px;
-                border-left: 4px solid var(--primary);
-            }
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
         }
         .time-slot-actions {
             display: flex;
-            gap: 8px;
-            align-self: flex-end;
-        }
-        @media (min-width: 768px) {
-            .time-slot-actions {
-                align-self: center;
-            }
+            gap: 10px;
         }
         .time-slot-actions button {
-            padding: 5px 10px;
-            font-size: 11px;
-        }
-        @media (min-width: 768px) {
-            .time-slot-actions button {
-                padding: 6px 12px;
-                font-size: 12px;
-            }
+            padding: 6px 12px;
+            font-size: 12px;
         }
         
-        /* 批量操作样式 */
-        .batch-actions {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        @media (min-width: 768px) {
-            .batch-actions {
-                gap: 15px;
-                margin-bottom: 25px;
-            }
-        }
-        .batch-info {
-            color: var(--primary);
-            font-weight: bold;
-            font-size: 0.9em;
-            margin-left: auto;
-        }
-        @media (min-width: 768px) {
-            .batch-info {
-                font-size: 1em;
-            }
-        }
-        .student-select-checkbox {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            z-index: 10;
-        }
-        @media (min-width: 768px) {
-            .student-select-checkbox {
-                top: 15px;
-                right: 15px;
-                width: 20px;
-                height: 20px;
-            }
-        }
-        
-        /* 学生详情模态框 */
-        .student-details-modal {
+        /* 日期选择日历样式 */
+        .calendar-modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -1529,219 +791,132 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 15px;
         }
-        @media (min-width: 768px) {
-            .student-details-modal {
-                padding: 20px;
-            }
-        }
-        .student-details-content {
+        
+        .calendar-container {
             background-color: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            max-width: 100%;
-            width: 100%;
-            max-height: 85vh;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
             overflow-y: auto;
         }
-        @media (min-width: 768px) {
-            .student-details-content {
-                padding: 30px;
-                border-radius: 15px;
-                box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-                max-width: 800px;
-                width: 90%;
-                max-height: 80vh;
-            }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
-        .attendance-dates-grid {
+        
+        .calendar-month-nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .calendar-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            grid-template-columns: repeat(7, 1fr);
             gap: 8px;
-            margin-top: 12px;
+            margin-bottom: 20px;
         }
-        @media (min-width: 768px) {
-            .attendance-dates-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-                gap: 10px;
-                margin-top: 15px;
-            }
-        }
-        .attendance-date-item {
-            background: var(--success);
-            color: white;
-            padding: 6px;
-            border-radius: 6px;
+        
+        .calendar-day-header {
             text-align: center;
-            font-size: 0.85em;
-        }
-        @media (min-width: 768px) {
-            .attendance-date-item {
-                padding: 8px;
-                border-radius: 8px;
-                font-size: 0.9em;
-            }
+            font-weight: bold;
+            color: var(--gray);
+            padding: 8px;
+            font-size: 0.9em;
         }
         
-        /* 移动设备优化 */
-        @media (max-width: 767px) {
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+            font-size: 0.9em;
+        }
+        
+        .calendar-day:hover {
+            background-color: rgba(230, 126, 34, 0.1);
+        }
+        
+        .calendar-day.selected {
+            background-color: var(--primary);
+            color: white;
+            font-weight: bold;
+        }
+        
+        .calendar-day.today {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .calendar-day.other-month {
+            color: #ccc;
+        }
+        
+        .selected-dates-summary {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--info);
+        }
+        
+        @media (max-width: 768px) {
             .nav {
-                position: sticky;
-                top: 0;
-                z-index: 100;
-            }
-            
-            .nav button {
-                padding: 8px 10px;
-                font-size: 11px;
-                min-width: 0;
-                flex: 1;
-            }
-            
-            .student-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .feature-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .time-slot-tabs {
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                padding-bottom: 10px;
-                margin-bottom: 15px;
-            }
-            
-            .time-slot-tab {
-                flex-shrink: 0;
-            }
-            
-            .table {
-                display: block;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            
-            .student-details-content {
-                padding: 15px;
-                max-height: 90vh;
-            }
-            
-            .batch-actions button {
-                padding: 10px 12px;
-                font-size: 13px;
-                flex: 1;
-                min-width: 0;
-            }
-            
-            .batch-info {
-                flex-basis: 100%;
-                text-align: center;
-                margin-top: 10px;
-                margin-left: 0;
-            }
-            
-            .user-info {
                 flex-direction: column;
-                text-align: center;
-                gap: 10px;
+                align-items: center;
             }
-            
-            .user-info button {
+            .nav button {
                 width: 100%;
+                max-width: 250px;
             }
-        }
-        
-        /* 平板设备优化 */
-        @media (min-width: 480px) and (max-width: 767px) {
-            .nav button {
-                max-width: 110px;
-                font-size: 12px;
+            .header h1 {
+                font-size: 1.8em;
             }
-            
+            .school-logo {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin: 0 auto 15px;
+            }
+            .time-slot-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .student-count {
+                margin-top: 10px;
+            }
+            .time-slot-tabs {
+                flex-direction: column;
+            }
             .student-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                grid-template-columns: 1fr;
             }
-            
             .feature-cards {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                grid-template-columns: 1fr;
             }
-            
             .stats-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                grid-template-columns: 1fr;
             }
-        }
-        
-        /* 桌面设备优化 */
-        @media (min-width: 1024px) {
-            .container {
-                margin: 30px auto;
+            .time-slot-item {
+                flex-direction: column;
+                align-items: flex-start;
             }
-            
-            .nav button {
-                padding: 14px 24px;
-                font-size: 15px;
+            .time-slot-actions {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: flex-end;
             }
-            
-            .content {
-                padding: 40px;
-            }
-        }
-        
-        /* 超大屏幕优化 */
-        @media (min-width: 1440px) {
-            .container {
-                margin: 50px auto;
-            }
-            
-            .content {
-                padding: 50px;
-            }
-        }
-        
-        /* 滚动优化 */
-        html {
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        /* 防止移动端点击延迟 */
-        a, button, input, label, .student-card-enhanced, .time-slot-tab {
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-        }
-        
-        /* 改善移动端表单体验 */
-        input, select, textarea {
-            font-size: 16px; /* 防止iOS缩放 */
-        }
-        
-        /* 改善长按选择 */
-        .student-card-enhanced, .time-slot-tab, .btn {
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-        }
-        
-        /* 模态框滚动优化 */
-        .student-details-modal, #viewAttendanceModal {
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-        }
-        
-        /* 固定导航栏背景 */
-        .nav {
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
         }
     </style>
 </head>
@@ -1761,21 +936,29 @@
                 <h2>🔐 Login to Sync Data</h2>
                 <p>Sign in to automatically sync data across all your devices</p>
                 <div class="form-group">
-                    <input type="email" id="email" placeholder="Email address" class="form-input">
-                    <input type="password" id="password" placeholder="Password" class="form-input" style="margin-top: 15px;">
+                    <input type="email" id="email" placeholder="Email address" class="form-input" style="max-width: 300px; margin: 10px auto;">
+                    <input type="password" id="password" placeholder="Password" class="form-input" style="max-width: 300px; margin: 10px auto;">
                 </div>
-                <button class="btn" onclick="login()" style="margin-top: 15px;">Login</button>
-                <button class="btn btn-secondary" onclick="signup()" style="margin-top: 10px;">Sign Up</button>
+                <button class="btn" onclick="login()">Login</button>
+                <button class="btn btn-secondary" onclick="signup()">Sign Up</button>
                 <p style="margin-top: 15px; font-size: 14px; color: #666;">
                     Don't have an account? Click Sign Up to create one
                 </p>
+                
+                <!-- 测试模式按钮 -->
+                <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid var(--border);">
+                    <p style="margin-bottom: 10px; color: var(--gray); font-size: 14px;">⚠️ 如果登录有问题，可以使用测试模式：</p>
+                    <button onclick="skipLoginForTesting()" style="background: var(--info); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; width: 100%;">
+                        测试模式（跳过登录）
+                    </button>
+                </div>
             </div>
         </div>
 
         <div id="appSection" style="display: none;">
             <div class="user-info">
                 <span>Welcome, <strong id="userEmail"></strong></span>
-                <button class="btn btn-warning" onclick="logout()">Logout</button>
+                <button class="btn btn-warning" onclick="logout()" style="padding: 8px 16px; font-size: 14px;">Logout</button>
             </div>
             
             <div class="nav">
@@ -1784,9 +967,9 @@
                 <button onclick="showSection('attendance')">📝 Attendance</button>
                 <button onclick="showSection('records')">📈 Records</button>
                 <button onclick="showSection('timeslots')">⏰ Time Slots</button>
-                <button onclick="showSection('timeSlotsManagement')">➕ Manage Slots</button>
+                <button onclick="showSection('timeSlotsManagement')">➕ Manage Time Slots</button>
                 <button onclick="showSection('exports')">📤 Export</button>
-                <button onclick="showSection('stats')">📊 Stats</button>
+                <button onclick="showSection('stats')">📊 Statistics</button>
             </div>
             
             <div class="content">
@@ -1835,13 +1018,13 @@
                             <div class="icon">📝</div>
                             <h3>Record Attendance</h3>
                             <p>Mark attendance for specific time slots and dates with our intuitive interface.</p>
-                            <button class="btn" onclick="showSectionWithFocus('attendance', 'timeSlotSelect')">Record Now</button>
+                            <button class="btn" onclick="showSection('attendance')">Record Now</button>
                         </div>
                         <div class="feature-card">
                             <div class="icon">👥</div>
                             <h3>Manage Students</h3>
                             <p>Add students with detailed information and assign them to appropriate time slots.</p>
-                            <button class="btn" onclick="showSectionWithFocus('students', 'studentName')">Manage Students</button>
+                            <button class="btn" onclick="showSection('students')">Manage Students</button>
                         </div>
                         <div class="feature-card">
                             <div class="icon">⏰</div>
@@ -1853,7 +1036,7 @@
                             <div class="icon">➕</div>
                             <h3>Manage Time Slots</h3>
                             <p>Add, edit or remove time slots to match your class schedule.</p>
-                            <button class="btn" onclick="showSectionWithFocus('timeSlotsManagement', 'newTimeSlotName')">Manage Time Slots</button>
+                            <button class="btn" onclick="showSection('timeSlotsManagement')">Manage Time Slots</button>
                         </div>
                     </div>
                 </div>
@@ -1863,20 +1046,17 @@
                     <h2>👥 Student Management</h2>
                     
                     <!-- 批量操作按钮组 -->
-                    <div class="batch-actions">
+                    <div class="batch-actions" style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
                         <button class="btn btn-secondary" onclick="selectAllStudents()">
                             <span>📋 全选</span>
                         </button>
                         <button class="btn btn-secondary" onclick="deselectAllStudents()">
                             <span>📋 取消全选</span>
                         </button>
-                        <button class="btn btn-warning" onclick="batchChangeTimeSlot()">
-                            <span>⏰ 批量更改时间槽</span>
+                        <button class="btn btn-info" onclick="openDateSelectionForBatch()">
+                            <span>📅 批量添加考勤日期</span>
                         </button>
-                        <button class="btn btn-danger" onclick="deleteSelectedStudents()">
-                            <span>🗑️ 批量删除</span>
-                        </button>
-                        <div class="batch-info">
+                        <div class="batch-info" style="margin-left: auto; color: var(--primary); font-weight: bold;">
                             <span id="selectedCount">已选择: 0 名学生</span>
                         </div>
                     </div>
@@ -1888,8 +1068,8 @@
                     </div>
                     
                     <!-- 添加学生表单 -->
-                    <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 25px;">
-                        <h3 style="margin-bottom: 15px; color: var(--dark); font-size: 1.2em;">Add New Student</h3>
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 30px;">
+                        <h3 style="margin-bottom: 20px; color: var(--dark);">Add New Student</h3>
                         <div class="form-group">
                             <label class="form-label">Student Name</label>
                             <input type="text" id="studentName" class="form-input" placeholder="Enter student name">
@@ -1927,8 +1107,8 @@
                     </div>
                     
                     <!-- 编辑学生表单 -->
-                    <div id="editStudentForm" style="display: none; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 25px; border-left: 4px solid var(--info);">
-                        <h3 style="margin-bottom: 15px; color: var(--dark); font-size: 1.2em;">✏️ Edit Student</h3>
+                    <div id="editStudentForm" style="display: none; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 30px; border-left: 4px solid var(--info);">
+                        <h3 style="margin-bottom: 20px; color: var(--dark);">✏️ Edit Student</h3>
                         
                         <div class="form-group">
                             <label class="form-label">Student Name</label>
@@ -1962,13 +1142,11 @@
                             <input type="number" id="editStudentTotalSessions" class="form-input" placeholder="48" min="1" max="200">
                         </div>
                         <input type="hidden" id="editStudentId">
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <button class="btn" onclick="updateStudent()">💾 Update Student</button>
-                            <button class="btn btn-secondary" onclick="cancelEdit()">❌ Cancel</button>
-                        </div>
+                        <button class="btn" onclick="updateStudent()">💾 Update Student</button>
+                        <button class="btn btn-secondary" onclick="cancelEdit()">❌ Cancel</button>
                     </div>
                     
-                    <h3 style="margin-top: 10px; margin-bottom: 15px; font-size: 1.3em;">Student List</h3>
+                    <h3 style="margin-top: 10px; margin-bottom: 20px;">Student List</h3>
                     
                     <div class="time-slot-tabs" id="timeSlotTabs"></div>
                     <div id="timeSlotContents"></div>
@@ -1977,7 +1155,7 @@
                 <!-- Record Attendance -->
                 <div id="attendance" class="section">
                     <h2>📝 Record Attendance</h2>
-                    <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
                         <div class="form-group">
                             <label class="form-label">Select Time Slot</label>
                             <select id="timeSlotSelect" class="form-input" onchange="updateStudentsCheckboxes()">
@@ -2013,9 +1191,9 @@
                     </div>
                     
                     <!-- Class Attendance Records -->
-                    <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 25px;">
-                        <h3 style="margin-bottom: 15px; color: var(--dark); font-size: 1.2em;">📅 Class Attendance Records</h3>
-                        <p style="margin-bottom: 12px; color: var(--gray); font-size: 0.95em;">View and manage attendance records for all classes. Click on a record to see details or delete it.</p>
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 30px;">
+                        <h3 style="margin-bottom: 20px; color: var(--dark);">📅 Class Attendance Records</h3>
+                        <p style="margin-bottom: 15px; color: var(--gray);">View and manage attendance records for all classes. Click on a record to see details or delete it.</p>
                         
                         <div class="form-group">
                             <label class="form-label">Filter by Time Slot</label>
@@ -2040,9 +1218,9 @@
                     </div>
                     
                     <!-- Student Attendance Summary -->
-                    <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
-                        <h3 style="margin-bottom: 15px; color: var(--dark); font-size: 1.2em;">👥 Student Attendance Summary</h3>
-                        <p style="margin-bottom: 12px; color: var(--gray); font-size: 0.95em;">View attendance summary for each student. Click on "View Dates" to see all attended dates.</p>
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
+                        <h3 style="margin-bottom: 20px; color: var(--dark);">👥 Student Attendance Summary</h3>
+                        <p style="margin-bottom: 15px; color: var(--grey);">View attendance summary for each student. Click on "View Dates" to see all attended dates.</p>
                         
                         <div class="form-group">
                             <label class="form-label">Filter by Time Slot</label>
@@ -2081,17 +1259,17 @@
                 <!-- Time Slots -->
                 <div id="timeslots" class="section">
                     <h2>⏰ Time Slots</h2>
-                    <p style="margin-bottom: 15px; color: var(--gray);">Students grouped by their class time slots.</p>
+                    <p>Students grouped by their class time slots.</p>
                     <div id="timeSlotsContainer"></div>
                 </div>
 
                 <!-- Time Slots Management -->
                 <div id="timeSlotsManagement" class="section">
                     <h2>➕ Manage Time Slots</h2>
-                    <p style="margin-bottom: 15px; color: var(--gray);">Add, edit or remove time slots to match your class schedule.</p>
+                    <p>Add, edit or remove time slots to match your class schedule.</p>
                     
                     <div class="time-slots-management">
-                        <h3 style="margin-bottom: 15px; font-size: 1.2em;">Add New Time Slot</h3>
+                        <h3>Add New Time Slot</h3>
                         <div class="form-group">
                             <label class="form-label">Time Slot Name</label>
                             <input type="text" id="newTimeSlotName" class="form-input" placeholder="e.g., Friday 7pm-8:30pm">
@@ -2102,7 +1280,7 @@
                     </div>
                     
                     <div class="time-slots-management">
-                        <h3 style="margin-bottom: 15px; font-size: 1.2em;">Current Time Slots</h3>
+                        <h3>Current Time Slots</h3>
                         <div class="time-slots-list" id="timeSlotsList">
                             <!-- 时间槽列表将通过JavaScript动态加载 -->
                         </div>
@@ -2112,7 +1290,7 @@
                 <!-- Data Export -->
                 <div id="exports" class="section">
                     <h2>📤 Data Export</h2>
-                    <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
                         <div class="export-options">
                             <button class="btn" onclick="exportToCSV()">📄 Export to CSV</button>
                             <button class="btn" onclick="exportToJSON()">🔤 Export to JSON</button>
@@ -2131,12 +1309,12 @@
         </div>
     </div>
 
-        <!-- View Attendance Dates Modal -->
-    <div id="viewAttendanceModal" class="student-details-modal" style="display: none;">
-        <div class="student-details-content">
+    <!-- View Attendance Dates Modal -->
+    <div id="viewAttendanceModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background-color: white; padding: 30px; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 style="margin: 0; font-size: 1.3em; color: var(--dark);">Attendance Dates for <span id="modalStudentName" style="color: var(--primary);"></span></h3>
-                <button class="btn" onclick="closeAttendanceModal()" style="padding: 8px 12px; background: var(--gray);">×</button>
+                <h3 style="margin: 0; font-size: 1.5em; color: var(--dark);">Attendance Dates for <span id="modalStudentName" style="color: var(--primary);"></span></h3>
+                <button class="btn" onclick="closeAttendanceModal()" style="padding: 8px 16px; background: var(--gray);">×</button>
             </div>
             <div style="margin-bottom: 20px;">
                 <p><strong>Time Slot:</strong> <span id="modalStudentTimeSlot"></span></p>
@@ -2145,23 +1323,23 @@
                 <p><strong>Attendance Rate:</strong> <span id="modalStudentAttendanceRate"></span></p>
             </div>
             <div id="attendanceDatesContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 20px;"></div>
-            <div style="margin-top: 25px; text-align: center;">
+            <div style="margin-top: 30px; text-align: center;">
                 <button class="btn btn-secondary" onclick="closeAttendanceModal()">Close</button>
             </div>
         </div>
     </div>
 
     <!-- Student Details Modal -->
-    <div id="studentDetailsModal" class="student-details-modal" style="display: none;">
-        <div class="student-details-content">
+    <div id="studentDetailsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
+        <div style="background-color: white; padding: 30px; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); max-width: 800px; width: 90%; max-height: 80vh; overflow-y: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 style="margin: 0; color: var(--dark); font-size: 1.5em;">📚 Student Details</h2>
-                <button class="btn" onclick="closeStudentDetails()" style="padding: 8px 12px; background: var(--gray);">×</button>
+                <h2 style="margin: 0; color: var(--dark);">📚 Student Details</h2>
+                <button class="btn" onclick="closeStudentDetails()" style="padding: 8px 16px; background: var(--gray);">×</button>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 25px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
                 <div>
-                    <h3 style="color: var(--dark); margin-bottom: 10px; font-size: 1.2em;">👤 Personal Information</h3>
+                    <h3 style="color: var(--dark); margin-bottom: 10px;">👤 Personal Information</h3>
                     <p><strong>Name:</strong> <span id="detailStudentName"></span></p>
                     <p><strong>Age:</strong> <span id="detailStudentAge"></span></p>
                     <p><strong>Gender:</strong> <span id="detailStudentGender"></span></p>
@@ -2170,52 +1348,50 @@
                     <p><strong>Total Sessions:</strong> <span id="detailStudentTotalSessions"></span></p>
                 </div>
                 <div>
-                    <h3 style="color: var(--dark); margin-bottom: 10px; font-size: 1.2em;">📊 Attendance Summary</h3>
+                    <h3 style="color: var(--dark); margin-bottom: 10px;">📊 Attendance Summary</h3>
                     <p><strong>Sessions Attended:</strong> <span id="detailAttendanceCount"></span></p>
-                    <p><strong>Attendance Rate:</strong> <span id="detailAttendanceRate"></span></p>
+                    <p><strong>Attendance Rate:</strong> <span id="detailAttendanceRate"></span>%</p>
                     <p><strong>Last Attended:</strong> <span id="detailLastAttended"></span></p>
                 </div>
             </div>
             
-            <h3 style="color: var(--dark); margin-bottom: 15px; font-size: 1.2em;">📅 All Attendance Dates</h3>
-            <div class="attendance-dates-grid" id="detailAttendanceDates">
-                <!-- Attendance dates will be inserted here -->
-            </div>
+            <h3 style="color: var(--dark); margin-bottom: 15px;">📅 All Attendance Dates</h3>
+            <div id="detailAttendanceDates" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-bottom: 25px;"></div>
             
-            <div style="margin-top: 25px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button class="btn btn-info" onclick="editCurrentStudent()">✏️ Edit Student</button>
+                <button class="btn" onclick="openDateSelectionForSingleStudent()" style="background: var(--success);">📅 Add Attendance Dates</button>
                 <button class="btn btn-secondary" onclick="closeStudentDetails()">Close</button>
             </div>
         </div>
     </div>
 
-    <!-- Date Selection Modal -->
-    <div id="dateSelectionModal" class="modal-overlay" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalStudentNameForDate">选择出席日期</h3>
-                <span class="close-modal" onclick="closeDateModal()">&times;</span>
+    <!-- Date Selection Calendar Modal -->
+    <div id="dateSelectionModal" class="calendar-modal" style="display: none;">
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <h3 id="dateSelectionTitle">选择考勤日期</h3>
+                <button class="btn" onclick="closeDateSelectionModal()" style="padding: 8px 16px; background: var(--gray);">×</button>
             </div>
             
-            <div class="modal-body">
-                <div class="month-nav">
-                    <button onclick="changeMonth(-1)" class="btn btn-sm btn-secondary">&lt;</button>
-                    <span id="currentMonthLabel" style="font-weight:bold; margin:0 15px;">2023年 10月</span>
-                    <button onclick="changeMonth(1)" class="btn btn-sm btn-secondary">&gt;</button>
-                </div>
-                
-                <div class="calendar-grid" id="calendarGrid">
-                    <!-- 日历将通过JavaScript动态生成 -->
-                </div>
-                
-                <div class="selected-dates-summary">
-                    已选: <span id="selectedCountDisplay">0</span> 天
-                </div>
+            <div class="calendar-month-nav">
+                <button class="btn btn-secondary" onclick="changeCalendarMonth(-1)">‹ 上个月</button>
+                <span id="currentMonthLabel" style="font-weight: bold; font-size: 1.2em;">2024年 1月</span>
+                <button class="btn btn-secondary" onclick="changeCalendarMonth(1)">下个月 ›</button>
             </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeDateModal()">取消</button>
-                <button class="btn btn-success" onclick="confirmBatchAttendance()">确认出席</button>
+            
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- 日历将通过JavaScript动态生成 -->
+            </div>
+            
+            <div class="selected-dates-summary">
+                <p><strong>已选择日期:</strong> <span id="selectedDatesCount">0</span> 天</p>
+                <div id="selectedDatesList" style="margin-top: 10px; max-height: 100px; overflow-y: auto;"></div>
+            </div>
+            
+            <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="closeDateSelectionModal()">取消</button>
+                <button class="btn btn-success" onclick="saveSelectedDates()">保存选择</button>
             </div>
         </div>
     </div>
@@ -2251,14 +1427,15 @@
         // 搜索相关变量
         let currentSearchTerm = '';
         let currentSelectedStudentId = '';
-
-        // === 日期选择功能相关全局变量 ===
-        let currentSelectionStudentId = null;
-        let currentSelectionStudentName = null;
-        let selectedDates = new Set(); // 使用 Set 自动去重
+        
+        // 日期选择相关变量
+        let selectedDates = new Set();
         let currentCalendarDate = new Date();
+        let dateSelectionMode = ''; // 'single' 或 'batch'
+        let dateSelectionStudentId = '';
+        let dateSelectionStudentIds = [];
 
-        // 修正后的系统类
+        // 修正后的系统类 - 添加时间槽排序功能和日期格式化
         class MemoschoolAttendanceSystem {
             constructor() {
                 this.students = new Map();
@@ -2490,7 +1667,7 @@
                     throw new Error('Student name and time slot are required');
                 }
                 
-                const studentId = `${name.replace(/\s+/g, '').toLowerCase()}-${Date.now()}`;
+                const studentId = `${name.replace(/\s+/g, '')}-${timeSlot.replace(/\s+/g, '')}-${Date.now()}`;
                 const student = {
                     id: studentId,
                     name,
@@ -2620,17 +1797,11 @@
                 const attendanceRate = totalSessions > 0 ? 
                     (validAttendanceCount / totalSessions * 100).toFixed(1) : 0;
                 
-                // 获取最后出席日期
-                const lastAttended = validAttendanceDates.length > 0 ? 
-                    validAttendanceDates[validAttendanceDates.length - 1] : 'Never';
-                
                 return {
                     ...student,
                     attendanceCount: validAttendanceCount,
                     totalSessions: totalSessions,
                     attendanceRate,
-                    attendanceDates: validAttendanceDates,
-                    lastAttended: this.formatDate(lastAttended),
                     recentAttendance: validAttendanceDates.slice(-5)
                 };
             }
@@ -2717,7 +1888,7 @@
                 };
                 return JSON.stringify(data, null, 2);
             }
-
+            
             // 时间槽管理方法
             async addTimeSlot(name) {
                 if (!name) {
@@ -2769,91 +1940,82 @@
             }
         }
 
-        // 创建系统实例
+        // Create system instance
         const system = new MemoschoolAttendanceSystem();
 
-        // === 日期选择功能相关函数 ===
+        // ==================== 日期选择功能 ====================
         
-        // 1. 打开模态框的主函数
-        function openDateSelectionModal(studentId, studentName) {
-            currentSelectionStudentId = studentId;
-            currentSelectionStudentName = studentName;
-            selectedDates.clear(); // 清空之前的选择
-            
-            document.getElementById('modalStudentNameForDate').textContent = `为 ${studentName} 选择日期`;
-            document.getElementById('selectedCountDisplay').textContent = '0';
-            document.getElementById('dateSelectionModal').style.display = 'flex';
-            
-            renderCalendar();
-        }
-        
-        // 2. 关闭模态框
-        function closeDateModal() {
-            document.getElementById('dateSelectionModal').style.display = 'none';
-        }
-        
-        // 3. 渲染日历核心逻辑
+        // 渲染日历
         function renderCalendar() {
             const grid = document.getElementById('calendarGrid');
             const label = document.getElementById('currentMonthLabel');
-            grid.innerHTML = ''; // 清空
+            grid.innerHTML = '';
             
             const year = currentCalendarDate.getFullYear();
             const month = currentCalendarDate.getMonth();
             
-            // 更新标题
+            // 更新月份标题
             const monthNames = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
             label.textContent = `${year}年 ${monthNames[month]}`;
             
-            // 添加星期头
+            // 添加星期标题
             const days = ['日', '一', '二', '三', '四', '五', '六'];
-            days.forEach(d => {
-                const div = document.createElement('div');
-                div.className = 'calendar-day-header';
-                div.textContent = d;
-                grid.appendChild(div);
+            days.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day-header';
+                dayElement.textContent = day;
+                grid.appendChild(dayElement);
             });
-        
-            // 计算当月第一天是星期几
-            const firstDay = new Date(year, month, 1).getDay();
-            // 计算当月有多少天
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
             
-            // 填充空白
-            for (let i = 0; i < firstDay; i++) {
-                const div = document.createElement('div');
-                div.className = 'calendar-date empty';
-                grid.appendChild(div);
+            // 获取当月第一天和最后一天
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            
+            // 计算第一天是星期几 (0 = 星期日, 1 = 星期一, ...)
+            const firstDayIndex = firstDay.getDay();
+            
+            // 添加空白格子（上个月的日期）
+            for (let i = 0; i < firstDayIndex; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day other-month';
+                emptyDay.textContent = '';
+                grid.appendChild(emptyDay);
             }
             
-            // 填充日期
+            // 添加本月的日期
             const today = new Date();
-            for (let d = 1; d <= daysInMonth; d++) {
-                const div = document.createElement('div');
-                div.className = 'calendar-date';
-                div.textContent = d;
+            const todayStr = today.toISOString().split('T')[0];
+            
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const date = new Date(year, month, day);
+                const dateStr = date.toISOString().split('T')[0];
                 
-                // 构建日期字符串 YYYY-MM-DD
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                dayElement.dataset.date = dateStr;
                 
-                // 检查是否是今天
-                if (year === today.getFullYear() && month === today.getMonth() && d === today.getDate()) {
-                    div.classList.add('today');
+                // 如果是今天
+                if (dateStr === todayStr) {
+                    dayElement.classList.add('today');
                 }
                 
-                // 检查是否已选中
+                // 如果已经选中
                 if (selectedDates.has(dateStr)) {
-                    div.classList.add('selected');
+                    dayElement.classList.add('selected');
                 }
                 
                 // 点击事件
-                div.onclick = () => toggleDateSelection(dateStr, div);
+                dayElement.addEventListener('click', () => toggleDateSelection(dateStr, dayElement));
                 
-                grid.appendChild(div);
+                grid.appendChild(dayElement);
             }
+            
+            // 更新已选择日期列表
+            updateSelectedDatesList();
         }
         
-        // 4. 切换日期选中状态
+        // 切换日期选择状态
         function toggleDateSelection(dateStr, element) {
             if (selectedDates.has(dateStr)) {
                 selectedDates.delete(dateStr);
@@ -2862,96 +2024,341 @@
                 selectedDates.add(dateStr);
                 element.classList.add('selected');
             }
-            document.getElementById('selectedCountDisplay').textContent = selectedDates.size;
+            updateSelectedDatesList();
         }
         
-        // 5. 切换月份
-        function changeMonth(delta) {
+        // 更新已选择日期列表
+        function updateSelectedDatesList() {
+            const countElement = document.getElementById('selectedDatesCount');
+            const listElement = document.getElementById('selectedDatesList');
+            
+            countElement.textContent = selectedDates.size;
+            
+            if (selectedDates.size === 0) {
+                listElement.innerHTML = '<p style="color: var(--gray); font-style: italic;">没有选择任何日期</p>';
+            } else {
+                const datesArray = Array.from(selectedDates).sort();
+                listElement.innerHTML = datesArray.map(date => {
+                    const formattedDate = system.formatDate(date);
+                    return `<div style="padding: 4px 8px; background: #e8f4fd; margin: 2px 0; border-radius: 4px;">${formattedDate}</div>`;
+                }).join('');
+            }
+        }
+        
+        // 更改月份
+        function changeCalendarMonth(delta) {
             currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
             renderCalendar();
         }
         
-        // 6. 最终确认提交
-        async function confirmBatchAttendance() {
+        // 打开日期选择模态框（单个学生）
+        function openDateSelectionForSingleStudent() {
+            if (!currentSelectedStudentId) {
+                showToast('请先选择一个学生', 'error');
+                return;
+            }
+            
+            const student = system.students.get(currentSelectedStudentId);
+            if (!student) {
+                showToast('学生信息不存在', 'error');
+                return;
+            }
+            
+            dateSelectionMode = 'single';
+            dateSelectionStudentId = currentSelectedStudentId;
+            selectedDates.clear();
+            
+            // 预选学生已有的考勤日期
+            if (student.attendanceDates && student.attendanceDates.length > 0) {
+                student.attendanceDates.forEach(date => {
+                    selectedDates.add(date);
+                });
+            }
+            
+            document.getElementById('dateSelectionTitle').textContent = `为 ${student.name} 选择考勤日期`;
+            document.getElementById('dateSelectionModal').style.display = 'flex';
+            
+            renderCalendar();
+        }
+        
+        // 打开日期选择模态框（批量操作）
+        function openDateSelectionForBatch() {
+            const selectedCheckboxes = document.querySelectorAll('.student-select-checkbox:checked');
+            if (selectedCheckboxes.length === 0) {
+                showToast('请先选择至少一名学生', 'error');
+                return;
+            }
+            
+            dateSelectionMode = 'batch';
+            dateSelectionStudentIds = Array.from(selectedCheckboxes).map(cb => cb.value);
+            selectedDates.clear();
+            
+            document.getElementById('dateSelectionTitle').textContent = `为 ${dateSelectionStudentIds.length} 名学生选择考勤日期`;
+            document.getElementById('dateSelectionModal').style.display = 'flex';
+            
+            renderCalendar();
+        }
+        
+        // 关闭日期选择模态框
+        function closeDateSelectionModal() {
+            document.getElementById('dateSelectionModal').style.display = 'none';
+            selectedDates.clear();
+            dateSelectionMode = '';
+            dateSelectionStudentId = '';
+            dateSelectionStudentIds = [];
+        }
+        
+        // 保存选择的日期
+        async function saveSelectedDates() {
             if (selectedDates.size === 0) {
                 showToast('请至少选择一个日期', 'error');
                 return;
             }
             
-            const confirmBtn = document.querySelector('.modal-footer .btn-success');
-            const originalText = confirmBtn.textContent;
-            confirmBtn.textContent = '提交中...';
-            confirmBtn.disabled = true;
-        
             try {
-                // 更新学生的考勤数据
-                const studentRef = db.collection('users').doc(system.userId).collection('students').doc(currentSelectionStudentId);
+                if (dateSelectionMode === 'single') {
+                    await saveDatesForSingleStudent();
+                } else if (dateSelectionMode === 'batch') {
+                    await saveDatesForBatchStudents();
+                }
                 
-                // 获取学生现有的考勤日期
-                const student = system.students.get(currentSelectionStudentId);
-                const existingDates = student.attendanceDates || [];
-                
-                // 合并现有的和新选择的日期（去重）
-                const allDates = [...new Set([...existingDates, ...Array.from(selectedDates)])];
-                
-                // 更新学生信息
-                await studentRef.update({
-                    attendanceDates: allDates,
-                    attendanceCount: allDates.length,
-                    lastAttended: allDates[allDates.length - 1] || student.enrolledDate
-                });
-                
-                // 为每个选中的日期创建考勤记录
-                const batch = db.batch();
-                selectedDates.forEach(dateStr => {
-                    // 检查是否已经有这个时间槽的这天的记录
-                    const studentTimeSlot = student.timeSlot;
-                    const recordId = `${studentTimeSlot}-${dateStr}`.replace(/[^a-zA-Z0-9]/g, '-');
-                    const recordRef = db.collection('users').doc(system.userId).collection('attendance').doc(recordId);
-                    
-                    // 检查是否已存在记录
-                    const existingRecord = system.attendanceRecords.find(record => 
-                        record.timeSlot === studentTimeSlot && record.date === dateStr
-                    );
-                    
-                    if (existingRecord) {
-                        // 如果记录已存在，添加学生到presentStudents数组（如果不在的话）
-                        if (!existingRecord.presentStudents.includes(currentSelectionStudentId)) {
-                            batch.update(recordRef, {
-                                presentStudents: firebase.firestore.FieldValue.arrayUnion(currentSelectionStudentId)
-                            });
-                        }
-                    } else {
-                        // 创建新记录
-                        batch.set(recordRef, {
-                            id: recordId,
-                            timeSlot: studentTimeSlot,
-                            date: dateStr,
-                            topic: '批量添加',
-                            presentStudents: [currentSelectionStudentId],
-                            recordedAt: new Date().toISOString()
-                        });
-                    }
-                });
-                
-                await batch.commit();
-                
-                // 成功后的UI反馈
-                showToast(`成功记录 ${selectedDates.size} 天出席！`);
-                closeDateModal();
+                closeDateSelectionModal();
+                showToast(`成功添加 ${selectedDates.size} 个考勤日期`, 'success');
                 
                 // 刷新界面
                 updateUI();
                 
             } catch (error) {
-                console.error("Batch save error:", error);
-                showToast("提交失败: " + error.message, 'error');
-            } finally {
-                confirmBtn.textContent = originalText;
-                confirmBtn.disabled = false;
+                console.error('保存日期时出错:', error);
+                showToast('保存失败: ' + error.message, 'error');
             }
         }
-
+        
+        // 为单个学生保存日期
+        async function saveDatesForSingleStudent() {
+            const student = system.students.get(dateSelectionStudentId);
+            if (!student) {
+                throw new Error('学生不存在');
+            }
+            
+            // 获取现有的考勤日期
+            const existingDates = student.attendanceDates || [];
+            
+            // 合并现有日期和新选择的日期（去重）
+            const allDates = [...new Set([...existingDates, ...Array.from(selectedDates)])];
+            
+            // 更新学生信息
+            if (system.isOnline) {
+                await db.collection('users').doc(system.userId).collection('students')
+                    .doc(dateSelectionStudentId).update({
+                        attendanceDates: allDates,
+                        attendanceCount: allDates.length,
+                        lastAttended: allDates[allDates.length - 1] || student.enrolledDate
+                    });
+            } else {
+                student.attendanceDates = allDates;
+                student.attendanceCount = allDates.length;
+                student.lastAttended = allDates[allDates.length - 1] || student.enrolledDate;
+            }
+            
+            // 为每个选中的日期创建考勤记录
+            const timeSlot = student.timeSlot;
+            for (const dateStr of selectedDates) {
+                await createAttendanceRecordIfNeeded(timeSlot, dateStr, [dateSelectionStudentId]);
+            }
+        }
+        
+        // 为批量学生保存日期
+        async function saveDatesForBatchStudents() {
+            const batch = db.batch();
+            
+            for (const studentId of dateSelectionStudentIds) {
+                const student = system.students.get(studentId);
+                if (!student) continue;
+                
+                // 获取现有的考勤日期
+                const existingDates = student.attendanceDates || [];
+                
+                // 合并现有日期和新选择的日期（去重）
+                const allDates = [...new Set([...existingDates, ...Array.from(selectedDates)])];
+                
+                // 更新学生信息
+                const studentRef = db.collection('users').doc(system.userId).collection('students').doc(studentId);
+                batch.update(studentRef, {
+                    attendanceDates: allDates,
+                    attendanceCount: allDates.length,
+                    lastAttended: allDates[allDates.length - 1] || student.enrolledDate
+                });
+            }
+            
+            await batch.commit();
+            
+            // 为每个选中的日期创建考勤记录
+            for (const dateStr of selectedDates) {
+                await createAttendanceRecordForBatch(dateStr, dateSelectionStudentIds);
+            }
+        }
+        
+        // 创建考勤记录（如果不存在）
+        async function createAttendanceRecordIfNeeded(timeSlot, dateStr, studentIds) {
+            const recordId = `${timeSlot}-${dateStr}`.replace(/[^a-zA-Z0-9]/g, '-');
+            const recordRef = db.collection('users').doc(system.userId).collection('attendance').doc(recordId);
+            
+            try {
+                const doc = await recordRef.get();
+                
+                if (doc.exists) {
+                    // 如果记录已存在，添加学生到presentStudents数组
+                    const existingData = doc.data();
+                    const existingStudents = existingData.presentStudents || [];
+                    const newStudents = studentIds.filter(id => !existingStudents.includes(id));
+                    
+                    if (newStudents.length > 0) {
+                        await recordRef.update({
+                            presentStudents: firebase.firestore.FieldValue.arrayUnion(...newStudents)
+                        });
+                    }
+                } else {
+                    // 创建新记录
+                    await recordRef.set({
+                        id: recordId,
+                        timeSlot: timeSlot,
+                        date: dateStr,
+                        topic: '批量添加',
+                        presentStudents: studentIds,
+                        recordedAt: new Date().toISOString()
+                    });
+                }
+            } catch (error) {
+                console.error('创建考勤记录时出错:', error);
+            }
+        }
+        
+        // 为批量学生创建考勤记录
+        async function createAttendanceRecordForBatch(dateStr, studentIds) {
+            // 按时间槽分组学生
+            const studentsByTimeSlot = {};
+            
+            for (const studentId of studentIds) {
+                const student = system.students.get(studentId);
+                if (!student) continue;
+                
+                const timeSlot = student.timeSlot;
+                if (!studentsByTimeSlot[timeSlot]) {
+                    studentsByTimeSlot[timeSlot] = [];
+                }
+                studentsByTimeSlot[timeSlot].push(studentId);
+            }
+            
+            // 为每个时间槽创建考勤记录
+            for (const [timeSlot, slotStudentIds] of Object.entries(studentsByTimeSlot)) {
+                await createAttendanceRecordIfNeeded(timeSlot, dateStr, slotStudentIds);
+            }
+        }
+        
+        // ==================== 学生详情功能 ====================
+        
+        // 查看学生详情
+        function viewStudentDetails(studentId) {
+            const student = system.students.get(studentId);
+            if (!student) {
+                showToast('Student not found!', 'error');
+                return;
+            }
+            
+            currentSelectedStudentId = studentId;
+            
+            // 获取学生考勤信息
+            const attendanceInfo = system.getStudentAttendance(studentId);
+            
+            // 填充模态框信息
+            document.getElementById('detailStudentName').textContent = student.name;
+            document.getElementById('detailStudentAge').textContent = student.age || 'N/A';
+            document.getElementById('detailStudentGender').textContent = student.gender || 'N/A';
+            document.getElementById('detailStudentTimeSlot').textContent = student.timeSlot;
+            document.getElementById('detailStudentEnrolledDate').textContent = system.formatDate(student.enrolledDate);
+            document.getElementById('detailStudentTotalSessions').textContent = student.totalSessions || 48;
+            
+            document.getElementById('detailAttendanceCount').textContent = attendanceInfo.attendanceCount;
+            document.getElementById('detailAttendanceRate').textContent = attendanceInfo.attendanceRate;
+            
+            // 获取最后出席日期
+            const lastAttended = student.attendanceDates && student.attendanceDates.length > 0 
+                ? system.formatDate(student.attendanceDates[student.attendanceDates.length - 1])
+                : '从未出席';
+            document.getElementById('detailLastAttended').textContent = lastAttended;
+            
+            // 填充考勤日期
+            const datesContainer = document.getElementById('detailAttendanceDates');
+            datesContainer.innerHTML = '';
+            
+            const attendanceDates = student.attendanceDates || [];
+            
+            if (attendanceDates.length === 0) {
+                datesContainer.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--gray);">No attendance records found</p>';
+            } else {
+                // 按日期排序（最新的在前）
+                const sortedDates = [...attendanceDates].sort((a, b) => new Date(b) - new Date(a));
+                
+                sortedDates.forEach(date => {
+                    const dateElement = document.createElement('div');
+                    dateElement.className = 'attendance-dot present';
+                    dateElement.textContent = system.formatDate(date);
+                    dateElement.title = `Attended on ${system.formatDate(date)}`;
+                    dateElement.style.cursor = 'default';
+                    datesContainer.appendChild(dateElement);
+                });
+            }
+            
+            // 显示模态框
+            document.getElementById('studentDetailsModal').style.display = 'flex';
+        }
+        
+        // 关闭学生详情
+        function closeStudentDetails() {
+            document.getElementById('studentDetailsModal').style.display = 'none';
+            currentSelectedStudentId = '';
+        }
+        
+        // 编辑当前查看的学生
+        function editCurrentStudent() {
+            if (currentSelectedStudentId) {
+                editStudent(currentSelectedStudentId);
+                closeStudentDetails();
+            }
+        }
+        
+        // ==================== 批量操作功能 ====================
+        
+        // 更新选中计数
+        function updateSelectedCount() {
+            const checkboxes = document.querySelectorAll('.student-select-checkbox:checked');
+            const countElement = document.getElementById('selectedCount');
+            countElement.textContent = `已选择: ${checkboxes.length} 名学生`;
+        }
+        
+        // 全选学生
+        function selectAllStudents() {
+            const checkboxes = document.querySelectorAll('.student-select-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            updateSelectedCount();
+            showToast(`已全选 ${checkboxes.length} 名学生`, 'info');
+        }
+        
+        // 取消全选
+        function deselectAllStudents() {
+            const checkboxes = document.querySelectorAll('.student-select-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateSelectedCount();
+            showToast('已取消全选', 'info');
+        }
+        
+        // ==================== 其他功能 ====================
+        
         // Firebase Authentication Functions
         async function login() {
             const email = document.getElementById('email').value;
@@ -3017,6 +2424,103 @@
             system.initialize(user.uid);
         }
 
+        // 测试模式：跳过登录直接进入系统
+        function skipLoginForTesting() {
+            console.log("⚠️ 进入测试模式（跳过登录）");
+            
+            // 模拟用户对象
+            const mockUser = {
+                uid: 'test-user-' + Date.now(),
+                email: 'test@example.com'
+            };
+            
+            // 显示主界面
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('appSection').style.display = 'block';
+            document.getElementById('userEmail').textContent = '测试用户（离线模式）';
+            
+            // 初始化系统（离线模式）
+            system.userId = mockUser.uid;
+            system.isOnline = false;
+            
+            // 加载默认时间槽
+            system.timeSlots = DEFAULT_TIME_SLOTS.map(slot => ({
+                id: slot.replace(/\s+/g, '-').toLowerCase(),
+                name: slot,
+                isDefault: true,
+                createdAt: new Date().toISOString()
+            }));
+            
+            // 清空现有数据
+            system.students.clear();
+            system.attendanceRecords = [];
+            
+            // 添加一些测试数据
+            addSampleData();
+            
+            // 更新UI
+            updateUI();
+            updateSyncStatus('✅ 进入测试模式（离线）', 'synced');
+            showToast('已进入测试模式，所有数据仅保存在本地', 'info');
+        }
+
+        // 添加示例数据
+        function addSampleData() {
+            // 添加一些示例学生
+            const sampleStudents = [
+                { name: '张三', age: 12, gender: 'Male', timeSlot: 'Friday 2pm-3:30pm' },
+                { name: '李四', age: 13, gender: 'Female', timeSlot: 'Saturday 9am-10:30am' },
+                { name: '王五', age: 11, gender: 'Male', timeSlot: 'Saturday 11am-12:30pm' },
+                { name: '赵六', age: 14, gender: 'Female', timeSlot: 'Sunday 9am-10:30am' }
+            ];
+            
+            sampleStudents.forEach((student, index) => {
+                const studentId = `${student.name.replace(/\s+/g, '')}-${Date.now() + index}`;
+                const studentData = {
+                    id: studentId,
+                    name: student.name,
+                    age: student.age,
+                    gender: student.gender,
+                    timeSlot: student.timeSlot,
+                    enrolledDate: '2024-01-01',
+                    totalSessions: 48,
+                    attendanceCount: Math.floor(Math.random() * 30) + 10,
+                    attendanceDates: generateSampleDates(30),
+                    createdAt: new Date().toISOString()
+                };
+                system.students.set(studentId, studentData);
+            });
+            
+            // 添加示例考勤记录
+            const today = new Date();
+            for (let i = 0; i < 5; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - i * 7); // 过去几周
+                
+                const record = {
+                    id: `record-${i}`,
+                    timeSlot: DEFAULT_TIME_SLOTS[i % DEFAULT_TIME_SLOTS.length],
+                    date: date.toISOString().split('T')[0],
+                    topic: `示例课程 ${i + 1}`,
+                    presentStudents: Array.from(system.students.keys()).slice(0, 3),
+                    recordedAt: new Date().toISOString()
+                };
+                system.attendanceRecords.push(record);
+            }
+        }
+
+        // 生成示例考勤日期
+        function generateSampleDates(count) {
+            const dates = [];
+            const today = new Date();
+            for (let i = 0; i < count; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - i * 2); // 每两天一次
+                dates.push(date.toISOString().split('T')[0]);
+            }
+            return dates;
+        }
+
         // Listen for auth state changes
         auth.onAuthStateChanged((user) => {
             if (user) {
@@ -3049,64 +2553,12 @@
             updateSelectedCount();
         }
 
-        // UI Functions with auto-scroll
+        // UI Functions
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
             });
             document.getElementById(sectionId).classList.add('active');
-            
-            // 平滑滚动到section顶部
-            setTimeout(() => {
-                const sectionElement = document.getElementById(sectionId);
-                if (sectionElement) {
-                    const offset = 20; // 稍微偏移一点
-                    const sectionPosition = sectionElement.offsetTop - offset;
-                    
-                    // 如果是移动设备且导航栏是sticky的，调整滚动位置
-                    const navHeight = document.querySelector('.nav').offsetHeight;
-                    const finalPosition = window.innerWidth < 768 ? 
-                        sectionPosition - navHeight : 
-                        sectionPosition;
-                    
-                    window.scrollTo({
-                        top: finalPosition,
-                        behavior: 'smooth'
-                    });
-                }
-            }, 50); // 小延迟确保DOM已更新
-        }
-
-        // 带有焦点和滚动优化的showSection
-        function showSectionWithFocus(sectionId, focusElementId = null) {
-            showSection(sectionId);
-            
-            // 如果有指定焦点元素，滚动到该元素并聚焦
-            if (focusElementId) {
-                setTimeout(() => {
-                    const focusElement = document.getElementById(focusElementId);
-                    if (focusElement) {
-                        const offset = 30;
-                        const elementPosition = focusElement.offsetTop - offset;
-                        
-                        // 如果是移动设备且导航栏是sticky的，调整滚动位置
-                        const navHeight = document.querySelector('.nav').offsetHeight;
-                        const finalPosition = window.innerWidth < 768 ? 
-                            elementPosition - navHeight : 
-                            elementPosition;
-                        
-                        window.scrollTo({
-                            top: finalPosition,
-                            behavior: 'smooth'
-                        });
-                        
-                        // 稍微延迟后聚焦元素
-                        setTimeout(() => {
-                            focusElement.focus();
-                        }, 400);
-                    }
-                }, 300);
-            }
         }
 
         // 更新所有时间槽选择框
@@ -3208,28 +2660,6 @@
             }
         }
 
-        // 添加数据验证函数
-        function validateStudentData(studentData) {
-            const errors = [];
-            
-            if (!studentData.name || studentData.name.trim().length < 2) {
-                errors.push('Name must be at least 2 characters');
-            }
-            
-            if (studentData.age) {
-                const age = parseInt(studentData.age);
-                if (isNaN(age) || age < 3 || age > 30) {
-                    errors.push('Age must be between 3 and 30');
-                }
-            }
-            
-            if (!studentData.timeSlot) {
-                errors.push('Please select a time slot');
-            }
-            
-            return errors;
-        }
-
         async function addStudent() {
             const name = document.getElementById('studentName').value.trim();
             const age = document.getElementById('studentAge').value;
@@ -3238,81 +2668,25 @@
             const enrolledDate = document.getElementById('studentEnrolledDate').value;
             const totalSessions = document.getElementById('studentTotalSessions').value || 48;
             
-            // 验证数据
-            const validationErrors = validateStudentData({ name, age, gender, timeSlot, enrolledDate });
-            if (validationErrors.length > 0) {
-                showToast('Validation errors: ' + validationErrors.join(', '), 'error');
+            if (!name || !timeSlot) {
+                showToast('Please enter at least student name and select a time slot', 'error');
                 return;
             }
-            
-            // 生成唯一的学生ID
-            const studentId = `${name.replace(/\s+/g, '').toLowerCase()}-${Date.now()}`;
             
             // 如果没有选择入学日期，默认使用今天
             const finalEnrolledDate = enrolledDate || new Date().toISOString().split('T')[0];
             
             try {
-                // 检查是否已存在同名同时间槽的学生
-                const existingStudent = Array.from(system.students.values()).find(
-                    student => student.name.toLowerCase() === name.toLowerCase() && 
-                              student.timeSlot === timeSlot
-                );
-                
-                if (existingStudent) {
-                    if (!confirm(`A student named "${name}" already exists in time slot "${timeSlot}". Continue anyway?`)) {
-                        return;
-                    }
-                }
-                
-                const studentData = {
-                    id: studentId,
-                    name,
-                    age: age ? parseInt(age) : '',
-                    gender: gender || '',
-                    timeSlot,
-                    enrolledDate: finalEnrolledDate,
-                    totalSessions: parseInt(totalSessions) || 48,
-                    attendanceCount: 0,
-                    attendanceDates: [],
-                    createdAt: new Date().toISOString()
-                };
-                
-                // 保存到Firestore
-                await db.collection('users').doc(system.userId).collection('students')
-                    .doc(studentId).set(studentData);
-                
-                // 清空表单
+                await system.addStudent(name, age, gender, timeSlot, finalEnrolledDate, totalSessions);
                 document.getElementById('studentName').value = '';
                 document.getElementById('studentAge').value = '';
                 document.getElementById('studentGender').value = '';
                 document.getElementById('studentTimeSlot').value = '';
                 document.getElementById('studentEnrolledDate').value = '';
                 document.getElementById('studentTotalSessions').value = '48';
-                
-                showToast(`Student "${name}" added successfully!`, 'success');
-                
-                // 滚动到学生列表
-                setTimeout(() => {
-                    const studentList = document.querySelector('#students h3');
-                    if (studentList) {
-                        const offset = 30;
-                        const elementPosition = studentList.offsetTop - offset;
-                        
-                        const navHeight = document.querySelector('.nav').offsetHeight;
-                        const finalPosition = window.innerWidth < 768 ? 
-                            elementPosition - navHeight : 
-                            elementPosition;
-                        
-                        window.scrollTo({
-                            top: finalPosition,
-                            behavior: 'smooth'
-                        });
-                    }
-                }, 300);
-                
+                showToast('Student added successfully!', 'success');
             } catch (error) {
-                console.error('Error adding student:', error);
-                showToast('Failed to add student: ' + error.message, 'error');
+                showToast('Error: ' + error.message, 'error');
             }
         }
 
@@ -3337,31 +2711,7 @@
             document.getElementById('editStudentForm').style.display = 'block';
             
             // 滚动到编辑表单
-            setTimeout(() => {
-                const editForm = document.getElementById('editStudentForm');
-                if (editForm) {
-                    const offset = 30;
-                    const elementPosition = editForm.offsetTop - offset;
-                    
-                    const navHeight = document.querySelector('.nav').offsetHeight;
-                    const finalPosition = window.innerWidth < 768 ? 
-                        elementPosition - navHeight : 
-                        elementPosition;
-                    
-                    window.scrollTo({
-                        top: finalPosition,
-                        behavior: 'smooth'
-                    });
-                }
-            }, 100);
-        }
-
-        // 编辑当前查看的学生
-        function editCurrentStudent() {
-            if (currentSelectedStudentId) {
-                editStudent(currentSelectedStudentId);
-                closeStudentDetails();
-            }
+            document.getElementById('editStudentForm').scrollIntoView({ behavior: 'smooth' });
         }
 
         // 更新学生函数
@@ -3374,10 +2724,8 @@
             const enrolledDate = document.getElementById('editStudentEnrolledDate').value;
             const totalSessions = document.getElementById('editStudentTotalSessions').value || 48;
             
-            // 验证数据
-            const validationErrors = validateStudentData({ name, age, gender, timeSlot, enrolledDate });
-            if (validationErrors.length > 0) {
-                showToast('Validation errors: ' + validationErrors.join(', '), 'error');
+            if (!name || !timeSlot) {
+                showToast('Please enter at least student name and select a time slot', 'error');
                 return;
             }
             
@@ -3397,11 +2745,6 @@
                 document.getElementById('editStudentForm').style.display = 'none';
                 
                 showToast('Student updated successfully!', 'success');
-                
-                // 如果正在查看该学生的详情，更新详情模态框
-                if (currentSelectedStudentId === studentId) {
-                    viewStudentDetails(studentId);
-                }
                 
             } catch (error) {
                 showToast('Error updating student: ' + error.message, 'error');
@@ -3437,62 +2780,6 @@
                     showToast('Error deleting student: ' + error.message, 'error');
                 }
             }
-        }
-
-        // 查看学生详情
-        function viewStudentDetails(studentId) {
-            const student = system.students.get(studentId);
-            if (!student) {
-                showToast('Student not found!', 'error');
-                return;
-            }
-            
-            currentSelectedStudentId = studentId;
-            
-            // 获取学生考勤信息
-            const attendanceInfo = system.getStudentAttendance(studentId);
-            
-            // 填充模态框信息
-            document.getElementById('detailStudentName').textContent = student.name;
-            document.getElementById('detailStudentAge').textContent = student.age || 'N/A';
-            document.getElementById('detailStudentGender').textContent = student.gender || 'N/A';
-            document.getElementById('detailStudentTimeSlot').textContent = student.timeSlot;
-            document.getElementById('detailStudentEnrolledDate').textContent = system.formatDate(student.enrolledDate);
-            document.getElementById('detailStudentTotalSessions').textContent = student.totalSessions || 48;
-            
-            document.getElementById('detailAttendanceCount').textContent = attendanceInfo.attendanceCount;
-            document.getElementById('detailAttendanceRate').textContent = attendanceInfo.attendanceRate + '%';
-            document.getElementById('detailLastAttended').textContent = attendanceInfo.lastAttended;
-            
-            // 填充考勤日期
-            const datesContainer = document.getElementById('detailAttendanceDates');
-            datesContainer.innerHTML = '';
-            
-            const attendanceDates = attendanceInfo.attendanceDates || [];
-            
-            if (attendanceDates.length === 0) {
-                datesContainer.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--gray);">No attendance records found</p>';
-            } else {
-                // 按日期排序（最新的在前）
-                const sortedDates = [...attendanceDates].sort((a, b) => new Date(b) - new Date(a));
-                
-                sortedDates.forEach(date => {
-                    const dateElement = document.createElement('div');
-                    dateElement.className = 'attendance-date-item';
-                    dateElement.textContent = system.formatDate(date);
-                    dateElement.title = `Attended on ${system.formatDate(date)}`;
-                    datesContainer.appendChild(dateElement);
-                });
-            }
-            
-            // 显示模态框
-            document.getElementById('studentDetailsModal').style.display = 'flex';
-        }
-
-        // 关闭学生详情模态框
-        function closeStudentDetails() {
-            document.getElementById('studentDetailsModal').style.display = 'none';
-            currentSelectedStudentId = '';
         }
 
         function updateTimeSlotTabs() {
@@ -3618,7 +2905,9 @@
                 const enrolledDate = system.formatDate(student.enrolledDate);
                 
                 card.innerHTML = `
-                    <input type="checkbox" class="student-select-checkbox" value="${student.id}" onclick="event.stopPropagation(); updateSelectedCount();">
+                    <div style="position: absolute; top: 15px; right: 15px;">
+                        <input type="checkbox" class="student-select-checkbox" value="${student.id}" onclick="event.stopPropagation(); updateSelectedCount();">
+                    </div>
                     <div class="student-header">
                         <div>
                             <div class="student-name">${student.name}</div>
@@ -3639,8 +2928,8 @@
                         </div>
                     </div>
                     <div class="student-actions">
-                        <button class="btn btn-info" onclick="editStudent('${student.id}')" style="padding: 8px 12px; font-size: 12px; flex: 1;">Edit</button>
-                        <button class="btn btn-warning" onclick="deleteStudent('${student.id}')" style="padding: 8px 12px; font-size: 12px; flex: 1;">Delete</button>
+                        <button class="btn btn-info" onclick="event.stopPropagation(); editStudent('${student.id}')" style="padding: 8px 12px; font-size: 12px; flex: 1;">Edit</button>
+                        <button class="btn btn-warning" onclick="event.stopPropagation(); deleteStudent('${student.id}')" style="padding: 8px 12px; font-size: 12px; flex: 1;">Delete</button>
                     </div>
                 `;
                 
@@ -3747,8 +3036,8 @@
                 tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: var(--gray);">No attendance records found</td></tr>';
             }
         }
-
-                // 更新学生考勤摘要
+        
+        // 更新学生考勤摘要
         function updateStudentAttendanceSummary() {
             const tbody = document.getElementById('studentAttendanceSummary');
             tbody.innerHTML = '';
@@ -3810,26 +3099,26 @@
             // 创建详情模态框
             const modal = document.createElement('div');
             modal.id = 'classAttendanceDetailsModal';
-            modal.style = 'display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 15px;';
+            modal.style = 'display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;';
             
             // 获取出席学生的详细信息
             const presentStudents = record.presentStudents.map(studentId => {
                 const student = system.students.get(studentId);
                 return student ? `
-                    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
                         <div>
                             <strong>${student.name}</strong> (${student.age || 'N/A'}, ${student.gender || 'N/A'})
                         </div>
-                        <button class="btn btn-warning" onclick="removeStudentFromAttendance('${record.id}', '${studentId}')" style="padding: 4px 8px; font-size: 12px; flex-shrink: 0;">Remove</button>
+                        <button class="btn btn-warning" onclick="removeStudentFromAttendance('${record.id}', '${studentId}')" style="padding: 4px 8px; font-size: 12px;">Remove</button>
                     </div>
                 ` : '';
             }).join('');
             
             modal.innerHTML = `
-                <div style="background-color: white; padding: 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); max-width: 100%; width: 100%; max-height: 85vh; overflow-y: auto;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                        <h3 style="margin: 0; font-size: 1.3em; color: var(--dark);">Class Attendance Details</h3>
-                        <button class="btn" onclick="closeClassAttendanceDetailsModal()" style="padding: 8px 12px; background: var(--gray); flex-shrink: 0;">×</button>
+                <div style="background-color: white; padding: 30px; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="margin: 0; font-size: 1.5em; color: var(--dark);">Class Attendance Details</h3>
+                        <button class="btn" onclick="closeClassAttendanceDetailsModal()" style="padding: 8px 16px; background: var(--gray);">×</button>
                     </div>
                     <div style="margin-bottom: 20px;">
                         <p><strong>Date:</strong> ${system.formatDate(record.date)}</p>
@@ -3838,14 +3127,14 @@
                         <p><strong>Present Students:</strong> ${record.presentStudents.length}</p>
                     </div>
                     <div style="margin-top: 20px;">
-                        <h4 style="margin-bottom: 15px; color: var(--dark); font-size: 1.1em;">Present Students</h4>
+                        <h4 style="margin-bottom: 15px; color: var(--dark);">Present Students</h4>
                         <div id="presentStudentsList">
                             ${presentStudents || '<p style="color: var(--gray);">No students present</p>'}
                         </div>
                     </div>
-                    <div style="margin-top: 25px; text-align: center; display: flex; flex-direction: column; gap: 10px;">
-                        <button class="btn btn-warning" onclick="deleteClassAttendanceRecord('${record.id}')" style="width: 100%;">Delete Entire Record</button>
-                        <button class="btn btn-secondary" onclick="closeClassAttendanceDetailsModal()" style="width: 100%;">Close</button>
+                    <div style="margin-top: 30px; text-align: center;">
+                        <button class="btn btn-warning" onclick="deleteClassAttendanceRecord('${record.id}')" style="margin-right: 10px;">Delete Entire Record</button>
+                        <button class="btn btn-secondary" onclick="closeClassAttendanceDetailsModal()">Close</button>
                     </div>
                 </div>
             `;
@@ -3963,130 +3252,128 @@
         }
 
         async function recordAttendance() {
-            console.log("🚀 开始执行智能点名...");
-            
+            console.log("🚀 开始执行智能点名..."); 
+        
+            // 1. 获取输入框 (修正了 ID)
             const dateInput = document.getElementById('classDate');
-            const timeSlotInput = document.getElementById('timeSlotSelect');
-            const topicInput = document.getElementById('sessionTopic');
             
+            // ⚠️ 关键修改：这里改成了 timeSlotSelect
+            const timeSlotInput = document.getElementById('timeSlotSelect'); 
+        
+            // 安全检查
             if (!dateInput || !timeSlotInput) {
-                showToast("❌ 系统错误：找不到时间槽选择器", 'error');
+                alert("❌ 依然报错？请检查您的 HTML 里 <select> 的 ID 是不是 'timeSlotSelect'");
                 return;
             }
-            
+        
             const date = dateInput.value;
             const timeSlot = timeSlotInput.value;
-            const topic = topicInput ? topicInput.value : '';
             
-            // 获取勾选的学生
-            const selectedCheckboxes = document.querySelectorAll('#studentsCheckboxes input:checked');
+            // 2. 获取勾选的学生 (修正了选择器，适配您的旧代码)
+            // 尝试两种方式获取，确保能抓到人
+            let selectedCheckboxes = document.querySelectorAll('#studentsCheckboxes input:checked');
+            if (selectedCheckboxes.length === 0) {
+                // 备用方案
+                selectedCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            }
+            
             const selectedStudentIds = Array.from(selectedCheckboxes).map(cb => cb.value);
-            
-            // 基础验证
+        
+            // 3. 基础验证
             if (!date || !timeSlot) {
-                showToast('请选择日期和时间槽', 'error');
+                showToast('Please select date and time slot', 'error');
                 return;
             }
-            
+        
             if (selectedStudentIds.length === 0) {
-                showToast('请至少选择一名学生', 'error');
+                showToast('Please select at least one student', 'error');
                 return;
             }
-            
-            // 锁定按钮
+        
+            // 4. 锁定按钮
             const btn = document.querySelector('button[onclick*="recordAttendance"]');
             const originalBtnText = btn ? btn.innerHTML : 'Record Attendance';
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = '⏳ 处理中...';
+                btn.innerHTML = '⏳ Checking...';
             }
-            
+        
             try {
-                const recordId = `${timeSlot}-${date}`.replace(/[^a-zA-Z0-9]/g, '-');
+                const recordId = `${date}_${timeSlot.replace(/[: ]/g, '')}`;
+                const recordRef = db.collection('users').doc(system.userId).collection('class_attendance').doc(recordId);
+        
+                // 1. 先读取现有的记录
+                const docSnap = await recordRef.get();
                 
-                // 检查是否已存在记录
-                const existingRecord = system.attendanceRecords.find(record => 
-                    record.timeSlot === timeSlot && record.date === date
-                );
-                
-                if (existingRecord) {
-                    // 补录模式：合并学生名单
-                    const existingStudentIds = existingRecord.presentStudents || [];
-                    const newStudentIds = selectedStudentIds.filter(id => !existingStudentIds.includes(id));
-                    
-                    if (newStudentIds.length === 0) {
-                        showToast('⚠️ 这些学生都已经点过名了！', 'warning');
-                        if (btn) { btn.disabled = false; btn.innerHTML = originalBtnText; }
-                        return;
+                let studentsToUpdateStats = []; // 真正需要 +1 的学生列表（新人）
+        
+                if (docSnap.exists) {
+                    // === 补录模式 ===
+                    const existingData = docSnap.data();
+                    const existingStudentIds = existingData.studentIds || [];
+        
+                    // 筛选出"真正的新人"
+                    studentsToUpdateStats = selectedStudentIds.filter(id => !existingStudentIds.includes(id));
+        
+                    if (studentsToUpdateStats.length === 0) {
+                        showToast('⚠️ 这些学生都已经点过名了，没有新数据！', 'warning');
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = originalBtnText;
+                        }
+                        return; 
                     }
-                    
-                    // 更新考勤记录
-                    const updatedStudentIds = [...existingStudentIds, ...newStudentIds];
-                    
-                    // 1. 更新考勤记录
-                    await db.collection('users').doc(system.userId).collection('attendance')
-                        .doc(recordId).update({
-                            presentStudents: updatedStudentIds
-                        });
-                    
-                    // 2. 为新学生更新个人统计
-                    const batch = db.batch();
-                    for (const studentId of newStudentIds) {
-                        const studentRef = db.collection('users').doc(system.userId).collection('students').doc(studentId);
-                        batch.update(studentRef, {
-                            attendanceDates: firebase.firestore.FieldValue.arrayUnion(date),
-                            attendanceCount: firebase.firestore.FieldValue.increment(1)
-                        });
-                    }
-                    
-                    if (newStudentIds.length > 0) {
-                        await batch.commit();
-                        showToast(`✅ 成功为 ${newStudentIds.length} 位学生补录考勤！`, 'success');
-                    }
-                    
+        
+                    // 更新课堂记录
+                    await recordRef.update({
+                        studentIds: firebase.firestore.FieldValue.arrayUnion(...studentsToUpdateStats)
+                    });
+        
                 } else {
-                    // 新建记录模式
-                    const recordData = {
-                        id: recordId,
-                        timeSlot: timeSlot,
+                    // === 新建模式 ===
+                    studentsToUpdateStats = selectedStudentIds;
+                    
+                    await recordRef.set({
                         date: date,
-                        topic: topic,
-                        presentStudents: selectedStudentIds,
-                        recordedAt: new Date().toISOString()
-                    };
-                    
-                    // 1. 创建考勤记录
-                    await db.collection('users').doc(system.userId).collection('attendance')
-                        .doc(recordId).set(recordData);
-                    
-                    // 2. 为所有学生更新个人统计
-                    const batch = db.batch();
-                    for (const studentId of selectedStudentIds) {
-                        const studentRef = db.collection('users').doc(system.userId).collection('students').doc(studentId);
-                        batch.update(studentRef, {
-                            attendanceDates: firebase.firestore.FieldValue.arrayUnion(date),
-                            attendanceCount: firebase.firestore.FieldValue.increment(1),
-                            lastAttended: date
-                        });
-                    }
-                    
-                    await batch.commit();
-                    showToast(`✅ 成功记录 ${selectedStudentIds.length} 位学生的考勤！`, 'success');
+                        timeSlot: timeSlot,
+                        studentIds: selectedStudentIds,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+        
+                // 2. 更新个人统计 (+1)
+                const batch = db.batch();
+                for (const studentId of studentsToUpdateStats) {
+                    const studentRef = db.collection('users').doc(system.userId).collection('students').doc(studentId);
+                    batch.update(studentRef, {
+                        attendanceDates: firebase.firestore.FieldValue.arrayUnion(date),
+                        attendanceCount: firebase.firestore.FieldValue.increment(1), 
+                        lastAttended: date
+                    });
                 }
                 
+                if (studentsToUpdateStats.length > 0) {
+                    await batch.commit();
+                    showToast(`✅ 成功添加 ${studentsToUpdateStats.length} 位新学生！`, 'success');
+                }
+        
                 // 3. 刷新界面
-                // 清空选择
-                selectedCheckboxes.forEach(cb => cb.checked = false);
+                // 自动查找可用的刷新函数
+                if (typeof updateClassAttendanceRecords === 'function') {
+                    updateClassAttendanceRecords();
+                } else if (typeof updateAttendanceRecords === 'function') {
+                    updateAttendanceRecords();
+                }
                 
-                // 更新UI
-                if (typeof updateClassAttendanceRecords === 'function') updateClassAttendanceRecords();
-                if (typeof updateStudentAttendanceSummary === 'function') updateStudentAttendanceSummary();
                 if (typeof updateStats === 'function') updateStats();
                 if (typeof updateDashboard === 'function') updateDashboard();
-                
+        
+                // 4. 清空勾选 (可选)
+                // selectedCheckboxes.forEach(cb => cb.checked = false);
+        
             } catch (error) {
-                console.error("Error recording attendance:", error);
-                showToast('❌ 记录失败: ' + error.message, 'error');
+                console.error("Error:", error);
+                alert('Error: ' + error.message);
             } finally {
                 if (btn) {
                     btn.disabled = false;
@@ -4341,154 +3628,18 @@
             }
         }
         
-        // === 批量操作功能 ===
-        
-        // 更新选中计数
-        function updateSelectedCount() {
-            const checkboxes = document.querySelectorAll('.student-select-checkbox:checked');
-            const countElement = document.getElementById('selectedCount');
-            countElement.textContent = `已选择: ${checkboxes.length} 名学生`;
-        }
-        
-        // 全选学生
-        function selectAllStudents() {
-            const checkboxes = document.querySelectorAll('.student-select-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = true;
-            });
-            updateSelectedCount();
-            showToast(`已全选 ${checkboxes.length} 名学生`, 'info');
-        }
-        
-        // 取消全选
-        function deselectAllStudents() {
-            const checkboxes = document.querySelectorAll('.student-select-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = false;
-            });
-            updateSelectedCount();
-            showToast('已取消全选', 'info');
-        }
-        
-        // 批量删除学生
-        async function deleteSelectedStudents() {
-            const checkboxes = document.querySelectorAll('.student-select-checkbox:checked');
-            if (checkboxes.length === 0) {
-                showToast('请先选择要删除的学生', 'warning');
-                return;
-            }
-            
-            const studentIds = Array.from(checkboxes).map(cb => cb.value);
-            
-            if (confirm(`确定要删除选中的 ${studentIds.length} 名学生吗？此操作不可恢复。`)) {
-                try {
-                    const batch = db.batch();
-                    
-                    for (const studentId of studentIds) {
-                        const studentRef = db.collection('users').doc(system.userId).collection('students').doc(studentId);
-                        batch.delete(studentRef);
-                    }
-                    
-                    await batch.commit();
-                    showToast(`成功删除 ${studentIds.length} 名学生`, 'success');
-                    
-                } catch (error) {
-                    showToast('删除失败: ' + error.message, 'error');
-                }
-            }
-        }
-        
-        // 批量更改时间槽
-        async function batchChangeTimeSlot() {
-            const checkboxes = document.querySelectorAll('.student-select-checkbox:checked');
-            if (checkboxes.length === 0) {
-                showToast('请先选择学生', 'warning');
-                return;
-            }
-            
-            // 创建时间槽选择模态框
-            const timeSlots = system.timeSlots;
-            let timeSlotOptions = '<option value="">Select Time Slot</option>';
-            timeSlots.forEach(slot => {
-                timeSlotOptions += `<option value="${slot.name}">${slot.name}</option>`;
-            });
-            
-            const newTimeSlot = prompt(`请选择新的时间槽：\n\n${timeSlots.map(slot => `• ${slot.name}`).join('\n')}\n\n输入时间槽名称：`);
-            
-            if (!newTimeSlot) return;
-            
-            // 验证时间槽是否存在
-            const isValidTimeSlot = timeSlots.some(slot => slot.name === newTimeSlot);
-            if (!isValidTimeSlot) {
-                showToast(`时间槽 "${newTimeSlot}" 不存在，请使用现有的时间槽名称`, 'error');
-                return;
-            }
-            
-            const studentIds = Array.from(checkboxes).map(cb => cb.value);
-            
-            try {
-                const batch = db.batch();
-                
-                for (const studentId of studentIds) {
-                    const studentRef = db.collection('users').doc(system.userId).collection('students').doc(studentId);
-                    batch.update(studentRef, {
-                        timeSlot: newTimeSlot
-                    });
-                }
-                
-                await batch.commit();
-                showToast(`成功将 ${studentIds.length} 名学生更改到时间槽 "${newTimeSlot}"`, 'success');
-                
-            } catch (error) {
-                showToast('更改失败: ' + error.message, 'error');
-            }
-        }
-        
         // Initialize the system when the page loads
         window.onload = function() {
-            // 设置默认日期
-            const today = new Date();
-            const todayFormatted = today.toISOString().split('T')[0];
-            
-            document.getElementById('classDate').value = todayFormatted;
-            document.getElementById('studentEnrolledDate').value = todayFormatted;
-            
+            document.getElementById('classDate').valueAsDate = new Date();
+            document.getElementById('studentEnrolledDate').valueAsDate = new Date();
             updateSyncStatus('🔵 Ready to connect', 'syncing');
             
             // 添加搜索功能
             const searchInput = document.getElementById('searchStudents');
             if (searchInput) {
-                let searchTimeout;
                 searchInput.addEventListener('input', function(e) {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(() => {
-                        currentSearchTerm = e.target.value.trim();
-                        updateTimeSlotTabs();
-                    }, 300); // 300ms延迟，避免频繁刷新
-                });
-            }
-            
-            // 监听窗口大小变化，优化移动端体验
-            let resizeTimer;
-            window.addEventListener('resize', function() {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(function() {
-                    // 重新调整UI
-                    updateUI();
-                }, 250);
-            });
-            
-            // 移动端触摸优化
-            if ('ontouchstart' in window) {
-                // 为移动设备添加触摸反馈
-                document.addEventListener('touchstart', function() {}, {passive: true});
-                
-                // 改善移动端滚动体验
-                document.body.style.overflowX = 'hidden';
-                
-                // 移动端按钮触摸反馈
-                document.querySelectorAll('.btn, .student-card-enhanced, .time-slot-tab').forEach(el => {
-                    el.style.cursor = 'pointer';
+                    currentSearchTerm = e.target.value.trim();
+                    updateTimeSlotTabs();
                 });
             }
         };

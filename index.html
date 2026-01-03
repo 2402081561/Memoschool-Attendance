@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memoschool Kuching Attendance</title>
+    <title>Genius Mind Academy Attendance</title>
     
     <!-- Firebase SDK --> 
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -1426,6 +1426,18 @@
                             </button>
                             <div id="healthCheckResult" style="margin-top: 10px;"></div>
                         </div>
+                        
+                        <!-- 添加时区修复工具 -->
+                        <div class="tool-card">
+                            <h3>🕐 Fix Timezone Issues</h3>
+                            <p>Fix dates that appear one day off due to timezone differences. This ensures selected dates match recorded dates.</p>
+                            <button class="btn btn-warning" onclick="DateFixer.fixAllDates()">
+                                Fix Timezone Dates
+                            </button>
+                            <p style="margin-top: 10px; font-size: 0.9em; color: var(--gray);">
+                                Timezone offset: <span id="timezoneOffset">0</span> minutes
+                            </p>
+                        </div>
                     </div>
                 </div>
 
@@ -1562,6 +1574,62 @@
         let dateSelectionStudentId = '';
         let dateSelectionStudentIds = [];
 
+        // 日期修复工具类
+        class DateFixer {
+            static fixAllDates() {
+                console.log('🔧 开始修复所有日期时区问题...');
+                
+                let fixedCount = 0;
+                
+                // 修复学生出勤日期
+                for (const [studentId, student] of system.students.entries()) {
+                    if (student.attendanceDates && student.attendanceDates.length > 0) {
+                        const fixedDates = student.attendanceDates.map(date => 
+                            system.getLocalDateString(date)
+                        );
+                        
+                        // 检查是否有变化
+                        if (JSON.stringify(fixedDates) !== JSON.stringify(student.attendanceDates)) {
+                            student.attendanceDates = fixedDates;
+                            fixedCount++;
+                            
+                            // 更新数据库
+                            if (system.isOnline) {
+                                db.collection('users').doc(system.userId).collection('students')
+                                    .doc(studentId).update({
+                                        attendanceDates: fixedDates
+                                    }).catch(console.error);
+                            }
+                        }
+                    }
+                }
+                
+                // 修复考勤记录日期
+                for (const record of system.attendanceRecords) {
+                    const fixedDate = system.getLocalDateString(record.date);
+                    if (fixedDate !== record.date) {
+                        record.date = fixedDate;
+                        fixedCount++;
+                        
+                        // 更新数据库
+                        if (system.isOnline) {
+                            const recordId = record.id;
+                            db.collection('users').doc(system.userId).collection('attendance')
+                                .doc(recordId).update({
+                                    date: fixedDate
+                                }).catch(console.error);
+                        }
+                    }
+                }
+                
+                console.log(`✅ 修复了 ${fixedCount} 个日期时区问题`);
+                showToast(`修复了 ${fixedCount} 个日期时区问题`, 'success');
+                
+                // 刷新UI
+                updateUI();
+            }
+        }
+
         // Fixed system class with improved attendance calculation
         class MemoschoolAttendanceSystem {
             constructor() {
@@ -1679,57 +1747,82 @@
                 return (dayOrder[day] || 99) * 10000 + timeValue;
             }
             
-            // Format date as DD/MM/YYYY
-            formatDate(dateString) {
-                if (!dateString) return 'N/A';
-                
-                try {
-                    // If in YYYY-MM-DD format
-                    if (dateString.includes('-')) {
-                        const [year, month, day] = dateString.split('-');
-                        return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
-                    }
-                    
-                    // If in other format, try to parse
-                    const date = new Date(dateString);
-                    if (isNaN(date.getTime())) {
-                        return dateString; // If cannot parse, return original string
-                    }
-                    
-                    const day = date.getDate().toString().padStart(2, '0');
-                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                    const year = date.getFullYear();
-                    
-                    return `${day}/${month}/${year}`;
-                } catch (error) {
-                    console.error('Error formatting date:', error);
-                    return dateString;
+            // ========== 修复时区的日期处理方法 ==========
+            
+            // 将Date对象格式化为本地日期字符串（YYYY-MM-DD）
+            formatLocalDate(date) {
+                if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+                    const today = new Date();
+                    const year = today.getFullYear();
+                    const month = String(today.getMonth() + 1).padStart(2, '0');
+                    const day = String(today.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
                 }
+                
+                // 使用本地时间，而不是UTC
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
             }
             
-            // Parse DD/MM/YYYY format date to YYYY-MM-DD
-            parseDate(dateString) {
-                if (!dateString) return null;
-                
-                try {
-                    if (dateString.includes('/')) {
-                        const [day, month, year] = dateString.split('/').map(Number);
-                        if (day && month && year) {
-                            return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-                        }
-                    }
-                    
-                    // If already in YYYY-MM-DD format, return directly
-                    if (dateString.includes('-')) {
-                        return dateString;
-                    }
-                } catch (error) {
-                    console.error('Error parsing date:', error);
+            // 将各种输入转换为本地日期字符串
+            getLocalDateString(dateInput) {
+                // 处理各种日期输入格式
+                if (!dateInput) {
+                    return this.formatLocalDate(new Date());
                 }
                 
-                // If cannot parse, return original string
-                return dateString;
+                if (dateInput instanceof Date) {
+                    return this.formatLocalDate(dateInput);
+                }
+                
+                // 如果是字符串，尝试解析
+                if (typeof dateInput === 'string') {
+                    // 如果是 YYYY-MM-DD 格式，直接返回
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(dateInput)) {
+                        return dateInput;
+                    }
+                    
+                    // 如果是 DD/MM/YYYY 格式，转换
+                    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateInput)) {
+                        const [day, month, year] = dateInput.split('/');
+                        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                    }
+                    
+                    // 尝试解析其他格式
+                    const date = new Date(dateInput);
+                    if (!isNaN(date.getTime())) {
+                        return this.formatLocalDate(date);
+                    }
+                }
+                
+                // 如果无法解析，返回今天
+                return this.formatLocalDate(new Date());
             }
+            
+            // 将存储的日期字符串（YYYY-MM-DD）显示为DD/MM/YYYY
+            formatDateForDisplay(dateString) {
+                if (!dateString) return 'N/A';
+                
+                // 确保日期是本地时间
+                const localDateStr = this.getLocalDateString(dateString);
+                const [year, month, day] = localDateStr.split('-');
+                
+                return `${day}/${month}/${year}`;
+            }
+            
+            // 兼容原有的formatDate方法
+            formatDate(dateString) {
+                return this.formatDateForDisplay(dateString);
+            }
+            
+            // 解析 DD/MM/YYYY 格式日期到 YYYY-MM-DD
+            parseDate(dateString) {
+                return this.getLocalDateString(dateString);
+            }
+            
+            // ========== 其他方法保持不变 ==========
             
             async initializeDefaultTimeSlots() {
                 for (const timeSlot of DEFAULT_TIME_SLOTS) {
@@ -1801,7 +1894,7 @@
                     age: age || '',
                     gender: gender || '',
                     timeSlot,
-                    enrolledDate: enrolledDate || new Date().toISOString().split('T')[0],
+                    enrolledDate: this.getLocalDateString(enrolledDate) || this.getLocalDateString(new Date()),
                     totalSessions: parseInt(totalSessions) || 48,
                     attendanceCount: 0,
                     attendanceDates: [],
@@ -1844,21 +1937,23 @@
                     throw new Error('Time slot and date are required');
                 }
                 
-                const recordId = `${timeSlot}-${date}`.replace(/[^a-zA-Z0-9]/g, '-');
+                // 使用本地日期字符串
+                const localDate = this.getLocalDateString(date);
+                const recordId = `${timeSlot}-${localDate}`.replace(/[^a-zA-Z0-9]/g, '-');
                 
                 // Check if attendance for this day has already been recorded
                 const existingRecord = this.attendanceRecords.find(record => 
-                    record.timeSlot === timeSlot && record.date === date
+                    record.timeSlot === timeSlot && record.date === localDate
                 );
                 
                 if (existingRecord) {
-                    throw new Error(`Attendance for ${timeSlot} on ${date} already recorded`);
+                    throw new Error(`Attendance for ${timeSlot} on ${this.formatDate(localDate)} already recorded`);
                 }
                 
                 const record = {
                     id: recordId,
                     timeSlot,
-                    date,
+                    date: localDate, // 存储本地日期
                     topic: topic || '',
                     presentStudents: presentStudentIds,
                     recordedAt: new Date().toISOString()
@@ -1867,11 +1962,11 @@
                 // Update student attendance data with duplicate prevention
                 for (const studentId of presentStudentIds) {
                     const student = this.students.get(studentId);
-                    if (student && date >= student.enrolledDate) {
+                    if (student && localDate >= student.enrolledDate) {
                         
                         // Check if attendance for this day has already been recorded
                         const alreadyRecorded = student.attendanceDates && 
-                                              student.attendanceDates.includes(date);
+                                              student.attendanceDates.includes(localDate);
                         
                         if (!alreadyRecorded) {
                             // Initialize array if it doesn't exist
@@ -1880,7 +1975,7 @@
                             }
                             
                             // Add date and remove duplicates
-                            student.attendanceDates.push(date);
+                            student.attendanceDates.push(localDate);
                             
                             // Remove duplicates
                             const uniqueDates = [...new Set(student.attendanceDates)];
@@ -2021,7 +2116,7 @@
                 let csv = 'Name,Age,Gender,Enrolled Date,Time Slot,Sessions Attended,Total Sessions,Attendance Rate\n';
                 for (const student of this.students.values()) {
                     const info = this.getStudentAttendance(student.id);
-                    const formattedDate = this.formatDate(student.enrolledDate);
+                    const formattedDate = this.formatDateForDisplay(student.enrolledDate);
                     csv += `"${student.name}",${student.age},${student.gender},"${formattedDate}","${student.timeSlot}",${info.attendanceCount},${info.totalSessions},${info.attendanceRate}%\n`;
                 }
                 return csv;
@@ -2213,13 +2308,13 @@
                 grid.appendChild(emptyDay);
             }
             
-            // Add dates for current month
+            // Add dates for current month - 修复时区问题
             const today = new Date();
-            const todayStr = today.toISOString().split('T')[0];
+            const todayStr = system.getLocalDateString(today);
             
             for (let day = 1; day <= lastDay.getDate(); day++) {
                 const date = new Date(year, month, day);
-                const dateStr = date.toISOString().split('T')[0];
+                const dateStr = system.getLocalDateString(date);
                 
                 const dayElement = document.createElement('div');
                 dayElement.className = 'calendar-day';
@@ -2270,7 +2365,7 @@
             } else {
                 const datesArray = Array.from(selectedDates).sort();
                 listElement.innerHTML = datesArray.map(date => {
-                    const formattedDate = system.formatDate(date);
+                    const formattedDate = system.formatDateForDisplay(date);
                     return `<div style="padding: 4px 8px; background: #e8f4fd; margin: 2px 0; border-radius: 4px;">${formattedDate}</div>`;
                 }).join('');
             }
@@ -2564,7 +2659,7 @@
             document.getElementById('detailStudentAge').textContent = student.age || 'N/A';
             document.getElementById('detailStudentGender').textContent = student.gender || 'N/A';
             document.getElementById('detailStudentTimeSlot').textContent = student.timeSlot;
-            document.getElementById('detailStudentEnrolledDate').textContent = system.formatDate(student.enrolledDate);
+            document.getElementById('detailStudentEnrolledDate').textContent = system.formatDateForDisplay(student.enrolledDate);
             document.getElementById('detailStudentTotalSessions').textContent = student.totalSessions || 48;
             
             document.getElementById('detailAttendanceCount').textContent = attendanceInfo.attendanceCount;
@@ -2573,7 +2668,7 @@
             
             // Get last attended date
             const lastAttended = student.attendanceDates && student.attendanceDates.length > 0 
-                ? system.formatDate(student.attendanceDates[student.attendanceDates.length - 1])
+                ? system.formatDateForDisplay(student.attendanceDates[student.attendanceDates.length - 1])
                 : 'Never attended';
             document.getElementById('detailLastAttended').textContent = lastAttended;
             
@@ -2618,7 +2713,7 @@
                         dateElement.classList.add('duplicate');
                     }
                     
-                    const formattedDate = system.formatDate(date);
+                    const formattedDate = system.formatDateForDisplay(date);
                     dateElement.textContent = formattedDate;
                     dateElement.title = `Attended on ${formattedDate}${dateCounts[date] > 1 ? ` (${dateCounts[date]} times)` : ''}`;
                     
@@ -2723,7 +2818,7 @@
                     viewStudentDetails(studentId);
                     updateUI();
                     
-                    showToast(`Attendance record for ${system.formatDate(date)} deleted successfully`, 'success');
+                    showToast(`Attendance record for ${system.formatDateForDisplay(date)} deleted successfully`, 'success');
                 } else {
                     throw new Error('Attendance record not found');
                 }
@@ -2903,7 +2998,7 @@
                 const record = {
                     id: `record-${i}`,
                     timeSlot: DEFAULT_TIME_SLOTS[i % DEFAULT_TIME_SLOTS.length],
-                    date: date.toISOString().split('T')[0],
+                    date: system.getLocalDateString(date),
                     topic: `Sample Class ${i + 1}`,
                     presentStudents: Array.from(system.students.keys()).slice(0, 3),
                     recordedAt: new Date().toISOString()
@@ -2919,7 +3014,7 @@
             for (let i = 0; i < count; i++) {
                 const date = new Date(today);
                 date.setDate(today.getDate() - i * 2); // Every two days
-                dates.push(date.toISOString().split('T')[0]);
+                dates.push(system.getLocalDateString(date));
             }
             return dates;
         }
@@ -2953,6 +3048,9 @@
             updateFilterStudent();
             updateTimeSlotsList();
             updateSelectedCount();
+            
+            // 更新时区信息
+            updateTimezoneInfo();
         }
 
         // UI Functions
@@ -3032,6 +3130,22 @@
             });
         }
 
+        // 更新时区信息
+        function updateTimezoneInfo() {
+            const timezoneOffset = new Date().getTimezoneOffset();
+            const timezoneElement = document.getElementById('timezoneOffset');
+            if (timezoneElement) {
+                timezoneElement.textContent = timezoneOffset;
+                
+                // 添加时区说明
+                const timezoneNote = timezoneOffset < 0 ? 
+                    `(UTC+${Math.abs(timezoneOffset)/60})` : 
+                    `(UTC-${timezoneOffset/60})`;
+                
+                timezoneElement.innerHTML += ` ${timezoneNote}`;
+            }
+        }
+
         // Add time slot
         async function addTimeSlot() {
             const name = document.getElementById('newTimeSlotName').value.trim();
@@ -3077,7 +3191,7 @@
             }
             
             // If no enrollment date selected, default to today
-            const finalEnrolledDate = enrolledDate || new Date().toISOString().split('T')[0];
+            const finalEnrolledDate = system.getLocalDateString(enrolledDate);
             
             try {
                 await system.addStudent(name, age, gender, timeSlot, finalEnrolledDate, totalSessions);
@@ -3106,7 +3220,7 @@
             document.getElementById('editStudentAge').value = student.age || '';
             document.getElementById('editStudentGender').value = student.gender || '';
             document.getElementById('editStudentTimeSlot').value = student.timeSlot;
-            document.getElementById('editStudentEnrolledDate').value = student.enrolledDate || new Date().toISOString().split('T')[0];
+            document.getElementById('editStudentEnrolledDate').value = student.enrolledDate || system.getLocalDateString(new Date());
             document.getElementById('editStudentTotalSessions').value = student.totalSessions || 48;
             document.getElementById('editStudentId').value = studentId;
             
@@ -3138,7 +3252,7 @@
                     age: age || '',
                     gender: gender || '',
                     timeSlot,
-                    enrolledDate: enrolledDate || new Date().toISOString().split('T')[0],
+                    enrolledDate: system.getLocalDateString(enrolledDate),
                     totalSessions: parseInt(totalSessions) || 48
                 };
                 
@@ -3307,7 +3421,7 @@
                 }
                 
                 // Use new date formatting function
-                const enrolledDate = system.formatDate(student.enrolledDate);
+                const enrolledDate = system.formatDateForDisplay(student.enrolledDate);
                 
                 card.innerHTML = `
                     <div style="position: absolute; top: 15px; right: 15px;">
@@ -3415,8 +3529,8 @@
                 
                 const row = document.createElement('tr');
                 
-                // Format date
-                const formattedDate = system.formatDate(record.date);
+                // Format date - 使用修复后的日期显示方法
+                const formattedDate = system.formatDateForDisplay(record.date);
                 
                 // Get present student names
                 const presentStudentNames = record.presentStudents.map(studentId => {
@@ -3464,11 +3578,11 @@
                 const row = document.createElement('tr');
                 
                 // Use new date formatting function
-                const enrolledDate = system.formatDate(student.enrolledDate);
+                const enrolledDate = system.formatDateForDisplay(student.enrolledDate);
                 
                 // Format recent attendance
                 const recentDates = student.recentAttendance.map(date => {
-                    return system.formatDate(date);
+                    return system.formatDateForDisplay(date);
                 }).join(', ');
                 
                 row.innerHTML = `
@@ -3526,7 +3640,7 @@
                         <button class="btn" onclick="closeClassAttendanceDetailsModal()" style="padding: 8px 16px; background: var(--gray);">×</button>
                     </div>
                     <div style="margin-bottom: 20px;">
-                        <p><strong>Date:</strong> ${system.formatDate(record.date)}</p>
+                        <p><strong>Date:</strong> ${system.formatDateForDisplay(record.date)}</p>
                         <p><strong>Time Slot:</strong> ${record.timeSlot}</p>
                         <p><strong>Topic:</strong> ${record.topic || 'No topic'}</p>
                         <p><strong>Present Students:</strong> ${record.presentStudents.length}</p>
@@ -3671,9 +3785,18 @@
                 return;
             }
         
-            const date = dateInput.value;
+            let date = dateInput.value;
             const timeSlot = timeSlotInput.value;
             const topic = topicInput.value || '';
+            
+            // 如果日期为空，使用今天
+            if (!date) {
+                date = system.getLocalDateString(new Date());
+                dateInput.value = date;
+            }
+            
+            // 确保日期格式正确（本地日期）
+            date = system.getLocalDateString(date);
             
             // Get checked students
             const selectedCheckboxes = document.querySelectorAll('#studentsCheckboxes input:checked');
@@ -3708,7 +3831,7 @@
                 );
                 
                 if (existingRecord) {
-                    if (confirm(`Attendance for ${timeSlot} on ${date} already exists. Update it?`)) {
+                    if (confirm(`Attendance for ${timeSlot} on ${system.formatDateForDisplay(date)} already exists. Update it?`)) {
                         // Update existing record
                         const updatedPresentStudents = [...new Set([...existingRecord.presentStudents, ...selectedStudentIds])];
                         
@@ -3750,7 +3873,7 @@
                             }
                         }
                         
-                        showToast(`✅ Updated attendance for ${timeSlot} on ${date}`, 'success');
+                        showToast(`✅ Updated attendance for ${timeSlot} on ${system.formatDateForDisplay(date)}`, 'success');
                     } else {
                         showToast('Operation cancelled', 'info');
                         if (btn) {
@@ -3862,7 +3985,7 @@
                         studentCard.className = 'student-card';
                         
                         // Use new date formatting function
-                        const enrolledDate = system.formatDate(student.enrolledDate);
+                        const enrolledDate = system.formatDateForDisplay(student.enrolledDate);
                         
                         studentCard.innerHTML = `
                             <strong>${student.name}</strong><br>
@@ -4049,6 +4172,22 @@
                     issues.push(`Found ${noTimeSlotCount} student(s) without time slot assignment`);
                 }
                 
+                // Check 4: Date format issues
+                let dateFormatIssues = 0;
+                for (const student of system.students.values()) {
+                    if (student.attendanceDates) {
+                        for (const date of student.attendanceDates) {
+                            if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+                                dateFormatIssues++;
+                            }
+                        }
+                    }
+                }
+                
+                if (dateFormatIssues > 0) {
+                    issues.push(`Found ${dateFormatIssues} date(s) with incorrect format`);
+                }
+                
                 // Display results
                 if (issues.length === 0) {
                     resultElement.innerHTML = '<div style="color: var(--success);">✅ System health is good. No issues found.</div>';
@@ -4131,9 +4270,15 @@
 
         // Initialize the system when the page loads
         window.onload = function() {
-            document.getElementById('classDate').valueAsDate = new Date();
-            document.getElementById('studentEnrolledDate').valueAsDate = new Date();
+            // 使用本地日期，避免时区问题
+            const today = new Date();
+            const todayStr = system.getLocalDateString(today);
+            
+            document.getElementById('classDate').value = todayStr;
+            document.getElementById('studentEnrolledDate').value = todayStr;
+            
             updateSyncStatus('🔵 Ready to connect', 'syncing');
+            updateTimezoneInfo();
             
             // Add search functionality
             const searchInput = document.getElementById('searchStudents');
@@ -4146,6 +4291,11 @@
             
             // Set last duplicate check time
             document.getElementById('lastDuplicateCheck').textContent = 'Never';
+            
+            // Debug timezone info
+            console.log('Timezone offset:', new Date().getTimezoneOffset());
+            console.log('Today local date:', system.getLocalDateString(new Date()));
+            console.log('Today ISO date:', new Date().toISOString().split('T')[0]);
         };
     </script>
 </body>

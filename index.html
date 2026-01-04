@@ -1344,7 +1344,6 @@
                                     <th>Time Slot</th>
                                     <th>Sessions Attended</th>
                                     <th>Total Sessions</th>
-                                    <th>Attendance Rate</th>
                                     <th>Recent Attendance</th>
                                     <th>Actions</th>
                                 </tr>
@@ -1478,7 +1477,6 @@
                 <div>
                     <h3 style="color: var(--dark); margin-bottom: 10px;">📊 Attendance Summary</h3>
                     <p><strong>Sessions Attended:</strong> <span id="detailAttendanceCount"></span></p>
-                    <p><strong>Attendance Rate:</strong> <span id="detailAttendanceRate"></span>%</p>
                     <p><strong>Last Attended:</strong> <span id="detailLastAttended"></span></p>
                 </div>
             </div>
@@ -2027,7 +2025,7 @@
                     
                     // Async update to database
                     if (this.isOnline) {
-                        db.collection('users').doc(this.userId).collection('students')
+                        db.collection('users').doc(system.userId).collection('students')
                             .doc(studentId).update({
                                 attendanceDates: uniqueDates,
                                 attendanceCount: uniqueDates.length
@@ -2046,8 +2044,8 @@
                     student.attendanceCount = validAttendanceCount;
                     
                     // Async update to database
-                    if (this.isOnline) {
-                        db.collection('users').doc(this.userId).collection('students')
+                    if (system.isOnline) {
+                        db.collection('users').doc(system.userId).collection('students')
                             .doc(studentId).update({
                                 attendanceCount: validAttendanceCount
                             }).catch(console.error);
@@ -2128,11 +2126,11 @@
             }
 
             exportToCSV() {
-                let csv = 'Name,Age,Gender,Enrolled Date,Time Slot,Sessions Attended,Total Sessions,Attendance Rate\n';
+                let csv = 'Name,Age,Gender,Enrolled Date,Time Slot,Sessions Attended,Total Sessions\n';
                 for (const student of this.students.values()) {
                     const info = this.getStudentAttendance(student.id);
                     const formattedDate = this.formatDateForDisplay(student.enrolledDate);
-                    csv += `"${student.name}",${student.age},${student.gender},"${formattedDate}","${student.timeSlot}",${info.attendanceCount},${info.totalSessions},${info.attendanceRate}%\n`;
+                    csv += `"${student.name}",${student.age},${student.gender},"${formattedDate}","${student.timeSlot}",${info.attendanceCount},${info.totalSessions}\n`;
                 }
                 return csv;
             }
@@ -2669,7 +2667,7 @@
             // Get student attendance information
             const attendanceInfo = system.getStudentAttendance(studentId);
             
-            // Fill modal information
+            // Fill modal information - 移除了出席率百分比
             document.getElementById('detailStudentName').textContent = student.name;
             document.getElementById('detailStudentAge').textContent = student.age || 'N/A';
             document.getElementById('detailStudentGender').textContent = student.gender || 'N/A';
@@ -2678,7 +2676,6 @@
             document.getElementById('detailStudentTotalSessions').textContent = student.totalSessions || 48;
             
             document.getElementById('detailAttendanceCount').textContent = attendanceInfo.attendanceCount;
-            document.getElementById('detailAttendanceRate').textContent = attendanceInfo.attendanceRate;
             document.getElementById('detailTotalDates').textContent = `${attendanceInfo.attendanceCount} dates`;
             
             // Get last attended date
@@ -3408,7 +3405,7 @@
             contentsContainer.appendChild(allContent);
         }
 
-        // Create student card grid
+        // Create student card grid - 修改了这里移除了出席率百分比显示
         function createStudentGrid(students) {
             const grid = document.createElement('div');
             grid.className = 'student-grid';
@@ -3424,7 +3421,7 @@
                 const card = document.createElement('div');
                 card.className = 'student-card-enhanced';
                 
-                // Determine progress bar color based on attendance rate
+                // Determine progress bar color based on attendance rate (但只用于进度条颜色，不显示百分比)
                 let progressClass = 'progress-fill';
                 let badgeClass = 'attendance-badge';
                 if (student.attendanceRate < 60) {
@@ -3449,7 +3446,7 @@
                             <div class="student-meta">Enrolled: ${enrolledDate}</div>
                             <div class="student-meta">Total Sessions: ${student.totalSessions}</div>
                         </div>
-                        <div class="${badgeClass}">${student.attendanceRate}%</div>
+                        <div class="${badgeClass}">${student.attendanceCount}/${student.totalSessions}</div>
                     </div>
                     <div class="student-meta">${student.timeSlot}</div>
                     <div class="progress-container">
@@ -3571,7 +3568,7 @@
             }
         }
         
-        // Update student attendance summary
+        // Update student attendance summary - 移除了出席率列
         function updateStudentAttendanceSummary() {
             const tbody = document.getElementById('studentAttendanceSummary');
             tbody.innerHTML = '';
@@ -3608,7 +3605,6 @@
                     <td>${student.timeSlot}</td>
                     <td>${student.attendanceCount}</td>
                     <td>${student.totalSessions}</td>
-                    <td>${student.attendanceRate}%</td>
                     <td>${recentDates || 'No records'}</td>
                     <td>
                         <button class="btn btn-info" onclick="viewStudentDetails('${student.id}')" style="padding: 6px 12px; font-size: 12px;">View Details</button>
@@ -3618,7 +3614,7 @@
             });
             
             if (allAttendance.length === 0 || tbody.children.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 20px; color: var(--gray);">No students found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px; color: var(--gray);">No students found</td></tr>';
             }
         }
         
@@ -3975,7 +3971,7 @@
             }
         }
         
-        // Update time slots display
+        // Update time slots display - 修改了这里移除了出席率百分比
         function updateTimeSlots() {
             const container = document.getElementById('timeSlotsContainer');
             container.innerHTML = '';
@@ -4019,7 +4015,7 @@
                             ${student.age || 'N/A'} years, ${student.gender || 'N/A'}<br>
                             Enrolled: ${enrolledDate}<br>
                             Total Sessions: ${student.totalSessions}<br>
-                            Attendance: ${student.attendanceRate}% (${student.attendanceCount}/${student.totalSessions})
+                            Sessions Attended: ${student.attendanceCount}
                         `;
                         studentsContainer.appendChild(studentCard);
                     });

@@ -2004,6 +2004,7 @@
                 return record;
             }
             
+            // 修复了attendanceCount计算方法 - 确保准确统计唯一出勤日期
             getStudentAttendance(studentId) {
                 const student = this.students.get(studentId);
                 if (!student) return null;
@@ -2019,7 +2020,7 @@
                     date >= student.enrolledDate
                 );
                 
-                // Update student data if duplicates were found
+                // 修复：如果发现有重复日期，自动清理并更新数据库
                 if (uniqueDates.length !== attendanceDates.length) {
                     student.attendanceDates = uniqueDates;
                     student.attendanceCount = uniqueDates.length;
@@ -2034,10 +2035,24 @@
                     }
                 }
                 
+                // 修复：使用validAttendanceDates而不是uniqueDates来计算实际出勤
                 const validAttendanceCount = validAttendanceDates.length;
                 
                 // Use student's custom total sessions, default to 48
                 const totalSessions = student.totalSessions || 48;
+                
+                // 修复：确保attendanceCount与实际出勤日期数一致
+                if (student.attendanceCount !== validAttendanceCount) {
+                    student.attendanceCount = validAttendanceCount;
+                    
+                    // Async update to database
+                    if (this.isOnline) {
+                        db.collection('users').doc(this.userId).collection('students')
+                            .doc(studentId).update({
+                                attendanceCount: validAttendanceCount
+                            }).catch(console.error);
+                    }
+                }
                 
                 const attendanceRate = totalSessions > 0 ? 
                     (validAttendanceCount / totalSessions * 100).toFixed(1) : 0;
@@ -3770,7 +3785,7 @@
             }
         }
 
-        // Record attendance
+        // 修复后的recordAttendance函数 - 确保出勤计数准确
         async function recordAttendance() {
             console.log("🚀 Starting attendance recording..."); 
         
@@ -3832,8 +3847,20 @@
                 
                 if (existingRecord) {
                     if (confirm(`Attendance for ${timeSlot} on ${system.formatDateForDisplay(date)} already exists. Update it?`)) {
-                        // Update existing record
-                        const updatedPresentStudents = [...new Set([...existingRecord.presentStudents, ...selectedStudentIds])];
+                        // 修复：更新现有记录时，只添加新的学生，不重复添加已存在的学生
+                        const existingStudents = new Set(existingRecord.presentStudents);
+                        const newStudents = selectedStudentIds.filter(id => !existingStudents.has(id));
+                        
+                        if (newStudents.length === 0) {
+                            showToast('All selected students are already marked present', 'info');
+                            if (btn) {
+                                btn.disabled = false;
+                                btn.innerHTML = originalBtnText;
+                            }
+                            return;
+                        }
+                        
+                        const updatedPresentStudents = [...existingRecord.presentStudents, ...newStudents];
                         
                         if (system.isOnline) {
                             await db.collection('users').doc(system.userId).collection('attendance')
@@ -3846,34 +3873,32 @@
                             existingRecord.topic = topic || existingRecord.topic;
                         }
                         
-                        // Update student attendance counts for newly added students only
-                        for (const studentId of selectedStudentIds) {
-                            if (!existingRecord.presentStudents.includes(studentId)) {
-                                const student = system.students.get(studentId);
-                                if (student && student.enrolledDate <= date) {
-                                    if (!student.attendanceDates) student.attendanceDates = [];
-                                    if (!student.attendanceDates.includes(date)) {
-                                        student.attendanceDates.push(date);
-                                        
-                                        // Remove duplicates
-                                        const uniqueDates = [...new Set(student.attendanceDates)];
-                                        student.attendanceDates = uniqueDates;
-                                        student.attendanceCount = uniqueDates.length;
-                                        
-                                        if (system.isOnline) {
-                                            await db.collection('users').doc(system.userId).collection('students')
-                                                .doc(studentId).update({
-                                                    attendanceDates: uniqueDates,
-                                                    attendanceCount: uniqueDates.length,
-                                                    lastAttended: date
-                                                });
-                                        }
+                        // 修复：只更新新添加的学生出勤数据
+                        for (const studentId of newStudents) {
+                            const student = system.students.get(studentId);
+                            if (student && student.enrolledDate <= date) {
+                                if (!student.attendanceDates) student.attendanceDates = [];
+                                if (!student.attendanceDates.includes(date)) {
+                                    student.attendanceDates.push(date);
+                                    
+                                    // Remove duplicates
+                                    const uniqueDates = [...new Set(student.attendanceDates)];
+                                    student.attendanceDates = uniqueDates;
+                                    student.attendanceCount = uniqueDates.length;
+                                    
+                                    if (system.isOnline) {
+                                        await db.collection('users').doc(system.userId).collection('students')
+                                            .doc(studentId).update({
+                                                attendanceDates: uniqueDates,
+                                                attendanceCount: uniqueDates.length,
+                                                lastAttended: date
+                                            });
                                     }
                                 }
                             }
                         }
                         
-                        showToast(`✅ Updated attendance for ${timeSlot} on ${system.formatDateForDisplay(date)}`, 'success');
+                        showToast(`✅ Updated attendance for ${timeSlot} on ${system.formatDateForDisplay(date)} (${newStudents.length} new students)`, 'success');
                     } else {
                         showToast('Operation cancelled', 'info');
                         if (btn) {
@@ -3900,11 +3925,13 @@
                         system.attendanceRecords.push(record);
                     }
                     
-                    // Update student attendance counts
+                    // 修复：更新学生出勤数据，确保没有重复
                     for (const studentId of selectedStudentIds) {
                         const student = system.students.get(studentId);
                         if (student && student.enrolledDate <= date) {
                             if (!student.attendanceDates) student.attendanceDates = [];
+                            
+                            // 修复：检查该日期是否已存在
                             if (!student.attendanceDates.includes(date)) {
                                 student.attendanceDates.push(date);
                                 
@@ -4188,6 +4215,22 @@
                     issues.push(`Found ${dateFormatIssues} date(s) with incorrect format`);
                 }
                 
+                // 修复：添加检查出勤计数不一致的问题
+                let attendanceCountMismatch = 0;
+                for (const [studentId, student] of system.students.entries()) {
+                    if (student.attendanceDates) {
+                        const uniqueDates = [...new Set(student.attendanceDates)];
+                        if (student.attendanceCount !== uniqueDates.length) {
+                            attendanceCountMismatch++;
+                            console.log(`Student ${student.name}: attendanceCount=${student.attendanceCount}, uniqueDates=${uniqueDates.length}`);
+                        }
+                    }
+                }
+                
+                if (attendanceCountMismatch > 0) {
+                    issues.push(`Found ${attendanceCountMismatch} student(s) with attendance count mismatch`);
+                }
+                
                 // Display results
                 if (issues.length === 0) {
                     resultElement.innerHTML = '<div style="color: var(--success);">✅ System health is good. No issues found.</div>';
@@ -4296,6 +4339,21 @@
             console.log('Timezone offset:', new Date().getTimezoneOffset());
             console.log('Today local date:', system.getLocalDateString(new Date()));
             console.log('Today ISO date:', new Date().toISOString().split('T')[0]);
+            
+            // 自动修复任何现有的数据不一致问题
+            setTimeout(() => {
+                if (system.isOnline) {
+                    console.log('Running initial data consistency check...');
+                    // 在页面加载后自动检查并修复数据不一致
+                    setTimeout(() => {
+                        system.fixDuplicateAttendance().then(fixedCount => {
+                            if (fixedCount > 0) {
+                                console.log(`Automatically fixed ${fixedCount} duplicate attendance records`);
+                            }
+                        });
+                    }, 2000);
+                }
+            }, 1000);
         };
     </script>
 </body>

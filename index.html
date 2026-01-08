@@ -5,10 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genius Mind Academy Attendance</title>
     
-    <!-- Firebase SDK --> 
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
     <style>
         :root {
@@ -957,6 +961,15 @@
             line-height: 1.5;
         }
         
+        /* PDF Report Button */
+        .btn-pdf {
+            background: #e74c3c;
+        }
+        
+        .btn-pdf:hover {
+            background: #c0392b;
+        }
+        
         @media (max-width: 768px) {
             .nav {
                 flex-direction: column;
@@ -1477,6 +1490,7 @@
                 <div>
                     <h3 style="color: var(--dark); margin-bottom: 10px;">📊 Attendance Summary</h3>
                     <p><strong>Sessions Attended:</strong> <span id="detailAttendanceCount"></span></p>
+                    <p><strong>Remaining Sessions:</strong> <span id="detailRemainingSessions"></span></p>
                     <p><strong>Last Attended:</strong> <span id="detailLastAttended"></span></p>
                 </div>
             </div>
@@ -1497,6 +1511,7 @@
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 25px;">
                 <button class="btn btn-info" onclick="editCurrentStudent()">✏️ Edit Student</button>
                 <button class="btn" onclick="openDateSelectionForSingleStudent()" style="background: var(--success);">📅 Add Attendance Dates</button>
+                <button class="btn btn-pdf" onclick="generateStudentPDF(currentSelectedStudentId)">📄 Download PDF Report</button>
                 <button class="btn btn-warning" onclick="fixStudentDuplicates()" style="background: var(--warning);">🔄 Fix Duplicate Dates</button>
                 <button class="btn btn-secondary" onclick="closeStudentDetails()">Close</button>
             </div>
@@ -2282,6 +2297,259 @@
         // Create system instance
         const system = new MemoschoolAttendanceSystem();
 
+        // ==================== PDF Report Generation ====================
+        
+        // Generate PDF report for a student
+        function generateStudentPDF(studentId) {
+            const student = system.students.get(studentId);
+            if (!student) {
+                showToast('Student not found!', 'error');
+                return;
+            }
+            
+            // Get attendance information
+            const attendanceInfo = system.getStudentAttendance(studentId);
+            
+            // Calculate remaining sessions
+            const remainingSessions = student.totalSessions - attendanceInfo.attendanceCount;
+            
+            // Format dates
+            const enrolledDate = system.formatDateForDisplay(student.enrolledDate);
+            const today = new Date();
+            const reportDate = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
+            
+            // Create PDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Set title
+            doc.setFontSize(24);
+            doc.setTextColor(40, 40, 40);
+            doc.text("Memoschool Kuching", 105, 20, null, null, 'center');
+            
+            // Add line separator
+            doc.setLineWidth(0.5);
+            doc.line(20, 25, 190, 25);
+            
+            // Add report title
+            doc.setFontSize(18);
+            doc.setTextColor(230, 126, 34); // Primary color
+            doc.text("Student Attendance Report", 105, 35, null, null, 'center');
+            
+            // Student information section
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.setFont(undefined, 'bold');
+            doc.text("Student Information:", 20, 50);
+            doc.setFont(undefined, 'normal');
+            
+            // Student details table
+            const studentData = [
+                ["Name:", student.name],
+                ["Age:", student.age || "N/A"],
+                ["Gender:", student.gender || "N/A"],
+                ["Time Slot:", student.timeSlot],
+                ["Enrolled Date:", enrolledDate]
+            ];
+            
+            studentData.forEach((row, index) => {
+                doc.text(row[0], 25, 60 + (index * 7));
+                doc.text(row[1], 70, 60 + (index * 7));
+            });
+            
+            // Attendance summary section
+            doc.setFont(undefined, 'bold');
+            doc.text("Attendance Summary:", 20, 100);
+            doc.setFont(undefined, 'normal');
+            
+            // Attendance details table
+            const attendanceData = [
+                ["Total Sessions:", student.totalSessions.toString()],
+                ["Sessions Attended:", attendanceInfo.attendanceCount.toString()],
+                ["Remaining Sessions:", remainingSessions.toString()],
+                ["Last Updated:", reportDate]
+            ];
+            
+            attendanceData.forEach((row, index) => {
+                doc.text(row[0], 25, 110 + (index * 7));
+                doc.text(row[1], 70, 110 + (index * 7));
+            });
+            
+            // Add attendance dates if available
+            if (attendanceInfo.attendanceCount > 0) {
+                doc.setFont(undefined, 'bold');
+                doc.text("Attendance Dates:", 20, 145);
+                doc.setFont(undefined, 'normal');
+                
+                // Get sorted attendance dates
+                const attendanceDates = student.attendanceDates || [];
+                const sortedDates = [...attendanceDates].sort();
+                
+                // Display dates in columns
+                let x = 25;
+                let y = 155;
+                let col = 0;
+                
+                sortedDates.forEach((date, index) => {
+                    if (index > 0 && index % 8 === 0) {
+                        col++;
+                        y = 155;
+                    }
+                    
+                    const formattedDate = system.formatDateForDisplay(date);
+                    doc.text(formattedDate, x + (col * 60), y);
+                    y += 6;
+                });
+            }
+            
+            // Add footer
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text("Generated by Genius Mind Academy Attendance System", 105, 280, null, null, 'center');
+            doc.text("For inquiries: memoschool.kuching@gmail.com", 105, 285, null, null, 'center');
+            
+            // Save PDF
+            const fileName = `Memoschool_${student.name.replace(/\s+/g, '_')}_Attendance_Report.pdf`;
+            doc.save(fileName);
+            
+            showToast(`PDF report downloaded for ${student.name}`, 'success');
+        }
+        
+        // Generate PDF report for multiple students (batch)
+        function generateBatchPDFReport() {
+            const selectedCheckboxes = document.querySelectorAll('.student-select-checkbox:checked');
+            if (selectedCheckboxes.length === 0) {
+                showToast('Please select at least one student first', 'error');
+                return;
+            }
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Set title
+            doc.setFontSize(24);
+            doc.setTextColor(40, 40, 40);
+            doc.text("Memoschool Kuching", 105, 20, null, null, 'center');
+            
+            // Add line separator
+            doc.setLineWidth(0.5);
+            doc.line(20, 25, 190, 25);
+            
+            // Add report title
+            doc.setFontSize(18);
+            doc.setTextColor(230, 126, 34);
+            doc.text("Batch Attendance Report", 105, 35, null, null, 'center');
+            
+            // Add report date
+            const today = new Date();
+            const reportDate = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
+            doc.setFontSize(12);
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Report Date: ${reportDate}`, 20, 45);
+            doc.text(`Total Students: ${selectedCheckboxes.length}`, 150, 45);
+            
+            // Student table headers
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.setFont(undefined, 'bold');
+            
+            const headers = [
+                { text: "No.", x: 20 },
+                { text: "Name", x: 30 },
+                { text: "Time Slot", x: 80 },
+                { text: "Attended", x: 130 },
+                { text: "Total", x: 160 },
+                { text: "Remaining", x: 180 }
+            ];
+            
+            headers.forEach(header => {
+                doc.text(header.text, header.x, 55);
+            });
+            
+            // Add line under headers
+            doc.setLineWidth(0.2);
+            doc.line(20, 57, 190, 57);
+            
+            // Student data rows
+            doc.setFont(undefined, 'normal');
+            let y = 65;
+            let studentNumber = 1;
+            
+            selectedCheckboxes.forEach(checkbox => {
+                const studentId = checkbox.value;
+                const student = system.students.get(studentId);
+                
+                if (student) {
+                    const attendanceInfo = system.getStudentAttendance(studentId);
+                    const remainingSessions = student.totalSessions - attendanceInfo.attendanceCount;
+                    
+                    // Check if we need a new page
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                        
+                        // Add headers on new page
+                        doc.setFont(undefined, 'bold');
+                        headers.forEach(header => {
+                            doc.text(header.text, header.x, y);
+                        });
+                        doc.line(20, y + 2, 190, y + 2);
+                        doc.setFont(undefined, 'normal');
+                        y = 30;
+                    }
+                    
+                    doc.text(studentNumber.toString(), 20, y);
+                    doc.text(student.name, 30, y);
+                    doc.text(student.timeSlot, 80, y);
+                    doc.text(attendanceInfo.attendanceCount.toString(), 130, y);
+                    doc.text(student.totalSessions.toString(), 160, y);
+                    doc.text(remainingSessions.toString(), 180, y);
+                    
+                    studentNumber++;
+                    y += 10;
+                }
+            });
+            
+            // Add summary
+            doc.setFont(undefined, 'bold');
+            doc.text("Summary", 20, y + 10);
+            doc.setFont(undefined, 'normal');
+            
+            // Calculate totals
+            let totalAttended = 0;
+            let totalSessions = 0;
+            
+            selectedCheckboxes.forEach(checkbox => {
+                const studentId = checkbox.value;
+                const student = system.students.get(studentId);
+                if (student) {
+                    const attendanceInfo = system.getStudentAttendance(studentId);
+                    totalAttended += attendanceInfo.attendanceCount;
+                    totalSessions += student.totalSessions;
+                }
+            });
+            
+            const totalRemaining = totalSessions - totalAttended;
+            const averageAttendance = totalSessions > 0 ? ((totalAttended / totalSessions) * 100).toFixed(1) : 0;
+            
+            doc.text(`Total Students: ${selectedCheckboxes.length}`, 25, y + 20);
+            doc.text(`Total Sessions Attended: ${totalAttended}`, 25, y + 27);
+            doc.text(`Total Sessions Remaining: ${totalRemaining}`, 25, y + 34);
+            doc.text(`Average Attendance Rate: ${averageAttendance}%`, 25, y + 41);
+            
+            // Add footer
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            const footerY = doc.internal.pageSize.height - 10;
+            doc.text("Generated by Genius Mind Academy Attendance System", 105, footerY, null, null, 'center');
+            
+            // Save PDF
+            const fileName = `Memoschool_Batch_Report_${reportDate.replace(/\//g, '_')}.pdf`;
+            doc.save(fileName);
+            
+            showToast(`Batch PDF report downloaded for ${selectedCheckboxes.length} students`, 'success');
+        }
+
         // ==================== Date Selection Functionality ====================
         
         // Render calendar
@@ -2667,7 +2935,10 @@
             // Get student attendance information
             const attendanceInfo = system.getStudentAttendance(studentId);
             
-            // Fill modal information - 移除了出席率百分比
+            // Calculate remaining sessions
+            const remainingSessions = student.totalSessions - attendanceInfo.attendanceCount;
+            
+            // Fill modal information
             document.getElementById('detailStudentName').textContent = student.name;
             document.getElementById('detailStudentAge').textContent = student.age || 'N/A';
             document.getElementById('detailStudentGender').textContent = student.gender || 'N/A';
@@ -2676,6 +2947,7 @@
             document.getElementById('detailStudentTotalSessions').textContent = student.totalSessions || 48;
             
             document.getElementById('detailAttendanceCount').textContent = attendanceInfo.attendanceCount;
+            document.getElementById('detailRemainingSessions').textContent = remainingSessions;
             document.getElementById('detailTotalDates').textContent = `${attendanceInfo.attendanceCount} dates`;
             
             // Get last attended date
@@ -3405,7 +3677,7 @@
             contentsContainer.appendChild(allContent);
         }
 
-        // Create student card grid - 修改了这里移除了出席率百分比显示
+        // Create student card grid - 添加PDF按钮
         function createStudentGrid(students) {
             const grid = document.createElement('div');
             grid.className = 'student-grid';
@@ -3435,6 +3707,9 @@
                 // Use new date formatting function
                 const enrolledDate = system.formatDateForDisplay(student.enrolledDate);
                 
+                // Calculate remaining sessions
+                const remainingSessions = student.totalSessions - student.attendanceCount;
+                
                 card.innerHTML = `
                     <div style="position: absolute; top: 15px; right: 15px;">
                         <input type="checkbox" class="student-select-checkbox" value="${student.id}" onclick="event.stopPropagation(); updateSelectedCount();">
@@ -3444,7 +3719,7 @@
                             <div class="student-name">${student.name}</div>
                             <div class="student-meta">${student.age || 'N/A'} years, ${student.gender || 'N/A'}</div>
                             <div class="student-meta">Enrolled: ${enrolledDate}</div>
-                            <div class="student-meta">Total Sessions: ${student.totalSessions}</div>
+                            <div class="student-meta">Remaining Sessions: ${remainingSessions}</div>
                         </div>
                         <div class="${badgeClass}">${student.attendanceCount}/${student.totalSessions}</div>
                     </div>
@@ -3460,6 +3735,7 @@
                     </div>
                     <div class="student-actions">
                         <button class="btn btn-info" onclick="event.stopPropagation(); editStudent('${student.id}')" style="padding: 8px 12px; font-size: 12px; flex: 1;">Edit</button>
+                        <button class="btn btn-pdf" onclick="event.stopPropagation(); generateStudentPDF('${student.id}')" style="padding: 8px 12px; font-size: 12px; flex: 1;">PDF</button>
                         <button class="btn btn-warning" onclick="event.stopPropagation(); deleteStudent('${student.id}')" style="padding: 8px 12px; font-size: 12px; flex: 1;">Delete</button>
                     </div>
                 `;
@@ -3592,6 +3868,9 @@
                 // Use new date formatting function
                 const enrolledDate = system.formatDateForDisplay(student.enrolledDate);
                 
+                // Calculate remaining sessions
+                const remainingSessions = student.totalSessions - student.attendanceCount;
+                
                 // Format recent attendance
                 const recentDates = student.recentAttendance.map(date => {
                     return system.formatDateForDisplay(date);
@@ -3608,6 +3887,7 @@
                     <td>${recentDates || 'No records'}</td>
                     <td>
                         <button class="btn btn-info" onclick="viewStudentDetails('${student.id}')" style="padding: 6px 12px; font-size: 12px;">View Details</button>
+                        <button class="btn btn-pdf" onclick="generateStudentPDF('${student.id}')" style="padding: 6px 12px; font-size: 12px; background: #e74c3c; margin-top: 5px;">PDF</button>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -4010,12 +4290,16 @@
                         // Use new date formatting function
                         const enrolledDate = system.formatDateForDisplay(student.enrolledDate);
                         
+                        // Calculate remaining sessions
+                        const remainingSessions = student.totalSessions - student.attendanceCount;
+                        
                         studentCard.innerHTML = `
                             <strong>${student.name}</strong><br>
                             ${student.age || 'N/A'} years, ${student.gender || 'N/A'}<br>
                             Enrolled: ${enrolledDate}<br>
                             Total Sessions: ${student.totalSessions}<br>
-                            Sessions Attended: ${student.attendanceCount}
+                            Sessions Attended: ${student.attendanceCount}<br>
+                            Remaining Sessions: ${remainingSessions}
                         `;
                         studentsContainer.appendChild(studentCard);
                     });
@@ -4350,6 +4634,16 @@
                     }, 2000);
                 }
             }, 1000);
+            
+            // 添加批量PDF生成按钮到批量操作区域
+            const batchActions = document.querySelector('.batch-actions');
+            if (batchActions) {
+                const batchPDFButton = document.createElement('button');
+                batchPDFButton.className = 'btn btn-pdf';
+                batchPDFButton.innerHTML = '<span>📄 Batch PDF Reports</span>';
+                batchPDFButton.onclick = generateBatchPDFReport;
+                batchActions.appendChild(batchPDFButton);
+            }
         };
     </script>
 </body>

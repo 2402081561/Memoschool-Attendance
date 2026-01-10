@@ -970,6 +970,27 @@
             background: #c0392b;
         }
         
+        /* Attendance Dates Display in Table */
+        .attendance-dates-cell {
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        
+        .attendance-date-badge {
+            display: inline-block;
+            background: #e7f5ff;
+            color: #0d6efd;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin: 2px;
+            border: 1px solid #cfe2ff;
+        }
+        
         @media (max-width: 768px) {
             .nav {
                 flex-direction: column;
@@ -1298,7 +1319,7 @@
                 <div id="records" class="section">
                     <h2>📊 Attendance Records</h2>
                     <div class="accuracy-note">
-                        📈 <strong>Accuracy Note:</strong> Attendance rates are calculated based on total sessions set for each student (default: 48). You can adjust total sessions for individual students in the student management section.
+                        📈 <strong>Accuracy Note:</strong> Attendance is calculated based on total sessions set for each student (default: 48). You can adjust total sessions for individual students in the student management section.
                     </div>
                     
                     <!-- Class Attendance Records -->
@@ -1331,7 +1352,7 @@
                     <!-- Student Attendance Summary -->
                     <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
                         <h3 style="margin-bottom: 20px; color: var(--dark);">👥 Student Attendance Summary</h3>
-                        <p style="margin-bottom: 15px; color: var(--grey);">View attendance summary for each student. Click on "View Details" to see all attended dates.</p>
+                        <p style="margin-bottom: 15px; color: var(--grey);">View attendance summary for each student including all attended dates.</p>
                         
                         <div class="form-group">
                             <label class="form-label">Filter by Time Slot</label>
@@ -1357,7 +1378,7 @@
                                     <th>Time Slot</th>
                                     <th>Sessions Attended</th>
                                     <th>Total Sessions</th>
-                                    <th>Recent Attendance</th>
+                                    <th>Attendance Dates</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -2067,14 +2088,10 @@
                     }
                 }
                 
-                const attendanceRate = totalSessions > 0 ? 
-                    (validAttendanceCount / totalSessions * 100).toFixed(1) : 0;
-                
                 return {
                     ...student,
                     attendanceCount: validAttendanceCount,
                     totalSessions: totalSessions,
-                    attendanceRate,
                     recentAttendance: validAttendanceDates.slice(-5)
                 };
             }
@@ -2141,11 +2158,12 @@
             }
 
             exportToCSV() {
-                let csv = 'Name,Age,Gender,Enrolled Date,Time Slot,Sessions Attended,Total Sessions\n';
+                let csv = 'Name,Age,Gender,Enrolled Date,Time Slot,Sessions Attended,Total Sessions,Attendance Dates\n';
                 for (const student of this.students.values()) {
                     const info = this.getStudentAttendance(student.id);
                     const formattedDate = this.formatDateForDisplay(student.enrolledDate);
-                    csv += `"${student.name}",${student.age},${student.gender},"${formattedDate}","${student.timeSlot}",${info.attendanceCount},${info.totalSessions}\n`;
+                    const attendanceDates = student.attendanceDates ? student.attendanceDates.map(date => this.formatDateForDisplay(date)).join('; ') : '';
+                    csv += `"${student.name}",${student.age},${student.gender},"${formattedDate}","${student.timeSlot}",${info.attendanceCount},${info.totalSessions},"${attendanceDates}"\n`;
                 }
                 return csv;
             }
@@ -2366,8 +2384,7 @@
             const attendanceData = [
                 ["Total Sessions:", student.totalSessions.toString()],
                 ["Sessions Attended:", attendanceInfo.attendanceCount.toString()],
-                ["Remaining Sessions:", remainingSessions.toString()],
-                ["Attendance Rate:", `${((attendanceInfo.attendanceCount / student.totalSessions) * 100).toFixed(1)}%`]
+                ["Remaining Sessions:", remainingSessions.toString()]
             ];
             
             attendanceData.forEach((row, index) => {
@@ -2587,12 +2604,10 @@
             });
             
             const totalRemaining = totalSessions - totalAttended;
-            const averageAttendance = totalSessions > 0 ? ((totalAttended / totalSessions) * 100).toFixed(1) : 0;
             
             doc.text(`Total Students: ${selectedCheckboxes.length}`, 25, y + 20);
             doc.text(`Total Sessions Attended: ${totalAttended}`, 25, y + 27);
             doc.text(`Total Sessions Remaining: ${totalRemaining}`, 25, y + 34);
-            doc.text(`Average Attendance Rate: ${averageAttendance}%`, 25, y + 41);
             
             // Add footer
             doc.setFontSize(10);
@@ -3734,7 +3749,7 @@
             contentsContainer.appendChild(allContent);
         }
 
-        // Create student card grid - 添加PDF按钮
+        // Create student card grid
         function createStudentGrid(students) {
             const grid = document.createElement('div');
             grid.className = 'student-grid';
@@ -3750,13 +3765,16 @@
                 const card = document.createElement('div');
                 card.className = 'student-card-enhanced';
                 
-                // Determine progress bar color based on attendance rate (但只用于进度条颜色，不显示百分比)
+                // Determine progress bar color based on attendance rate
                 let progressClass = 'progress-fill';
                 let badgeClass = 'attendance-badge';
-                if (student.attendanceRate < 60) {
+                
+                // 计算出席率用于进度条颜色
+                const attendanceRate = (student.attendanceCount / student.totalSessions * 100);
+                if (attendanceRate < 60) {
                     progressClass += ' low';
                     badgeClass += ' attendance-low';
-                } else if (student.attendanceRate < 80) {
+                } else if (attendanceRate < 80) {
                     progressClass += ' medium';
                     badgeClass += ' attendance-medium';
                 }
@@ -3766,6 +3784,9 @@
                 
                 // Calculate remaining sessions
                 const remainingSessions = student.totalSessions - student.attendanceCount;
+                
+                // 计算进度条宽度
+                const progressWidth = Math.min((student.attendanceCount / student.totalSessions) * 100, 100);
                 
                 card.innerHTML = `
                     <div style="position: absolute; top: 15px; right: 15px;">
@@ -3783,11 +3804,11 @@
                     <div class="student-meta">${student.timeSlot}</div>
                     <div class="progress-container">
                         <div class="progress-label">
-                            <span>Attendance</span>
+                            <span>Sessions</span>
                             <span>${student.attendanceCount}/${student.totalSessions}</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="${progressClass}" style="width: ${student.attendanceRate}%"></div>
+                            <div class="${progressClass}" style="width: ${progressWidth}%"></div>
                         </div>
                     </div>
                     <div class="student-actions">
@@ -3901,7 +3922,7 @@
             }
         }
         
-        // Update student attendance summary - 移除了出席率列
+        // Update student attendance summary - 移除了出席率列，添加了Attendance Dates列
         function updateStudentAttendanceSummary() {
             const tbody = document.getElementById('studentAttendanceSummary');
             tbody.innerHTML = '';
@@ -3928,10 +3949,21 @@
                 // Calculate remaining sessions
                 const remainingSessions = student.totalSessions - student.attendanceCount;
                 
-                // Format recent attendance
-                const recentDates = student.recentAttendance.map(date => {
-                    return system.formatDateForDisplay(date);
-                }).join(', ');
+                // 获取所有出勤日期并格式化
+                const attendanceDates = student.attendanceDates || [];
+                const formattedDates = attendanceDates.map(date => system.formatDateForDisplay(date)).sort();
+                
+                // 创建出勤日期显示
+                let datesDisplay;
+                if (formattedDates.length === 0) {
+                    datesDisplay = 'No attendance records';
+                } else {
+                    datesDisplay = '<div class="attendance-dates-cell">';
+                    formattedDates.forEach(date => {
+                        datesDisplay += `<span class="attendance-date-badge">${date}</span> `;
+                    });
+                    datesDisplay += '</div>';
+                }
                 
                 row.innerHTML = `
                     <td>${student.name}</td>
@@ -3941,7 +3973,7 @@
                     <td>${student.timeSlot}</td>
                     <td>${student.attendanceCount}</td>
                     <td>${student.totalSessions}</td>
-                    <td>${recentDates || 'No records'}</td>
+                    <td>${datesDisplay}</td>
                     <td>
                         <button class="btn btn-info" onclick="viewStudentDetails('${student.id}')" style="padding: 6px 12px; font-size: 12px;">View Details</button>
                         <button class="btn btn-pdf" onclick="generateStudentPDF('${student.id}')" style="padding: 6px 12px; font-size: 12px; background: #e74c3c; margin-top: 5px;">PDF</button>
@@ -4308,7 +4340,7 @@
             }
         }
         
-        // Update time slots display - 修改了这里移除了出席率百分比
+        // Update time slots display
         function updateTimeSlots() {
             const container = document.getElementById('timeSlotsContainer');
             container.innerHTML = '';
@@ -4350,13 +4382,18 @@
                         // Calculate remaining sessions
                         const remainingSessions = student.totalSessions - student.attendanceCount;
                         
+                        // 获取出勤日期
+                        const attendanceDates = student.attendanceDates || [];
+                        const formattedDates = attendanceDates.map(date => system.formatDateForDisplay(date)).sort();
+                        
                         studentCard.innerHTML = `
                             <strong>${student.name}</strong><br>
                             ${student.age || 'N/A'} years, ${student.gender || 'N/A'}<br>
                             Enrolled: ${enrolledDate}<br>
                             Total Sessions: ${student.totalSessions}<br>
                             Sessions Attended: ${student.attendanceCount}<br>
-                            Remaining Sessions: ${remainingSessions}
+                            Remaining Sessions: ${remainingSessions}<br>
+                            ${formattedDates.length > 0 ? `Attendance Dates: ${formattedDates.slice(0, 3).join(', ')}${formattedDates.length > 3 ? '...' : ''}` : ''}
                         `;
                         studentsContainer.appendChild(studentCard);
                     });

@@ -2299,7 +2299,7 @@
 
         // ==================== PDF Report Generation ====================
         
-        // Generate PDF report for a student
+        // Generate PDF report for a student - 修复日期排版问题
         function generateStudentPDF(studentId) {
             const student = system.students.get(studentId);
             if (!student) {
@@ -2307,43 +2307,43 @@
                 return;
             }
             
-            // Get attendance information
+            // 获取出勤信息
             const attendanceInfo = system.getStudentAttendance(studentId);
             
-            // Calculate remaining sessions
+            // 计算剩余课程
             const remainingSessions = student.totalSessions - attendanceInfo.attendanceCount;
             
-            // Format dates
+            // 格式化日期
             const enrolledDate = system.formatDateForDisplay(student.enrolledDate);
             const today = new Date();
             const reportDate = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
             
-            // Create PDF
+            // 创建PDF
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            // Set title
+            // 设置标题
             doc.setFontSize(24);
             doc.setTextColor(40, 40, 40);
             doc.text("Memoschool Kuching", 105, 20, null, null, 'center');
             
-            // Add line separator
+            // 添加分隔线
             doc.setLineWidth(0.5);
             doc.line(20, 25, 190, 25);
             
-            // Add report title
+            // 添加报告标题
             doc.setFontSize(18);
-            doc.setTextColor(230, 126, 34); // Primary color
+            doc.setTextColor(230, 126, 34);
             doc.text("Student Attendance Report", 105, 35, null, null, 'center');
             
-            // Student information section
+            // 学生信息部分
             doc.setFontSize(12);
             doc.setTextColor(0, 0, 0);
             doc.setFont(undefined, 'bold');
             doc.text("Student Information:", 20, 50);
             doc.setFont(undefined, 'normal');
             
-            // Student details table
+            // 学生详细信息表格
             const studentData = [
                 ["Name:", student.name],
                 ["Age:", student.age || "N/A"],
@@ -2357,17 +2357,17 @@
                 doc.text(row[1], 70, 60 + (index * 7));
             });
             
-            // Attendance summary section
+            // 出勤摘要部分
             doc.setFont(undefined, 'bold');
             doc.text("Attendance Summary:", 20, 100);
             doc.setFont(undefined, 'normal');
             
-            // Attendance details table
+            // 出勤详情表格
             const attendanceData = [
                 ["Total Sessions:", student.totalSessions.toString()],
                 ["Sessions Attended:", attendanceInfo.attendanceCount.toString()],
                 ["Remaining Sessions:", remainingSessions.toString()],
-                ["Last Updated:", reportDate]
+                ["Attendance Rate:", `${((attendanceInfo.attendanceCount / student.totalSessions) * 100).toFixed(1)}%`]
             ];
             
             attendanceData.forEach((row, index) => {
@@ -2375,40 +2375,97 @@
                 doc.text(row[1], 70, 110 + (index * 7));
             });
             
-            // Add attendance dates if available
+            // 如果有出勤日期，在新页面显示
             if (attendanceInfo.attendanceCount > 0) {
-                doc.setFont(undefined, 'bold');
-                doc.text("Attendance Dates:", 20, 145);
-                doc.setFont(undefined, 'normal');
+                doc.addPage();
                 
-                // Get sorted attendance dates
+                // 新页面标题
+                doc.setFontSize(18);
+                doc.setTextColor(230, 126, 34);
+                doc.text("Attendance Details", 105, 20, null, null, 'center');
+                
+                // 学生信息摘要
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                doc.text(`Student: ${student.name}`, 20, 35);
+                doc.text(`Time Slot: ${student.timeSlot}`, 20, 42);
+                doc.text(`Total Attended: ${attendanceInfo.attendanceCount} sessions`, 20, 49);
+                
+                // 分隔线
+                doc.setLineWidth(0.3);
+                doc.line(20, 55, 190, 55);
+                
+                // 使用表格布局显示出勤日期
                 const attendanceDates = student.attendanceDates || [];
                 const sortedDates = [...attendanceDates].sort();
                 
-                // Display dates in columns
-                let x = 25;
-                let y = 155;
-                let col = 0;
+                // 设置表格参数
+                let yPosition = 65;
+                const datesPerRow = 4;
+                const dateWidth = 40;
+                const dateHeight = 8;
+                const startX = 20;
                 
-                sortedDates.forEach((date, index) => {
-                    if (index > 0 && index % 8 === 0) {
-                        col++;
-                        y = 155;
+                // 标题
+                doc.setFont(undefined, 'bold');
+                doc.text("Attendance Dates:", startX, yPosition - 5);
+                doc.setFont(undefined, 'normal');
+                
+                // 显示所有日期
+                for (let i = 0; i < sortedDates.length; i++) {
+                    if (i > 0 && i % datesPerRow === 0) {
+                        yPosition += dateHeight;
+                        
+                        // 检查是否需要新页面
+                        if (yPosition + dateHeight > 270) {
+                            doc.addPage();
+                            yPosition = 20;
+                        }
                     }
                     
+                    const date = sortedDates[i];
                     const formattedDate = system.formatDateForDisplay(date);
-                    doc.text(formattedDate, x + (col * 60), y);
-                    y += 6;
-                });
+                    const xPosition = startX + (i % datesPerRow) * dateWidth;
+                    
+                    // 添加轻微背景色
+                    doc.setFillColor(240, 248, 255);
+                    doc.rect(xPosition, yPosition, dateWidth - 2, dateHeight - 2, 'F');
+                    
+                    // 添加边框
+                    doc.setDrawColor(200, 200, 200);
+                    doc.setLineWidth(0.1);
+                    doc.rect(xPosition, yPosition, dateWidth - 2, dateHeight - 2);
+                    
+                    // 计算文本位置使其居中
+                    const textWidth = doc.getTextWidth(formattedDate);
+                    const textX = xPosition + (dateWidth - 2 - textWidth) / 2;
+                    const textY = yPosition + (dateHeight / 2) - 1;
+                    
+                    // 显示日期
+                    doc.setFontSize(9);
+                    doc.text(formattedDate, textX, textY);
+                }
+                
+                // 如果有多个页面，添加页脚
+                const pageCount = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(10);
+                    doc.setTextColor(100, 100, 100);
+                    doc.text(`Page ${i} of ${pageCount}`, 105, 285, null, null, 'center');
+                }
+                
+                // 回到第一页添加总页脚
+                doc.setPage(1);
             }
             
-            // Add footer
+            // 添加总页脚
             doc.setFontSize(10);
             doc.setTextColor(100, 100, 100);
             doc.text("Generated by Genius Mind Academy Attendance System", 105, 280, null, null, 'center');
             doc.text("For inquiries: memoschool.kuching@gmail.com", 105, 285, null, null, 'center');
             
-            // Save PDF
+            // 保存PDF
             const fileName = `Memoschool_${student.name.replace(/\s+/g, '_')}_Attendance_Report.pdf`;
             doc.save(fileName);
             

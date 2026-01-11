@@ -991,6 +991,209 @@
             border: 1px solid #cfe2ff;
         }
         
+        /* Reminders Styles */
+        .reminder-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--warning);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .reminder-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+        }
+        
+        .reminder-card.progress-report {
+            border-left-color: #3498db;
+        }
+        
+        .reminder-card.brain-test {
+            border-left-color: #9b59b6;
+        }
+        
+        .reminder-card.urgent {
+            border-left-color: var(--danger);
+            background: linear-gradient(90deg, #fff8f8 0%, #ffffff 100%);
+        }
+        
+        .reminder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .reminder-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: var(--dark);
+            margin: 0;
+        }
+        
+        .reminder-type {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-left: 10px;
+        }
+        
+        .type-progress {
+            background: #d6eaf8;
+            color: #21618c;
+        }
+        
+        .type-brain {
+            background: #e8daef;
+            color: #6c3483;
+        }
+        
+        .reminder-student {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        
+        .reminder-meta {
+            color: var(--gray);
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        
+        .reminder-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .reminder-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--danger);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+        
+        .reminder-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover {
+            background: #f8f9fa;
+            border-color: var(--primary);
+        }
+        
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .reminder-summary {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .summary-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+        
+        .summary-card .number {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .summary-card .label {
+            color: var(--gray);
+            font-size: 0.9em;
+        }
+        
+        .summary-card.urgent .number {
+            color: var(--danger);
+        }
+        
+        .summary-card.progress .number {
+            color: #3498db;
+        }
+        
+        .summary-card.brain .number {
+            color: #9b59b6;
+        }
+        
+        .reminder-status-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        
+        .status-pending {
+            background-color: var(--warning);
+        }
+        
+        .status-completed {
+            background-color: var(--success);
+        }
+        
+        .status-dismissed {
+            background-color: var(--gray);
+        }
+        
+        .student-list-reminder {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(230, 126, 34, 0.1);
+            color: var(--primary);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
         @media (max-width: 768px) {
             .nav {
                 flex-direction: column;
@@ -1042,6 +1245,12 @@
             }
             .tools-grid {
                 grid-template-columns: 1fr;
+            }
+            .reminder-filters {
+                flex-direction: column;
+            }
+            .reminder-summary {
+                flex-direction: column;
             }
         }
         
@@ -1098,6 +1307,7 @@
                 <button onclick="showSection('students')">👥 Students</button>
                 <button onclick="showSection('attendance')">📝 Attendance</button>
                 <button onclick="showSection('records')">📈 Records</button>
+                <button onclick="showSection('reminders')">🔔 Reminders</button>
                 <button onclick="showSection('timeslots')">⏰ Time Slots</button>
                 <button onclick="showSection('timeSlotsManagement')">➕ Manage Time Slots</button>
                 <button onclick="showSection('tools')">🛠️ Tools</button>
@@ -1138,9 +1348,9 @@
                                 <div class="trend positive">+5% improvement</div>
                             </div>
                             <div class="stat-card">
-                                <h3>Time Slots</h3>
-                                <div class="number" id="timeSlotsCountDashboard">0</div>
-                                <div class="trend">All active</div>
+                                <h3>Active Reminders</h3>
+                                <div class="number" id="activeRemindersCount">0</div>
+                                <div class="trend"><a href="#" onclick="showSection('reminders')">View Details</a></div>
                             </div>
                         </div>
                     </div>
@@ -1165,10 +1375,10 @@
                             <button class="btn" onclick="showSection('timeslots')">View Time Slots</button>
                         </div>
                         <div class="feature-card">
-                            <div class="icon">🛠️</div>
-                            <h3>System Tools</h3>
-                            <p>Fix data issues, clean duplicates, and optimize system performance.</p>
-                            <button class="btn" onclick="showSection('tools')">Open Tools</button>
+                            <div class="icon">🔔</div>
+                            <h3>Reminders</h3>
+                            <p>Track progress reports and brain test reminders for all students.</p>
+                            <button class="btn" onclick="showSection('reminders')">View Reminders</button>
                         </div>
                     </div>
                 </div>
@@ -1387,6 +1597,74 @@
                     </div>
                 </div>
 
+                <!-- Reminders Section -->
+                <div id="reminders" class="section">
+                    <h2>🔔 Reminders & Alerts</h2>
+                    <p>Track progress reports and brain test reminders for all students.</p>
+                    
+                    <!-- Reminder Summary Cards -->
+                    <div class="reminder-summary">
+                        <div class="summary-card urgent">
+                            <div class="number" id="urgentRemindersCount">0</div>
+                            <div class="label">Urgent Reminders</div>
+                        </div>
+                        <div class="summary-card progress">
+                            <div class="number" id="progressRemindersCount">0</div>
+                            <div class="label">Progress Reports</div>
+                        </div>
+                        <div class="summary-card brain">
+                            <div class="number" id="brainTestRemindersCount">0</div>
+                            <div class="label">Brain Tests</div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="number" id="totalRemindersCount">0</div>
+                            <div class="label">Total Reminders</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Filter Buttons -->
+                    <div class="reminder-filters">
+                        <button class="filter-btn active" onclick="filterReminders('all')">All Reminders</button>
+                        <button class="filter-btn" onclick="filterReminders('progress')">Progress Reports</button>
+                        <button class="filter-btn" onclick="filterReminders('brain')">Brain Tests</button>
+                        <button class="filter-btn" onclick="filterReminders('urgent')">Urgent</button>
+                        <button class="filter-btn" onclick="filterReminders('pending')">Pending</button>
+                        <button class="filter-btn" onclick="filterReminders('completed')">Completed</button>
+                    </div>
+                    
+                    <!-- Progress Reports Section -->
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 30px;">
+                        <h3 style="margin-bottom: 20px; color: var(--dark);">📋 Progress Reports</h3>
+                        <p style="margin-bottom: 15px; color: var(--gray);">Progress reports are due when students reach 12, 24, 26, and 48 classes.</p>
+                        
+                        <div id="progressReportsContainer" class="reminders-container">
+                            <!-- Progress report reminders will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Brain Test Section -->
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 30px;">
+                        <h3 style="margin-bottom: 20px; color: var(--dark);">🧠 Brain Tests</h3>
+                        <p style="margin-bottom: 15px; color: var(--gray);">Brain tests are due at 24 classes and the last 3 classes (based on total sessions).</p>
+                        
+                        <div id="brainTestsContainer" class="reminders-container">
+                            <!-- Brain test reminders will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Export Reminders -->
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
+                        <h3 style="margin-bottom: 20px; color: var(--dark);">📊 Export Reminders</h3>
+                        <p style="margin-bottom: 15px; color: var(--gray);">Export reminder lists for easy reference.</p>
+                        
+                        <div class="export-options">
+                            <button class="btn btn-info" onclick="exportProgressReports()">📄 Export Progress Reports</button>
+                            <button class="btn" onclick="exportBrainTests()">🧠 Export Brain Tests</button>
+                            <button class="btn btn-success" onclick="exportAllReminders()">📋 Export All Reminders</button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Time Slots -->
                 <div id="timeslots" class="section">
                     <h2>⏰ Time Slots</h2>
@@ -1597,6 +1875,11 @@
             "Sunday 4pm-5:30pm"
         ];
 
+        // Progress report thresholds
+        const PROGRESS_REPORT_THRESHOLDS = [12, 24, 26, 48];
+        const BRAIN_TEST_THRESHOLDS = [24]; // 24 classes
+        const LAST_THREE_CLASSES_THRESHOLD = 3; // Last 3 classes
+
         // Search related variables
         let currentSearchTerm = '';
         let currentSelectedStudentId = '';
@@ -1607,6 +1890,11 @@
         let dateSelectionMode = ''; // 'single' or 'batch'
         let dateSelectionStudentId = '';
         let dateSelectionStudentIds = [];
+
+        // Reminders related variables
+        let currentReminderFilter = 'all';
+        let allReminders = [];
+        let processedReminders = new Set(); // Store processed reminder IDs
 
         // 日期修复工具类
         class DateFixer {
@@ -1664,6 +1952,275 @@
             }
         }
 
+        // Reminder Management Class
+        class ReminderManager {
+            constructor(system) {
+                this.system = system;
+                this.reminders = [];
+            }
+            
+            // Calculate all reminders for all students
+            calculateAllReminders() {
+                this.reminders = [];
+                
+                for (const [studentId, student] of this.system.students.entries()) {
+                    const studentReminders = this.calculateStudentReminders(student);
+                    this.reminders.push(...studentReminders);
+                }
+                
+                // Sort reminders: urgent first, then by type, then by student name
+                this.reminders.sort((a, b) => {
+                    // Urgent reminders first
+                    if (a.isUrgent && !b.isUrgent) return -1;
+                    if (!a.isUrgent && b.isUrgent) return 1;
+                    
+                    // Then by type (progress reports first)
+                    const typeOrder = { 'progress': 1, 'brain': 2 };
+                    if (typeOrder[a.type] !== typeOrder[b.type]) {
+                        return typeOrder[a.type] - typeOrder[b.type];
+                    }
+                    
+                    // Then by student name
+                    return a.studentName.localeCompare(b.studentName);
+                });
+                
+                return this.reminders;
+            }
+            
+            // Calculate reminders for a single student
+            calculateStudentReminders(student) {
+                const reminders = [];
+                const attendanceCount = student.attendanceCount || 0;
+                const totalSessions = student.totalSessions || 48;
+                
+                // Calculate progress report reminders
+                for (const threshold of PROGRESS_REPORT_THRESHOLDS) {
+                    if (attendanceCount >= threshold) {
+                        // Check if this reminder has been processed
+                        const reminderId = `${student.id}-progress-${threshold}`;
+                        if (!processedReminders.has(reminderId)) {
+                            const isCompleted = this.checkIfReminderCompleted(student, 'progress', threshold);
+                            
+                            reminders.push({
+                                id: reminderId,
+                                studentId: student.id,
+                                studentName: student.name,
+                                studentTimeSlot: student.timeSlot,
+                                type: 'progress',
+                                threshold: threshold,
+                                attendanceCount: attendanceCount,
+                                totalSessions: totalSessions,
+                                message: `Student ${student.name} has completed ${threshold} classes. Progress report is due.`,
+                                isUrgent: attendanceCount > threshold, // Mark as urgent if past threshold
+                                status: isCompleted ? 'completed' : 'pending',
+                                createdAt: new Date().toISOString(),
+                                updatedAt: new Date().toISOString()
+                            });
+                        }
+                    }
+                }
+                
+                // Calculate brain test reminders
+                // 1. At 24 classes
+                if (attendanceCount >= 24) {
+                    const reminderId = `${student.id}-brain-24`;
+                    if (!processedReminders.has(reminderId)) {
+                        const isCompleted = this.checkIfReminderCompleted(student, 'brain', 24);
+                        
+                        reminders.push({
+                            id: reminderId,
+                            studentId: student.id,
+                            studentName: student.name,
+                            studentTimeSlot: student.timeSlot,
+                            type: 'brain',
+                            threshold: 24,
+                            attendanceCount: attendanceCount,
+                            totalSessions: totalSessions,
+                            message: `Student ${student.name} has completed 24 classes. Brain test is due.`,
+                            isUrgent: attendanceCount > 24,
+                            status: isCompleted ? 'completed' : 'pending',
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString()
+                        });
+                    }
+                }
+                
+                // 2. Last 3 classes (based on total sessions)
+                const lastThreeThreshold = totalSessions - LAST_THREE_CLASSES_THRESHOLD;
+                if (attendanceCount >= lastThreeThreshold) {
+                    const reminderId = `${student.id}-brain-last3`;
+                    if (!processedReminders.has(reminderId)) {
+                        const isCompleted = this.checkIfReminderCompleted(student, 'brain', 'last3');
+                        
+                        const remainingClasses = totalSessions - attendanceCount;
+                        const urgencyLevel = remainingClasses <= 0 ? 'past' : (remainingClasses <= 2 ? 'urgent' : 'normal');
+                        
+                        reminders.push({
+                            id: reminderId,
+                            studentId: student.id,
+                            studentName: student.name,
+                            studentTimeSlot: student.timeSlot,
+                            type: 'brain',
+                            threshold: 'last3',
+                            attendanceCount: attendanceCount,
+                            totalSessions: totalSessions,
+                            message: `Student ${student.name} is in the last 3 classes (${remainingClasses} remaining). Brain test is due.`,
+                            isUrgent: remainingClasses <= 2,
+                            status: isCompleted ? 'completed' : 'pending',
+                            urgencyLevel: urgencyLevel,
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString()
+                        });
+                    }
+                }
+                
+                return reminders;
+            }
+            
+            // Check if a reminder has been marked as completed
+            checkIfReminderCompleted(student, type, threshold) {
+                // Check in student's processed reminders
+                if (student.processedReminders && Array.isArray(student.processedReminders)) {
+                    const reminderKey = `${type}-${threshold}`;
+                    return student.processedReminders.includes(reminderKey);
+                }
+                return false;
+            }
+            
+            // Mark reminder as completed
+            async markReminderAsCompleted(reminderId, studentId, type, threshold) {
+                try {
+                    // Add to processed reminders set
+                    processedReminders.add(reminderId);
+                    
+                    // Update student's processed reminders in Firestore
+                    const student = this.system.students.get(studentId);
+                    if (student) {
+                        const reminderKey = `${type}-${threshold}`;
+                        
+                        if (!student.processedReminders) {
+                            student.processedReminders = [];
+                        }
+                        
+                        if (!student.processedReminders.includes(reminderKey)) {
+                            student.processedReminders.push(reminderKey);
+                            
+                            if (this.system.isOnline) {
+                                await db.collection('users').doc(this.system.userId).collection('students')
+                                    .doc(studentId).update({
+                                        processedReminders: student.processedReminders
+                                    });
+                            }
+                        }
+                    }
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Error marking reminder as completed:', error);
+                    return false;
+                }
+            }
+            
+            // Mark reminder as dismissed
+            async markReminderAsDismissed(reminderId) {
+                processedReminders.add(reminderId);
+                return true;
+            }
+            
+            // Get statistics
+            getStatistics() {
+                const total = this.reminders.length;
+                const progress = this.reminders.filter(r => r.type === 'progress').length;
+                const brain = this.reminders.filter(r => r.type === 'brain').length;
+                const urgent = this.reminders.filter(r => r.isUrgent).length;
+                const pending = this.reminders.filter(r => r.status === 'pending').length;
+                const completed = this.reminders.filter(r => r.status === 'completed').length;
+                
+                return {
+                    total,
+                    progress,
+                    brain,
+                    urgent,
+                    pending,
+                    completed
+                };
+            }
+            
+            // Filter reminders
+            filterReminders(filterType) {
+                switch(filterType) {
+                    case 'progress':
+                        return this.reminders.filter(r => r.type === 'progress');
+                    case 'brain':
+                        return this.reminders.filter(r => r.type === 'brain');
+                    case 'urgent':
+                        return this.reminders.filter(r => r.isUrgent);
+                    case 'pending':
+                        return this.reminders.filter(r => r.status === 'pending');
+                    case 'completed':
+                        return this.reminders.filter(r => r.status === 'completed');
+                    default:
+                        return this.reminders;
+                }
+            }
+            
+            // Export reminders as CSV
+            exportRemindersCSV(filterType = 'all') {
+                let csv = 'Student Name,Time Slot,Type,Threshold,Attendance Count,Total Sessions,Status,Message\n';
+                
+                const filteredReminders = this.filterReminders(filterType);
+                
+                filteredReminders.forEach(reminder => {
+                    const typeLabel = reminder.type === 'progress' ? 'Progress Report' : 'Brain Test';
+                    const thresholdLabel = reminder.type === 'brain' && reminder.threshold === 'last3' ? 
+                                          'Last 3 Classes' : `${reminder.threshold} Classes`;
+                    const statusLabel = reminder.status === 'completed' ? 'Completed' : 
+                                      reminder.status === 'dismissed' ? 'Dismissed' : 'Pending';
+                    
+                    csv += `"${reminder.studentName}","${reminder.studentTimeSlot}","${typeLabel}","${thresholdLabel}",${reminder.attendanceCount},${reminder.totalSessions},"${statusLabel}","${reminder.message}"\n`;
+                });
+                
+                return csv;
+            }
+            
+            // Export reminders as formatted list for printing
+            exportRemindersForPrint(filterType = 'all') {
+                const filteredReminders = this.filterReminders(filterType);
+                
+                let html = '<h2>Genius Mind Academy - Reminders Report</h2>';
+                html += `<p>Generated on: ${new Date().toLocaleDateString()}</p>`;
+                html += `<p>Total Reminders: ${filteredReminders.length}</p>`;
+                
+                // Group by type
+                const progressReminders = filteredReminders.filter(r => r.type === 'progress');
+                const brainReminders = filteredReminders.filter(r => r.type === 'brain');
+                
+                if (progressReminders.length > 0) {
+                    html += '<h3>📋 Progress Reports Due</h3>';
+                    html += '<ul>';
+                    progressReminders.forEach(reminder => {
+                        const statusIndicator = reminder.status === 'completed' ? '✅' : '⏳';
+                        html += `<li>${statusIndicator} ${reminder.studentName} (${reminder.studentTimeSlot}): ${reminder.message}</li>`;
+                    });
+                    html += '</ul>';
+                }
+                
+                if (brainReminders.length > 0) {
+                    html += '<h3>🧠 Brain Tests Due</h3>';
+                    html += '<ul>';
+                    brainReminders.forEach(reminder => {
+                        const statusIndicator = reminder.status === 'completed' ? '✅' : '⏳';
+                        const thresholdLabel = reminder.threshold === 'last3' ? 
+                                              'Last 3 Classes' : `${reminder.threshold} Classes`;
+                        html += `<li>${statusIndicator} ${reminder.studentName} (${reminder.studentTimeSlot}): ${thresholdLabel} - ${reminder.message}</li>`;
+                    });
+                    html += '</ul>';
+                }
+                
+                return html;
+            }
+        }
+
         // Fixed system class with improved attendance calculation
         class MemoschoolAttendanceSystem {
             constructor() {
@@ -1672,6 +2229,7 @@
                 this.timeSlots = [];
                 this.userId = null;
                 this.isOnline = false;
+                this.reminderManager = new ReminderManager(this);
             }
             
             async initialize(userId) {
@@ -1718,6 +2276,18 @@
                         });
                         // Sort immediately after loading
                         this.sortTimeSlots();
+                    }
+                    
+                    // Load processed reminders from all students
+                    processedReminders.clear();
+                    for (const [studentId, student] of this.students.entries()) {
+                        if (student.processedReminders && Array.isArray(student.processedReminders)) {
+                            student.processedReminders.forEach(reminderKey => {
+                                const [type, threshold] = reminderKey.split('-');
+                                const reminderId = `${studentId}-${type}-${threshold}`;
+                                processedReminders.add(reminderId);
+                            });
+                        }
                     }
                     
                     updateSyncStatus('✅ Data loaded from cloud', 'synced');
@@ -1932,6 +2502,7 @@
                     totalSessions: parseInt(totalSessions) || 48,
                     attendanceCount: 0,
                     attendanceDates: [],
+                    processedReminders: [], // Initialize empty array for processed reminders
                     createdAt: new Date().toISOString()
                 };
                 
@@ -2147,13 +2718,21 @@
                 const avgAttendanceRate = totalStudents > 0 && totalPossibleSessions > 0 ? 
                     (totalAttendance / totalPossibleSessions * 100).toFixed(1) : 0;
                 
+                // Calculate reminders statistics
+                const reminders = this.reminderManager.calculateAllReminders();
+                const stats = this.reminderManager.getStatistics();
+                
                 return {
                     totalStudents,
                     totalSessions: this.attendanceRecords.length,
                     totalAttendance,
                     totalPossibleSessions,
                     averageAttendanceRate: avgAttendanceRate,
-                    timeSlots: this.timeSlots.length
+                    timeSlots: this.timeSlots.length,
+                    activeReminders: stats.total,
+                    urgentReminders: stats.urgent,
+                    progressReminders: stats.progress,
+                    brainTestReminders: stats.brain
                 };
             }
 
@@ -2315,6 +2894,204 @@
         // Create system instance
         const system = new MemoschoolAttendanceSystem();
 
+        // ==================== Reminder Functions ====================
+        
+        // Update reminders display
+        function updateRemindersDisplay() {
+            // Calculate all reminders
+            allReminders = system.reminderManager.calculateAllReminders();
+            
+            // Update summary counts
+            const stats = system.reminderManager.getStatistics();
+            
+            document.getElementById('urgentRemindersCount').textContent = stats.urgent;
+            document.getElementById('progressRemindersCount').textContent = stats.progress;
+            document.getElementById('brainTestRemindersCount').textContent = stats.brain;
+            document.getElementById('totalRemindersCount').textContent = stats.total;
+            
+            // Update dashboard count
+            document.getElementById('activeRemindersCount').textContent = stats.total;
+            
+            // Filter reminders based on current filter
+            const filteredReminders = system.reminderManager.filterReminders(currentReminderFilter);
+            
+            // Clear containers
+            document.getElementById('progressReportsContainer').innerHTML = '';
+            document.getElementById('brainTestsContainer').innerHTML = '';
+            
+            // Separate reminders by type
+            const progressReminders = filteredReminders.filter(r => r.type === 'progress');
+            const brainReminders = filteredReminders.filter(r => r.type === 'brain');
+            
+            // Display progress reports
+            if (progressReminders.length === 0) {
+                document.getElementById('progressReportsContainer').innerHTML = 
+                    '<div style="text-align: center; padding: 40px; color: var(--gray);">' +
+                    '<p>No progress report reminders found.</p>' +
+                    '<p>Reminders will appear when students reach 12, 24, 26, or 48 classes.</p>' +
+                    '</div>';
+            } else {
+                progressReminders.forEach(reminder => {
+                    createReminderCard(reminder, 'progressReportsContainer');
+                });
+            }
+            
+            // Display brain tests
+            if (brainReminders.length === 0) {
+                document.getElementById('brainTestsContainer').innerHTML = 
+                    '<div style="text-align: center; padding: 40px; color: var(--gray);">' +
+                    '<p>No brain test reminders found.</p>' +
+                    '<p>Reminders will appear when students reach 24 classes or the last 3 classes.</p>' +
+                    '</div>';
+            } else {
+                brainReminders.forEach(reminder => {
+                    createReminderCard(reminder, 'brainTestsContainer');
+                });
+            }
+        }
+        
+        // Create reminder card
+        function createReminderCard(reminder, containerId) {
+            const container = document.getElementById(containerId);
+            
+            const card = document.createElement('div');
+            card.className = `reminder-card ${reminder.type}-report`;
+            if (reminder.isUrgent) {
+                card.classList.add('urgent');
+            }
+            
+            // Determine status color
+            let statusColor = 'var(--warning)';
+            let statusText = 'Pending';
+            if (reminder.status === 'completed') {
+                statusColor = 'var(--success)';
+                statusText = 'Completed';
+            } else if (reminder.status === 'dismissed') {
+                statusColor = 'var(--gray)';
+                statusText = 'Dismissed';
+            }
+            
+            // Calculate remaining classes for brain test
+            let remainingInfo = '';
+            if (reminder.type === 'brain' && reminder.threshold === 'last3') {
+                const remainingClasses = reminder.totalSessions - reminder.attendanceCount;
+                if (remainingClasses <= 0) {
+                    remainingInfo = `<span style="color: var(--danger); font-weight: bold;">Past due by ${Math.abs(remainingClasses)} classes</span>`;
+                } else {
+                    remainingInfo = `<span style="color: ${remainingClasses <= 2 ? 'var(--danger)' : 'var(--warning)'};">${remainingClasses} classes remaining</span>`;
+                }
+            }
+            
+            card.innerHTML = `
+                ${reminder.isUrgent ? '<div class="reminder-badge">URGENT</div>' : ''}
+                <div class="reminder-header">
+                    <div>
+                        <div class="reminder-title">
+                            ${reminder.type === 'progress' ? '📋 Progress Report' : '🧠 Brain Test'}
+                            <span class="reminder-type type-${reminder.type}">${reminder.type === 'progress' ? 'Progress' : 'Brain Test'}</span>
+                        </div>
+                        <div class="reminder-student">${reminder.studentName} - ${reminder.studentTimeSlot}</div>
+                    </div>
+                    <div class="reminder-status-toggle">
+                        <span class="status-indicator" style="background-color: ${statusColor};"></span>
+                        <span style="font-size: 0.9em; color: ${statusColor};">${statusText}</span>
+                    </div>
+                </div>
+                <div class="reminder-meta">
+                    <strong>Threshold:</strong> ${reminder.threshold === 'last3' ? 'Last 3 Classes' : `${reminder.threshold} Classes`} | 
+                    <strong>Attendance:</strong> ${reminder.attendanceCount}/${reminder.totalSessions} classes
+                    ${remainingInfo ? ` | ${remainingInfo}` : ''}
+                </div>
+                <p style="margin: 10px 0; color: var(--dark);">${reminder.message}</p>
+                <div class="reminder-actions">
+                    <button class="btn btn-success" onclick="markReminderAsCompleted('${reminder.id}', '${reminder.studentId}', '${reminder.type}', '${reminder.threshold}')" 
+                            ${reminder.status === 'completed' ? 'disabled' : ''}
+                            style="padding: 8px 16px; font-size: 14px;">
+                        ✅ Mark as Completed
+                    </button>
+                    <button class="btn btn-secondary" onclick="markReminderAsDismissed('${reminder.id}')" 
+                            ${reminder.status === 'dismissed' ? 'disabled' : ''}
+                            style="padding: 8px 16px; font-size: 14px;">
+                        📌 Dismiss
+                    </button>
+                    <button class="btn btn-info" onclick="viewStudentDetails('${reminder.studentId}')" 
+                            style="padding: 8px 16px; font-size: 14px;">
+                        👤 View Student
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(card);
+        }
+        
+        // Filter reminders
+        function filterReminders(filterType) {
+            currentReminderFilter = filterType;
+            
+            // Update filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            updateRemindersDisplay();
+        }
+        
+        // Mark reminder as completed
+        async function markReminderAsCompleted(reminderId, studentId, type, threshold) {
+            try {
+                const success = await system.reminderManager.markReminderAsCompleted(reminderId, studentId, type, threshold);
+                
+                if (success) {
+                    showToast('Reminder marked as completed', 'success');
+                    updateRemindersDisplay();
+                } else {
+                    showToast('Error marking reminder as completed', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+        
+        // Mark reminder as dismissed
+        async function markReminderAsDismissed(reminderId) {
+            try {
+                const success = await system.reminderManager.markReminderAsDismissed(reminderId);
+                
+                if (success) {
+                    showToast('Reminder dismissed', 'info');
+                    updateRemindersDisplay();
+                } else {
+                    showToast('Error dismissing reminder', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+        
+        // Export progress reports
+        function exportProgressReports() {
+            const csv = system.reminderManager.exportRemindersCSV('progress');
+            downloadFile(csv, 'genius_mind_progress_reports.csv', 'text/csv');
+            showToast('Progress reports exported successfully!', 'success');
+        }
+        
+        // Export brain tests
+        function exportBrainTests() {
+            const csv = system.reminderManager.exportRemindersCSV('brain');
+            downloadFile(csv, 'genius_mind_brain_tests.csv', 'text/csv');
+            showToast('Brain tests exported successfully!', 'success');
+        }
+        
+        // Export all reminders
+        function exportAllReminders() {
+            const csv = system.reminderManager.exportRemindersCSV('all');
+            downloadFile(csv, 'genius_mind_all_reminders.csv', 'text/csv');
+            showToast('All reminders exported successfully!', 'success');
+        }
+        
         // ==================== PDF Report Generation ====================
         
         // Generate PDF report for a student - 修复日期排版问题
@@ -3322,10 +4099,11 @@
         function addSampleData() {
             // Add some sample students
             const sampleStudents = [
-                { name: 'John Doe', age: 12, gender: 'Male', timeSlot: 'Friday 2pm-3:30pm' },
-                { name: 'Jane Smith', age: 13, gender: 'Female', timeSlot: 'Saturday 9am-10:30am' },
-                { name: 'Michael Brown', age: 11, gender: 'Male', timeSlot: 'Saturday 11am-12:30pm' },
-                { name: 'Emily Johnson', age: 14, gender: 'Female', timeSlot: 'Sunday 9am-10:30am' }
+                { name: 'John Doe', age: 12, gender: 'Male', timeSlot: 'Friday 2pm-3:30pm', totalSessions: 48 },
+                { name: 'Jane Smith', age: 13, gender: 'Female', timeSlot: 'Saturday 9am-10:30am', totalSessions: 48 },
+                { name: 'Michael Brown', age: 11, gender: 'Male', timeSlot: 'Saturday 11am-12:30pm', totalSessions: 48 },
+                { name: 'Emily Johnson', age: 14, gender: 'Female', timeSlot: 'Sunday 9am-10:30am', totalSessions: 48 },
+                { name: 'David Wilson', age: 15, gender: 'Male', timeSlot: 'Friday 2pm-3:30pm', totalSessions: 48 }
             ];
             
             sampleStudents.forEach((student, index) => {
@@ -3337,9 +4115,10 @@
                     gender: student.gender,
                     timeSlot: student.timeSlot,
                     enrolledDate: '2024-01-01',
-                    totalSessions: 48,
-                    attendanceCount: Math.floor(Math.random() * 30) + 10,
-                    attendanceDates: generateSampleDates(30),
+                    totalSessions: student.totalSessions,
+                    attendanceCount: Math.floor(Math.random() * 50) + 1,
+                    attendanceDates: generateSampleDates(Math.floor(Math.random() * 50) + 1),
+                    processedReminders: [],
                     createdAt: new Date().toISOString()
                 };
                 system.students.set(studentId, studentData);
@@ -3347,7 +4126,7 @@
             
             // Add sample attendance records
             const today = new Date();
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 10; i++) {
                 const date = new Date(today);
                 date.setDate(today.getDate() - i * 7); // Past few weeks
                 
@@ -3404,6 +4183,7 @@
             updateFilterStudent();
             updateTimeSlotsList();
             updateSelectedCount();
+            updateRemindersDisplay();
             
             // 更新时区信息
             updateTimezoneInfo();
@@ -3788,6 +4568,10 @@
                 // 计算进度条宽度
                 const progressWidth = Math.min((student.attendanceCount / student.totalSessions) * 100, 100);
                 
+                // Check if student has any reminders
+                const studentReminders = system.reminderManager.calculateStudentReminders(student);
+                const hasReminders = studentReminders.length > 0;
+                
                 card.innerHTML = `
                     <div style="position: absolute; top: 15px; right: 15px;">
                         <input type="checkbox" class="student-select-checkbox" value="${student.id}" onclick="event.stopPropagation(); updateSelectedCount();">
@@ -3811,6 +4595,7 @@
                             <div class="${progressClass}" style="width: ${progressWidth}%"></div>
                         </div>
                     </div>
+                    ${hasReminders ? `<div class="student-list-reminder" title="${studentReminders.length} reminder(s)">🔔 ${studentReminders.length}</div>` : ''}
                     <div class="student-actions">
                         <button class="btn btn-info" onclick="event.stopPropagation(); editStudent('${student.id}')" style="padding: 8px 12px; font-size: 12px; flex: 1;">Edit</button>
                         <button class="btn btn-pdf" onclick="event.stopPropagation(); generateStudentPDF('${student.id}')" style="padding: 8px 12px; font-size: 12px; flex: 1;">PDF</button>
@@ -4415,6 +5200,7 @@
             document.getElementById('timeSlotsCount').textContent = summary.timeSlots;
             document.getElementById('timeSlotsCountDashboard').textContent = summary.timeSlots;
             document.getElementById('recordedSessionsCount').textContent = summary.totalSessions;
+            document.getElementById('activeRemindersCount').textContent = summary.activeReminders;
         }
 
         // ==================== Tools Section Functions ====================

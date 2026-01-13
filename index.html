@@ -1350,7 +1350,7 @@
                             <div class="stat-card">
                                 <h3>Active Reminders</h3>
                                 <div class="number" id="activeRemindersCount">0</div>
-                                <div class="trend"><a href="#" onclick="showSection('reminders')">View Details</a></div>
+                                <div class="trend"><a href="#" onclick="showSection('reminders'); return false;">View Details</a></div>
                             </div>
                         </div>
                     </div>
@@ -1562,7 +1562,7 @@
                     <!-- Student Attendance Summary -->
                     <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
                         <h3 style="margin-bottom: 20px; color: var(--dark);">👥 Student Attendance Summary</h3>
-                        <p style="margin-bottom: 15px; color: var(--grey);">View attendance summary for each student including all attended dates.</p>
+                        <p style="margin-bottom: 15px; color: var(--gray);">View attendance summary for each student including all attended dates.</p>
                         
                         <div class="form-group">
                             <label class="form-label">Filter by Time Slot</label>
@@ -2234,17 +2234,61 @@
             
             async initialize(userId) {
                 this.userId = userId;
-                await this.loadFromFirestore();
+                console.log("🚀 初始化系统，用户ID:", userId);
+                
+                // 尝试加载Firestore数据，如果失败则使用本地存储
+                try {
+                    await this.loadFromFirestore();
+                } catch (error) {
+                    console.error("Firestore初始化失败，尝试本地存储:", error);
+                    this.isOnline = false;
+                    this.loadFromLocalStorage();
+                }
+                
                 this.startRealtimeSync();
             }
             
             async loadFromFirestore() {
-                if (!this.userId) return;
+                console.log("🔍 开始加载Firestore数据...");
+                console.log("User ID:", this.userId);
+                
+                if (!this.userId) {
+                    console.error("❌ 用户ID为空");
+                    updateSyncStatus('❌ 用户未登录', 'error');
+                    return;
+                }
                 
                 try {
-                    updateSyncStatus('🔄 Loading data from cloud...', 'syncing');
+                    updateSyncStatus('🔄 连接到数据库...', 'syncing');
                     
-                    // Load students data
+                    // 1. 测试Firestore连接
+                    console.log("测试Firestore连接...");
+                    const testRef = db.collection('test').doc('connection');
+                    try {
+                        await testRef.get();
+                        console.log("✅ Firestore连接测试成功");
+                    } catch (testError) {
+                        console.log("⚠️ 测试文档不存在，但连接可能正常");
+                    }
+                    
+                    // 2. 检查用户文档是否存在
+                    const userRef = db.collection('users').doc(this.userId);
+                    const userDoc = await userRef.get();
+                    
+                    if (!userDoc.exists) {
+                        console.log("📝 新用户，创建默认数据结构...");
+                        // 创建初始用户文档
+                        await userRef.set({
+                            createdAt: new Date().toISOString(),
+                            lastLogin: new Date().toISOString()
+                        });
+                        
+                        // 创建默认时间槽
+                        await this.initializeDefaultTimeSlots();
+                    }
+                    
+                    // 3. 加载学生数据
+                    updateSyncStatus('🔄 加载学生数据...', 'syncing');
                     const studentsSnapshot = await db.collection('users').doc(this.userId)
                         .collection('students').get();
                     
@@ -2252,8 +2296,9 @@
                     studentsSnapshot.forEach(doc => {
                         this.students.set(doc.id, doc.data());
                     });
+                    console.log(`📚 加载了 ${this.students.size} 个学生`);
                     
-                    // Load attendance records
+                    // 4. 加载考勤记录
                     const attendanceSnapshot = await db.collection('users').doc(this.userId)
                         .collection('attendance').get();
                     
@@ -2261,24 +2306,26 @@
                     attendanceSnapshot.forEach(doc => {
                         this.attendanceRecords.push(doc.data());
                     });
+                    console.log(`📅 加载了 ${this.attendanceRecords.length} 条考勤记录`);
                     
-                    // Load time slots
+                    // 5. 加载时间槽
                     const timeSlotsSnapshot = await db.collection('users').doc(this.userId)
                         .collection('timeSlots').get();
                     
                     this.timeSlots = [];
                     if (timeSlotsSnapshot.empty) {
-                        // If no time slots, create default ones
+                        console.log("⏰ 无时间槽，创建默认时间槽...");
                         await this.initializeDefaultTimeSlots();
                     } else {
                         timeSlotsSnapshot.forEach(doc => {
                             this.timeSlots.push(doc.data());
                         });
-                        // Sort immediately after loading
                         this.sortTimeSlots();
                     }
                     
-                    // Load processed reminders from all students
+                    console.log(`⏰ 加载了 ${this.timeSlots.length} 个时间槽`);
+                    
+                    // 6. 加载已处理的提醒
                     processedReminders.clear();
                     for (const [studentId, student] of this.students.entries()) {
                         if (student.processedReminders && Array.isArray(student.processedReminders)) {
@@ -2290,13 +2337,39 @@
                         }
                     }
                     
-                    updateSyncStatus('✅ Data loaded from cloud', 'synced');
                     this.isOnline = true;
-                    updateUI();
+                    updateSyncStatus('✅ 数据加载完成', 'synced');
+                    console.log("🎉 Firestore数据加载成功");
+                    
+                    // 保存到本地存储作为备份
+                    this.saveToLocalStorage();
                     
                 } catch (error) {
-                    console.error('Error loading from Firestore:', error);
-                    updateSyncStatus('❌ Error loading data', 'error');
+                    console.error("🔥 Firestore加载失败详情:", error);
+                    console.error("错误代码:", error.code);
+                    console.error("错误信息:", error.message);
+                    
+                    let errorMessage = '加载数据失败';
+                    
+                    // 更详细的错误分类
+                    if (error.code === 'permission-denied') {
+                        errorMessage = '数据库权限被拒绝，请检查Firestore安全规则';
+                    } else if (error.code === 'not-found') {
+                        errorMessage = '数据库或集合不存在';
+                    } else if (error.code === 'unauthenticated') {
+                        errorMessage = '用户未认证，请重新登录';
+                    } else if (error.code === 'failed-precondition') {
+                        errorMessage = '数据库未初始化或配置错误';
+                    } else if (error.message.includes('404')) {
+                        errorMessage = 'Firebase项目可能不存在或被禁用';
+                    } else if (error.message.includes('network') || error.code === 'unavailable') {
+                        errorMessage = '网络连接失败，正在启用离线模式';
+                        this.isOnline = false;
+                        this.loadFromLocalStorage();
+                    }
+                    
+                    updateSyncStatus(`❌ ${errorMessage}`, 'error');
+                    throw error; // 重新抛出错误，让调用者处理
                 }
             }
             
@@ -2429,6 +2502,7 @@
             // ========== 其他方法保持不变 ==========
             
             async initializeDefaultTimeSlots() {
+                console.log("初始化默认时间槽...");
                 for (const timeSlot of DEFAULT_TIME_SLOTS) {
                     const timeSlotId = timeSlot.replace(/\s+/g, '-').toLowerCase();
                     const timeSlotData = {
@@ -2438,52 +2512,75 @@
                         createdAt: new Date().toISOString()
                     };
                     
-                    await db.collection('users').doc(this.userId).collection('timeSlots')
-                        .doc(timeSlotId).set(timeSlotData);
-                    
-                    this.timeSlots.push(timeSlotData);
+                    try {
+                        if (this.isOnline) {
+                            await db.collection('users').doc(this.userId).collection('timeSlots')
+                                .doc(timeSlotId).set(timeSlotData);
+                        }
+                        this.timeSlots.push(timeSlotData);
+                    } catch (error) {
+                        console.error("创建时间槽失败:", error);
+                        // 即使在线失败，也在本地添加
+                        this.timeSlots.push(timeSlotData);
+                    }
                 }
                 // Sort after initialization
                 this.sortTimeSlots();
             }
             
             startRealtimeSync() {
-                if (!this.userId) return;
+                if (!this.userId || !this.isOnline) {
+                    console.log("⚠️ 离线模式，跳过实时同步");
+                    return;
+                }
                 
-                // Real-time listener for students data
-                db.collection('users').doc(this.userId).collection('students')
-                    .onSnapshot((snapshot) => {
-                        snapshot.docChanges().forEach((change) => {
-                            if (change.type === 'added' || change.type === 'modified') {
-                                this.students.set(change.doc.id, change.doc.data());
-                            } else if (change.type === 'removed') {
-                                this.students.delete(change.doc.id);
-                            }
+                console.log("启动实时同步...");
+                
+                try {
+                    // Real-time listener for students data
+                    db.collection('users').doc(this.userId).collection('students')
+                        .onSnapshot((snapshot) => {
+                            snapshot.docChanges().forEach((change) => {
+                                if (change.type === 'added' || change.type === 'modified') {
+                                    this.students.set(change.doc.id, change.doc.data());
+                                } else if (change.type === 'removed') {
+                                    this.students.delete(change.doc.id);
+                                }
+                            });
+                            updateUI();
+                            updateSyncStatus('✅ 实时同步活动', 'synced');
+                        }, (error) => {
+                            console.error("学生数据实时同步错误:", error);
                         });
-                        updateUI();
-                        updateSyncStatus('✅ Real-time sync active', 'synced');
-                    });
-                
-                // Real-time listener for attendance records
-                db.collection('users').doc(this.userId).collection('attendance')
-                    .onSnapshot((snapshot) => {
-                        this.attendanceRecords = snapshot.docs.map(doc => doc.data());
-                        updateUI();
-                        updateSyncStatus('✅ Real-time sync active', 'synced');
-                    });
-                
-                // Real-time listener for time slots
-                db.collection('users').doc(this.userId).collection('timeSlots')
-                    .onSnapshot((snapshot) => {
-                        this.timeSlots = [];
-                        snapshot.forEach(doc => {
-                            this.timeSlots.push(doc.data());
+                    
+                    // Real-time listener for attendance records
+                    db.collection('users').doc(this.userId).collection('attendance')
+                        .onSnapshot((snapshot) => {
+                            this.attendanceRecords = snapshot.docs.map(doc => doc.data());
+                            updateUI();
+                        }, (error) => {
+                            console.error("考勤记录实时同步错误:", error);
                         });
-                        // Sort after each update
-                        this.sortTimeSlots();
-                        updateUI();
-                        updateSyncStatus('✅ Real-time sync active', 'synced');
-                    });
+                    
+                    // Real-time listener for time slots
+                    db.collection('users').doc(this.userId).collection('timeSlots')
+                        .onSnapshot((snapshot) => {
+                            this.timeSlots = [];
+                            snapshot.forEach(doc => {
+                                this.timeSlots.push(doc.data());
+                            });
+                            // Sort after each update
+                            this.sortTimeSlots();
+                            updateUI();
+                        }, (error) => {
+                            console.error("时间槽实时同步错误:", error);
+                        });
+                        
+                } catch (error) {
+                    console.error("实时同步初始化失败:", error);
+                    this.isOnline = false;
+                    updateSyncStatus('🌐 离线模式', 'syncing');
+                }
             }
             
             async addStudent(name, age, gender, timeSlot, enrolledDate, totalSessions = 48) {
@@ -2507,11 +2604,20 @@
                 };
                 
                 if (this.isOnline) {
-                    await db.collection('users').doc(this.userId).collection('students')
-                        .doc(studentId).set(student);
-                } else {
-                    this.students.set(studentId, student);
+                    try {
+                        await db.collection('users').doc(this.userId).collection('students')
+                            .doc(studentId).set(student);
+                    } catch (error) {
+                        console.error("在线添加学生失败，保存到本地:", error);
+                        this.isOnline = false;
+                    }
                 }
+                
+                // 无论在线与否，都添加到本地
+                this.students.set(studentId, student);
+                
+                // 保存到本地存储
+                this.saveToLocalStorage();
                 
                 return student;
             }
@@ -2528,11 +2634,19 @@
                 };
                 
                 if (this.isOnline) {
-                    await db.collection('users').doc(this.userId).collection('students')
-                        .doc(studentId).update(updatedData);
-                } else {
-                    this.students.set(studentId, updatedStudent);
+                    try {
+                        await db.collection('users').doc(this.userId).collection('students')
+                            .doc(studentId).update(updatedData);
+                    } catch (error) {
+                        console.error("在线更新学生失败:", error);
+                    }
                 }
+                
+                // 更新本地数据
+                this.students.set(studentId, updatedStudent);
+                
+                // 保存到本地存储
+                this.saveToLocalStorage();
                 
                 return updatedStudent;
             }
@@ -2588,11 +2702,15 @@
                             student.attendanceCount = uniqueDates.length;
                             
                             if (this.isOnline) {
-                                await db.collection('users').doc(this.userId).collection('students')
-                                    .doc(studentId).update({
-                                        attendanceDates: uniqueDates,
-                                        attendanceCount: uniqueDates.length
-                                    });
+                                try {
+                                    await db.collection('users').doc(this.userId).collection('students')
+                                        .doc(studentId).update({
+                                            attendanceDates: uniqueDates,
+                                            attendanceCount: uniqueDates.length
+                                        });
+                                } catch (error) {
+                                    console.error("在线更新学生出勤失败:", error);
+                                }
                             }
                         }
                     }
@@ -2600,11 +2718,19 @@
                 
                 // Save attendance record
                 if (this.isOnline) {
-                    await db.collection('users').doc(this.userId).collection('attendance')
-                        .doc(recordId).set(record);
-                } else {
-                    this.attendanceRecords.push(record);
+                    try {
+                        await db.collection('users').doc(this.userId).collection('attendance')
+                            .doc(recordId).set(record);
+                    } catch (error) {
+                        console.error("在线保存考勤记录失败:", error);
+                    }
                 }
+                
+                // 添加到本地记录
+                this.attendanceRecords.push(record);
+                
+                // 保存到本地存储
+                this.saveToLocalStorage();
                 
                 return record;
             }
@@ -2632,7 +2758,7 @@
                     
                     // Async update to database
                     if (this.isOnline) {
-                        db.collection('users').doc(system.userId).collection('students')
+                        db.collection('users').doc(this.userId).collection('students')
                             .doc(studentId).update({
                                 attendanceDates: uniqueDates,
                                 attendanceCount: uniqueDates.length
@@ -2651,8 +2777,8 @@
                     student.attendanceCount = validAttendanceCount;
                     
                     // Async update to database
-                    if (system.isOnline) {
-                        db.collection('users').doc(system.userId).collection('students')
+                    if (this.isOnline) {
+                        db.collection('users').doc(this.userId).collection('students')
                             .doc(studentId).update({
                                 attendanceCount: validAttendanceCount
                             }).catch(console.error);
@@ -2774,12 +2900,20 @@
                 };
                 
                 if (this.isOnline) {
-                    await db.collection('users').doc(this.userId).collection('timeSlots')
-                        .doc(timeSlotId).set(timeSlot);
-                } else {
-                    this.timeSlots.push(timeSlot);
-                    this.sortTimeSlots();
+                    try {
+                        await db.collection('users').doc(this.userId).collection('timeSlots')
+                            .doc(timeSlotId).set(timeSlot);
+                    } catch (error) {
+                        console.error("在线添加时间槽失败:", error);
+                    }
                 }
+                
+                // 添加到本地
+                this.timeSlots.push(timeSlot);
+                this.sortTimeSlots();
+                
+                // 保存到本地存储
+                this.saveToLocalStorage();
                 
                 return timeSlot;
             }
@@ -2795,11 +2929,19 @@
                 }
                 
                 if (this.isOnline) {
-                    await db.collection('users').doc(this.userId).collection('timeSlots')
-                        .doc(timeSlotId).delete();
-                } else {
-                    this.timeSlots = this.timeSlots.filter(slot => slot.id !== timeSlotId);
+                    try {
+                        await db.collection('users').doc(this.userId).collection('timeSlots')
+                            .doc(timeSlotId).delete();
+                    } catch (error) {
+                        console.error("在线删除时间槽失败:", error);
+                    }
                 }
+                
+                // 从本地删除
+                this.timeSlots = this.timeSlots.filter(slot => slot.id !== timeSlotId);
+                
+                // 保存到本地存储
+                this.saveToLocalStorage();
                 
                 return true;
             }
@@ -2842,6 +2984,9 @@
                         }
                     }
                 }
+                
+                // 保存到本地存储
+                this.saveToLocalStorage();
                 
                 return fixedCount;
             }
@@ -2887,7 +3032,84 @@
                     }
                 }
                 
+                // 保存到本地存储
+                this.saveToLocalStorage();
+                
                 return recalculatedCount;
+            }
+            
+            // ========== 本地存储方法 ==========
+            
+            // 从本地存储加载数据
+            loadFromLocalStorage() {
+                console.log("📱 尝试从本地存储加载数据...");
+                
+                try {
+                    const savedData = localStorage.getItem(`memoschool_${this.userId}`);
+                    
+                    if (savedData) {
+                        const data = JSON.parse(savedData);
+                        
+                        // 恢复学生数据
+                        if (data.students && Array.isArray(data.students)) {
+                            this.students = new Map(data.students);
+                        }
+                        
+                        // 恢复考勤记录
+                        if (data.attendanceRecords && Array.isArray(data.attendanceRecords)) {
+                            this.attendanceRecords = data.attendanceRecords;
+                        }
+                        
+                        // 恢复时间槽
+                        if (data.timeSlots && Array.isArray(data.timeSlots)) {
+                            this.timeSlots = data.timeSlots;
+                            this.sortTimeSlots();
+                        }
+                        
+                        console.log(`📱 从本地存储恢复了 ${this.students.size} 个学生`);
+                        updateSyncStatus('📱 已加载本地数据', 'synced');
+                        return true;
+                    }
+                } catch (error) {
+                    console.error("本地存储加载失败:", error);
+                }
+                
+                // 如果没有本地数据，使用空数据
+                console.log("📱 无本地数据，使用空数据集");
+                this.students = new Map();
+                this.attendanceRecords = [];
+                this.timeSlots = [];
+                
+                // 创建默认时间槽
+                this.timeSlots = DEFAULT_TIME_SLOTS.map(slot => ({
+                    id: slot.replace(/\s+/g, '-').toLowerCase(),
+                    name: slot,
+                    isDefault: true,
+                    createdAt: new Date().toISOString()
+                }));
+                this.sortTimeSlots();
+                
+                updateSyncStatus('📱 使用默认数据', 'synced');
+                return false;
+            }
+            
+            // 保存到本地存储
+            saveToLocalStorage() {
+                if (!this.userId) return;
+                
+                try {
+                    const data = {
+                        students: Array.from(this.students.entries()),
+                        attendanceRecords: this.attendanceRecords,
+                        timeSlots: this.timeSlots,
+                        lastUpdated: new Date().toISOString()
+                    };
+                    
+                    localStorage.setItem(`memoschool_${this.userId}`, JSON.stringify(data));
+                    console.log("💾 数据已保存到本地存储");
+                } catch (error) {
+                    console.error("保存到本地存储失败:", error);
+                }
             }
         }
 
@@ -2898,61 +3120,80 @@
         
         // Update reminders display
         function updateRemindersDisplay() {
-            // Calculate all reminders
-            allReminders = system.reminderManager.calculateAllReminders();
-            
-            // Update summary counts
-            const stats = system.reminderManager.getStatistics();
-            
-            document.getElementById('urgentRemindersCount').textContent = stats.urgent;
-            document.getElementById('progressRemindersCount').textContent = stats.progress;
-            document.getElementById('brainTestRemindersCount').textContent = stats.brain;
-            document.getElementById('totalRemindersCount').textContent = stats.total;
-            
-            // Update dashboard count
-            document.getElementById('activeRemindersCount').textContent = stats.total;
-            
-            // Filter reminders based on current filter
-            const filteredReminders = system.reminderManager.filterReminders(currentReminderFilter);
-            
-            // Clear containers
-            document.getElementById('progressReportsContainer').innerHTML = '';
-            document.getElementById('brainTestsContainer').innerHTML = '';
-            
-            // Separate reminders by type
-            const progressReminders = filteredReminders.filter(r => r.type === 'progress');
-            const brainReminders = filteredReminders.filter(r => r.type === 'brain');
-            
-            // Display progress reports
-            if (progressReminders.length === 0) {
-                document.getElementById('progressReportsContainer').innerHTML = 
-                    '<div style="text-align: center; padding: 40px; color: var(--gray);">' +
-                    '<p>No progress report reminders found.</p>' +
-                    '<p>Reminders will appear when students reach 12, 24, 26, or 48 classes.</p>' +
-                    '</div>';
-            } else {
-                progressReminders.forEach(reminder => {
-                    createReminderCard(reminder, 'progressReportsContainer');
-                });
-            }
-            
-            // Display brain tests
-            if (brainReminders.length === 0) {
-                document.getElementById('brainTestsContainer').innerHTML = 
-                    '<div style="text-align: center; padding: 40px; color: var(--gray);">' +
-                    '<p>No brain test reminders found.</p>' +
-                    '<p>Reminders will appear when students reach 24 classes or the last 3 classes.</p>' +
-                    '</div>';
-            } else {
-                brainReminders.forEach(reminder => {
-                    createReminderCard(reminder, 'brainTestsContainer');
-                });
+            try {
+                // Calculate all reminders
+                allReminders = system.reminderManager.calculateAllReminders();
+                
+                // Update summary counts
+                const stats = system.reminderManager.getStatistics();
+                
+                const urgentElement = document.getElementById('urgentRemindersCount');
+                const progressElement = document.getElementById('progressRemindersCount');
+                const brainElement = document.getElementById('brainTestRemindersCount');
+                const totalElement = document.getElementById('totalRemindersCount');
+                
+                if (urgentElement) urgentElement.textContent = stats.urgent;
+                if (progressElement) progressElement.textContent = stats.progress;
+                if (brainElement) brainElement.textContent = stats.brain;
+                if (totalElement) totalElement.textContent = stats.total;
+                
+                // Update dashboard count
+                const activeRemindersElement = document.getElementById('activeRemindersCount');
+                if (activeRemindersElement) activeRemindersElement.textContent = stats.total;
+                
+                // Filter reminders based on current filter
+                const filteredReminders = system.reminderManager.filterReminders(currentReminderFilter);
+                
+                // Clear containers
+                const progressContainer = document.getElementById('progressReportsContainer');
+                const brainContainer = document.getElementById('brainTestsContainer');
+                
+                if (progressContainer) progressContainer.innerHTML = '';
+                if (brainContainer) brainContainer.innerHTML = '';
+                
+                // Separate reminders by type
+                const progressReminders = filteredReminders.filter(r => r.type === 'progress');
+                const brainReminders = filteredReminders.filter(r => r.type === 'brain');
+                
+                // Display progress reports
+                if (progressContainer) {
+                    if (progressReminders.length === 0) {
+                        progressContainer.innerHTML = 
+                            '<div style="text-align: center; padding: 40px; color: var(--gray);">' +
+                            '<p>No progress report reminders found.</p>' +
+                            '<p>Reminders will appear when students reach 12, 24, 26, or 48 classes.</p>' +
+                            '</div>';
+                    } else {
+                        progressReminders.forEach(reminder => {
+                            createReminderCard(reminder, 'progressReportsContainer');
+                        });
+                    }
+                }
+                
+                // Display brain tests
+                if (brainContainer) {
+                    if (brainReminders.length === 0) {
+                        brainContainer.innerHTML = 
+                            '<div style="text-align: center; padding: 40px; color: var(--gray);">' +
+                            '<p>No brain test reminders found.</p>' +
+                            '<p>Reminders will appear when students reach 24 classes or the last 3 classes.</p>' +
+                            '</div>';
+                    } else {
+                        brainReminders.forEach(reminder => {
+                            createReminderCard(reminder, 'brainTestsContainer');
+                        });
+                    }
+                }
+                
+            } catch (error) {
+                console.error("更新提醒显示失败:", error);
             }
         }
         
         // Create reminder card
         function createReminderCard(reminder, containerId) {
             const container = document.getElementById(containerId);
+            if (!container) return;
             
             const card = document.createElement('div');
             card.className = `reminder-card ${reminder.type}-report`;
@@ -3405,6 +3646,8 @@
         function renderCalendar() {
             const grid = document.getElementById('calendarGrid');
             const label = document.getElementById('currentMonthLabel');
+            if (!grid || !label) return;
+            
             grid.innerHTML = '';
             
             const year = currentCalendarDate.getFullYear();
@@ -3488,6 +3731,8 @@
             const countElement = document.getElementById('selectedDatesCount');
             const listElement = document.getElementById('selectedDatesList');
             
+            if (!countElement || !listElement) return;
+            
             countElement.textContent = selectedDates.size;
             
             if (selectedDates.size === 0) {
@@ -3531,8 +3776,15 @@
                 });
             }
             
-            document.getElementById('dateSelectionTitle').textContent = `Select Attendance Dates for ${student.name}`;
-            document.getElementById('dateSelectionModal').style.display = 'flex';
+            const titleElement = document.getElementById('dateSelectionTitle');
+            if (titleElement) {
+                titleElement.textContent = `Select Attendance Dates for ${student.name}`;
+            }
+            
+            const modalElement = document.getElementById('dateSelectionModal');
+            if (modalElement) {
+                modalElement.style.display = 'flex';
+            }
             
             renderCalendar();
         }
@@ -3549,15 +3801,25 @@
             dateSelectionStudentIds = Array.from(selectedCheckboxes).map(cb => cb.value);
             selectedDates.clear();
             
-            document.getElementById('dateSelectionTitle').textContent = `Select Attendance Dates for ${dateSelectionStudentIds.length} students`;
-            document.getElementById('dateSelectionModal').style.display = 'flex';
+            const titleElement = document.getElementById('dateSelectionTitle');
+            if (titleElement) {
+                titleElement.textContent = `Select Attendance Dates for ${dateSelectionStudentIds.length} students`;
+            }
+            
+            const modalElement = document.getElementById('dateSelectionModal');
+            if (modalElement) {
+                modalElement.style.display = 'flex';
+            }
             
             renderCalendar();
         }
         
         // Close date selection modal
         function closeDateSelectionModal() {
-            document.getElementById('dateSelectionModal').style.display = 'none';
+            const modalElement = document.getElementById('dateSelectionModal');
+            if (modalElement) {
+                modalElement.style.display = 'none';
+            }
             selectedDates.clear();
             dateSelectionMode = '';
             dateSelectionStudentId = '';
@@ -3619,53 +3881,81 @@
                 if (!alreadyAttended) {
                     // Create attendance record
                     const recordId = `${timeSlot.replace(/\s+/g, '-')}-${dateStr}`.replace(/[^a-zA-Z0-9\-]/g, '');
-                    const recordRef = db.collection('users').doc(system.userId).collection('attendance').doc(recordId);
                     
-                    try {
-                        const doc = await recordRef.get();
+                    if (system.isOnline) {
+                        const recordRef = db.collection('users').doc(system.userId).collection('attendance').doc(recordId);
                         
-                        if (doc.exists) {
-                            // If record exists, add student to presentStudents array
-                            await recordRef.update({
-                                presentStudents: firebase.firestore.FieldValue.arrayUnion(dateSelectionStudentId)
-                            });
-                        } else {
-                            // Create new record
-                            await recordRef.set({
-                                id: recordId,
-                                timeSlot: timeSlot,
-                                date: dateStr,
-                                topic: 'Batch Added',
-                                presentStudents: [dateSelectionStudentId],
-                                recordedAt: new Date().toISOString()
-                            });
+                        try {
+                            const doc = await recordRef.get();
+                            
+                            if (doc.exists) {
+                                // If record exists, add student to presentStudents array
+                                await recordRef.update({
+                                    presentStudents: firebase.firestore.FieldValue.arrayUnion(dateSelectionStudentId)
+                                });
+                            } else {
+                                // Create new record
+                                await recordRef.set({
+                                    id: recordId,
+                                    timeSlot: timeSlot,
+                                    date: dateStr,
+                                    topic: 'Batch Added',
+                                    presentStudents: [dateSelectionStudentId],
+                                    recordedAt: new Date().toISOString()
+                                });
+                            }
+                        } catch (error) {
+                            console.error('Error processing date:', dateStr, error);
                         }
-                        
-                        // Update student attendance data
-                        if (!student.attendanceDates) student.attendanceDates = [];
-                        student.attendanceDates.push(dateStr);
-                        
-                        // Remove duplicates
-                        const uniqueDates = [...new Set(student.attendanceDates)];
-                        student.attendanceDates = uniqueDates;
-                        student.attendanceCount = uniqueDates.length;
-                        
-                        if (system.isOnline) {
+                    }
+                    
+                    // Update student attendance data
+                    if (!student.attendanceDates) student.attendanceDates = [];
+                    student.attendanceDates.push(dateStr);
+                    
+                    // Remove duplicates
+                    const uniqueDates = [...new Set(student.attendanceDates)];
+                    student.attendanceDates = uniqueDates;
+                    student.attendanceCount = uniqueDates.length;
+                    
+                    if (system.isOnline) {
+                        try {
                             await db.collection('users').doc(system.userId).collection('students')
                                 .doc(dateSelectionStudentId).update({
                                     attendanceDates: uniqueDates,
                                     attendanceCount: uniqueDates.length,
                                     lastAttended: dateStr
                                 });
+                        } catch (error) {
+                            console.error('Error updating student:', error);
                         }
-                        
-                        processedCount++;
-                        
-                    } catch (error) {
-                        console.error('Error processing date:', dateStr, error);
                     }
+                    
+                    // 添加到本地考勤记录
+                    const existingRecordIndex = system.attendanceRecords.findIndex(r => r.id === recordId);
+                    if (existingRecordIndex !== -1) {
+                        // 更新现有记录
+                        if (!system.attendanceRecords[existingRecordIndex].presentStudents.includes(dateSelectionStudentId)) {
+                            system.attendanceRecords[existingRecordIndex].presentStudents.push(dateSelectionStudentId);
+                        }
+                    } else {
+                        // 创建新记录
+                        system.attendanceRecords.push({
+                            id: recordId,
+                            timeSlot: timeSlot,
+                            date: dateStr,
+                            topic: 'Batch Added',
+                            presentStudents: [dateSelectionStudentId],
+                            recordedAt: new Date().toISOString()
+                        });
+                    }
+                    
+                    processedCount++;
                 }
             }
+            
+            // 保存到本地存储
+            system.saveToLocalStorage();
             
             return processedCount;
         }
@@ -3713,54 +4003,93 @@
             }
             
             // Create/update attendance records
-            for (const [key, recordData] of attendanceRecords) {
-                const recordId = `${recordData.timeSlot.replace(/\s+/g, '-')}-${recordData.date}`.replace(/[^a-zA-Z0-9\-]/g, '');
-                const recordRef = db.collection('users').doc(system.userId).collection('attendance').doc(recordId);
-                
-                // Check if record exists
-                const doc = await recordRef.get();
-                
-                if (doc.exists) {
-                    // Update existing record
-                    batch.update(recordRef, {
-                        presentStudents: firebase.firestore.FieldValue.arrayUnion(...recordData.studentIds)
-                    });
-                } else {
-                    // Create new record
-                    batch.set(recordRef, {
-                        id: recordId,
-                        timeSlot: recordData.timeSlot,
-                        date: recordData.date,
-                        topic: 'Batch Added',
-                        presentStudents: recordData.studentIds,
-                        recordedAt: new Date().toISOString()
-                    });
+            if (system.isOnline) {
+                for (const [key, recordData] of attendanceRecords) {
+                    const recordId = `${recordData.timeSlot.replace(/\s+/g, '-')}-${recordData.date}`.replace(/[^a-zA-Z0-9\-]/g, '');
+                    const recordRef = db.collection('users').doc(system.userId).collection('attendance').doc(recordId);
+                    
+                    // Check if record exists
+                    const doc = await recordRef.get();
+                    
+                    if (doc.exists) {
+                        // Update existing record
+                        batch.update(recordRef, {
+                            presentStudents: firebase.firestore.FieldValue.arrayUnion(...recordData.studentIds)
+                        });
+                    } else {
+                        // Create new record
+                        batch.set(recordRef, {
+                            id: recordId,
+                            timeSlot: recordData.timeSlot,
+                            date: recordData.date,
+                            topic: 'Batch Added',
+                            presentStudents: recordData.studentIds,
+                            recordedAt: new Date().toISOString()
+                        });
+                    }
+                    
+                    // 更新本地记录
+                    const existingRecordIndex = system.attendanceRecords.findIndex(r => r.id === recordId);
+                    if (existingRecordIndex !== -1) {
+                        // 合并学生ID
+                        const existingStudents = system.attendanceRecords[existingRecordIndex].presentStudents;
+                        recordData.studentIds.forEach(studentId => {
+                            if (!existingStudents.includes(studentId)) {
+                                existingStudents.push(studentId);
+                            }
+                        });
+                    } else {
+                        // 添加新记录
+                        system.attendanceRecords.push({
+                            id: recordId,
+                            timeSlot: recordData.timeSlot,
+                            date: recordData.date,
+                            topic: 'Batch Added',
+                            presentStudents: recordData.studentIds,
+                            recordedAt: new Date().toISOString()
+                        });
+                    }
                 }
+                
+                // Update student data in Firestore
+                for (const update of studentUpdates) {
+                    const student = system.students.get(update.studentId);
+                    if (student) {
+                        const studentRef = db.collection('users').doc(system.userId).collection('students').doc(update.studentId);
+                        
+                        // Get current data to calculate new array
+                        const studentDoc = await studentRef.get();
+                        const currentData = studentDoc.data();
+                        const currentDates = currentData.attendanceDates || [];
+                        
+                        if (!currentDates.includes(update.date)) {
+                            batch.update(studentRef, {
+                                attendanceDates: firebase.firestore.FieldValue.arrayUnion(update.date),
+                                attendanceCount: firebase.firestore.FieldValue.increment(1),
+                                lastAttended: update.date
+                            });
+                        }
+                    }
+                }
+                
+                // Commit all changes
+                await batch.commit();
             }
             
-            // Update student data
+            // 更新本地学生数据
             for (const update of studentUpdates) {
                 const student = system.students.get(update.studentId);
                 if (student) {
-                    const studentRef = db.collection('users').doc(system.userId).collection('students').doc(update.studentId);
-                    
-                    // Get current data to calculate new array
-                    const studentDoc = await studentRef.get();
-                    const currentData = studentDoc.data();
-                    const currentDates = currentData.attendanceDates || [];
-                    
-                    if (!currentDates.includes(update.date)) {
-                        batch.update(studentRef, {
-                            attendanceDates: firebase.firestore.FieldValue.arrayUnion(update.date),
-                            attendanceCount: firebase.firestore.FieldValue.increment(1),
-                            lastAttended: update.date
-                        });
+                    if (!student.attendanceDates) student.attendanceDates = [];
+                    if (!student.attendanceDates.includes(update.date)) {
+                        student.attendanceDates.push(update.date);
+                        student.attendanceCount = student.attendanceDates.length;
                     }
                 }
             }
             
-            // Commit all changes
-            await batch.commit();
+            // 保存到本地存储
+            system.saveToLocalStorage();
             
             return {
                 processedDates: selectedDates.size,
@@ -3788,87 +4117,108 @@
             const remainingSessions = student.totalSessions - attendanceInfo.attendanceCount;
             
             // Fill modal information
-            document.getElementById('detailStudentName').textContent = student.name;
-            document.getElementById('detailStudentAge').textContent = student.age || 'N/A';
-            document.getElementById('detailStudentGender').textContent = student.gender || 'N/A';
-            document.getElementById('detailStudentTimeSlot').textContent = student.timeSlot;
-            document.getElementById('detailStudentEnrolledDate').textContent = system.formatDateForDisplay(student.enrolledDate);
-            document.getElementById('detailStudentTotalSessions').textContent = student.totalSessions || 48;
+            const detailName = document.getElementById('detailStudentName');
+            const detailAge = document.getElementById('detailStudentAge');
+            const detailGender = document.getElementById('detailStudentGender');
+            const detailTimeSlot = document.getElementById('detailStudentTimeSlot');
+            const detailEnrolledDate = document.getElementById('detailStudentEnrolledDate');
+            const detailTotalSessions = document.getElementById('detailStudentTotalSessions');
+            const detailAttendanceCount = document.getElementById('detailAttendanceCount');
+            const detailRemainingSessions = document.getElementById('detailRemainingSessions');
+            const detailTotalDates = document.getElementById('detailTotalDates');
+            const detailLastAttended = document.getElementById('detailLastAttended');
             
-            document.getElementById('detailAttendanceCount').textContent = attendanceInfo.attendanceCount;
-            document.getElementById('detailRemainingSessions').textContent = remainingSessions;
-            document.getElementById('detailTotalDates').textContent = `${attendanceInfo.attendanceCount} dates`;
+            if (detailName) detailName.textContent = student.name;
+            if (detailAge) detailAge.textContent = student.age || 'N/A';
+            if (detailGender) detailGender.textContent = student.gender || 'N/A';
+            if (detailTimeSlot) detailTimeSlot.textContent = student.timeSlot;
+            if (detailEnrolledDate) detailEnrolledDate.textContent = system.formatDateForDisplay(student.enrolledDate);
+            if (detailTotalSessions) detailTotalSessions.textContent = student.totalSessions || 48;
+            if (detailAttendanceCount) detailAttendanceCount.textContent = attendanceInfo.attendanceCount;
+            if (detailRemainingSessions) detailRemainingSessions.textContent = remainingSessions;
+            if (detailTotalDates) detailTotalDates.textContent = `${attendanceInfo.attendanceCount} dates`;
             
             // Get last attended date
             const lastAttended = student.attendanceDates && student.attendanceDates.length > 0 
                 ? system.formatDateForDisplay(student.attendanceDates[student.attendanceDates.length - 1])
                 : 'Never attended';
-            document.getElementById('detailLastAttended').textContent = lastAttended;
+            if (detailLastAttended) detailLastAttended.textContent = lastAttended;
             
             // Fill attendance dates
             const datesContainer = document.getElementById('detailAttendanceDates');
             const warningContainer = document.getElementById('duplicateWarning');
-            datesContainer.innerHTML = '';
+            if (datesContainer) datesContainer.innerHTML = '';
+            if (warningContainer) warningContainer.style.display = 'none';
             
             const attendanceDates = student.attendanceDates || [];
             
-            if (attendanceDates.length === 0) {
-                datesContainer.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--gray); padding: 20px;">No attendance records found</p>';
-                warningContainer.style.display = 'none';
-            } else {
-                // Sort (newest first)
-                const sortedDates = [...attendanceDates].sort((a, b) => new Date(b) - new Date(a));
-                
-                // Check for duplicate dates
-                const dateCounts = {};
-                sortedDates.forEach(date => {
-                    dateCounts[date] = (dateCounts[date] || 0) + 1;
-                });
-                
-                const hasDuplicates = Object.values(dateCounts).some(count => count > 1);
-                
-                // Show duplicate warning
-                if (hasDuplicates) {
-                    warningContainer.style.display = 'block';
-                    const duplicateCount = Object.values(dateCounts).filter(count => count > 1).length;
-                    warningContainer.innerHTML = `⚠️ <strong>Found ${duplicateCount} duplicate date(s)!</strong> Click "Fix Duplicate Dates" to clean up.`;
+            if (datesContainer) {
+                if (attendanceDates.length === 0) {
+                    datesContainer.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--gray); padding: 20px;">No attendance records found</p>';
+                    if (warningContainer) warningContainer.style.display = 'none';
                 } else {
-                    warningContainer.style.display = 'none';
-                }
-                
-                // Generate date cards
-                sortedDates.forEach(date => {
-                    const dateElement = document.createElement('div');
-                    dateElement.className = 'attendance-date-item';
+                    // Sort (newest first)
+                    const sortedDates = [...attendanceDates].sort((a, b) => new Date(b) - new Date(a));
                     
-                    // Add special style for duplicate dates
-                    if (dateCounts[date] > 1) {
-                        dateElement.classList.add('duplicate');
-                    }
-                    
-                    const formattedDate = system.formatDateForDisplay(date);
-                    dateElement.textContent = formattedDate;
-                    dateElement.title = `Attended on ${formattedDate}${dateCounts[date] > 1 ? ` (${dateCounts[date]} times)` : ''}`;
-                    
-                    // Add click event to view details
-                    dateElement.style.cursor = 'pointer';
-                    dateElement.addEventListener('click', function() {
-                        if (confirm(`Remove attendance for ${formattedDate}?`)) {
-                            deleteAttendanceRecord(studentId, date);
-                        }
+                    // Check for duplicate dates
+                    const dateCounts = {};
+                    sortedDates.forEach(date => {
+                        dateCounts[date] = (dateCounts[date] || 0) + 1;
                     });
                     
-                    datesContainer.appendChild(dateElement);
-                });
+                    const hasDuplicates = Object.values(dateCounts).some(count => count > 1);
+                    
+                    // Show duplicate warning
+                    if (warningContainer) {
+                        if (hasDuplicates) {
+                            warningContainer.style.display = 'block';
+                            const duplicateCount = Object.values(dateCounts).filter(count => count > 1).length;
+                            warningContainer.innerHTML = `⚠️ <strong>Found ${duplicateCount} duplicate date(s)!</strong> Click "Fix Duplicate Dates" to clean up.`;
+                        } else {
+                            warningContainer.style.display = 'none';
+                        }
+                    }
+                    
+                    // Generate date cards
+                    sortedDates.forEach(date => {
+                        const dateElement = document.createElement('div');
+                        dateElement.className = 'attendance-date-item';
+                        
+                        // Add special style for duplicate dates
+                        if (dateCounts[date] > 1) {
+                            dateElement.classList.add('duplicate');
+                        }
+                        
+                        const formattedDate = system.formatDateForDisplay(date);
+                        dateElement.textContent = formattedDate;
+                        dateElement.title = `Attended on ${formattedDate}${dateCounts[date] > 1 ? ` (${dateCounts[date]} times)` : ''}`;
+                        
+                        // Add click event to view details
+                        dateElement.style.cursor = 'pointer';
+                        dateElement.addEventListener('click', function() {
+                            if (confirm(`Remove attendance for ${formattedDate}?`)) {
+                                deleteAttendanceRecord(studentId, date);
+                            }
+                        });
+                        
+                        datesContainer.appendChild(dateElement);
+                    });
+                }
             }
             
             // Show modal
-            document.getElementById('studentDetailsModal').style.display = 'flex';
+            const modal = document.getElementById('studentDetailsModal');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
         }
         
         // Close student details
         function closeStudentDetails() {
-            document.getElementById('studentDetailsModal').style.display = 'none';
+            const modal = document.getElementById('studentDetailsModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
             currentSelectedStudentId = '';
         }
         
@@ -3913,6 +4263,9 @@
                         });
                 }
                 
+                // 保存到本地存储
+                system.saveToLocalStorage();
+                
                 // Refresh display
                 viewStudentDetails(currentSelectedStudentId);
                 updateUI();
@@ -3947,6 +4300,31 @@
                             });
                     }
                     
+                    // 从考勤记录中移除学生
+                    for (const record of system.attendanceRecords) {
+                        if (record.date === date && record.presentStudents.includes(studentId)) {
+                            record.presentStudents = record.presentStudents.filter(id => id !== studentId);
+                            
+                            // 如果记录中没有学生了，删除该记录
+                            if (record.presentStudents.length === 0) {
+                                system.attendanceRecords = system.attendanceRecords.filter(r => r.id !== record.id);
+                                if (system.isOnline) {
+                                    await db.collection('users').doc(system.userId).collection('attendance')
+                                        .doc(record.id).delete();
+                                }
+                            } else if (system.isOnline) {
+                                // 更新记录
+                                await db.collection('users').doc(system.userId).collection('attendance')
+                                    .doc(record.id).update({
+                                        presentStudents: record.presentStudents
+                                    });
+                            }
+                        }
+                    }
+                    
+                    // 保存到本地存储
+                    system.saveToLocalStorage();
+                    
                     // Refresh UI
                     viewStudentDetails(studentId);
                     updateUI();
@@ -3966,7 +4344,9 @@
         function updateSelectedCount() {
             const checkboxes = document.querySelectorAll('.student-select-checkbox:checked');
             const countElement = document.getElementById('selectedCount');
-            countElement.textContent = `Selected: ${checkboxes.length} student(s)`;
+            if (countElement) {
+                countElement.textContent = `Selected: ${checkboxes.length} student(s)`;
+            }
         }
         
         // Select all students
@@ -4047,9 +4427,13 @@
         }
 
         function showApp(user) {
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('appSection').style.display = 'block';
-            document.getElementById('userEmail').textContent = user.email;
+            const loginSection = document.getElementById('loginSection');
+            const appSection = document.getElementById('appSection');
+            const userEmail = document.getElementById('userEmail');
+            
+            if (loginSection) loginSection.style.display = 'none';
+            if (appSection) appSection.style.display = 'block';
+            if (userEmail) userEmail.textContent = user.email;
             
             // Initialize system with user ID
             system.initialize(user.uid);
@@ -4059,44 +4443,47 @@
         function skipLoginForTesting() {
             console.log("⚠️ Entering test mode (skip login)");
             
-            // Mock user object
-            const mockUser = {
-                uid: 'test-user-' + Date.now(),
-                email: 'test@example.com'
-            };
-            
-            // Show main interface
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('appSection').style.display = 'block';
-            document.getElementById('userEmail').textContent = 'Test User (Offline Mode)';
-            
-            // Initialize system (offline mode)
-            system.userId = mockUser.uid;
-            system.isOnline = false;
-            
-            // Load default time slots
-            system.timeSlots = DEFAULT_TIME_SLOTS.map(slot => ({
-                id: slot.replace(/\s+/g, '-').toLowerCase(),
-                name: slot,
-                isDefault: true,
-                createdAt: new Date().toISOString()
-            }));
-            
-            // Clear existing data
-            system.students.clear();
-            system.attendanceRecords = [];
-            
-            // Add some test data
-            addSampleData();
-            
-            // Update UI
-            updateUI();
-            updateSyncStatus('✅ Entered test mode (offline)', 'synced');
-            showToast('Entered test mode, all data saved locally only', 'info');
+            if (confirm("⚠️ 使用测试模式（离线）\n\n数据将保存在浏览器本地，不会同步到云端。\n确定要继续吗？")) {
+                // Mock user object
+                const mockUser = {
+                    uid: 'test-user-' + Date.now(),
+                    email: 'test@example.com'
+                };
+                
+                // Show main interface
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('appSection').style.display = 'block';
+                document.getElementById('userEmail').textContent = 'Test User (Offline Mode)';
+                
+                // Initialize system (offline mode)
+                system.userId = mockUser.uid;
+                system.isOnline = false;
+                
+                // Load default time slots
+                system.timeSlots = DEFAULT_TIME_SLOTS.map(slot => ({
+                    id: slot.replace(/\s+/g, '-').toLowerCase(),
+                    name: slot,
+                    isDefault: true,
+                    createdAt: new Date().toISOString()
+                }));
+                
+                // Clear existing data
+                system.students.clear();
+                system.attendanceRecords = [];
+                
+                // Add some test data
+                addSampleData();
+                
+                // Update UI
+                updateUI();
+                updateSyncStatus('✅ Entered test mode (offline)', 'synced');
+                showToast('Entered test mode, all data saved locally only', 'info');
+            }
         }
 
         // Add sample data
         function addSampleData() {
+            console.log("添加示例数据...");
             // Add some sample students
             const sampleStudents = [
                 { name: 'John Doe', age: 12, gender: 'Male', timeSlot: 'Friday 2pm-3:30pm', totalSessions: 48 },
@@ -4116,8 +4503,8 @@
                     timeSlot: student.timeSlot,
                     enrolledDate: '2024-01-01',
                     totalSessions: student.totalSessions,
-                    attendanceCount: Math.floor(Math.random() * 50) + 1,
-                    attendanceDates: generateSampleDates(Math.floor(Math.random() * 50) + 1),
+                    attendanceCount: Math.floor(Math.random() * 20) + 10,
+                    attendanceDates: generateSampleDates(Math.floor(Math.random() * 20) + 10),
                     processedReminders: [],
                     createdAt: new Date().toISOString()
                 };
@@ -4126,20 +4513,26 @@
             
             // Add sample attendance records
             const today = new Date();
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 5; i++) {
                 const date = new Date(today);
                 date.setDate(today.getDate() - i * 7); // Past few weeks
                 
+                const studentIds = Array.from(system.students.keys()).slice(0, 3);
                 const record = {
                     id: `record-${i}`,
                     timeSlot: DEFAULT_TIME_SLOTS[i % DEFAULT_TIME_SLOTS.length],
                     date: system.getLocalDateString(date),
                     topic: `Sample Class ${i + 1}`,
-                    presentStudents: Array.from(system.students.keys()).slice(0, 3),
+                    presentStudents: studentIds,
                     recordedAt: new Date().toISOString()
                 };
                 system.attendanceRecords.push(record);
             }
+            
+            console.log(`添加了 ${sampleStudents.length} 个示例学生和 5 个考勤记录`);
+            
+            // 保存到本地存储
+            system.saveToLocalStorage();
         }
 
         // Generate sample attendance dates
@@ -4159,34 +4552,59 @@
             if (user) {
                 showApp(user);
             } else {
-                document.getElementById('loginSection').style.display = 'block';
-                document.getElementById('appSection').style.display = 'none';
+                const loginSection = document.getElementById('loginSection');
+                const appSection = document.getElementById('appSection');
+                if (loginSection) loginSection.style.display = 'block';
+                if (appSection) appSection.style.display = 'none';
             }
         });
 
         // Sync status update
         function updateSyncStatus(message, type = 'syncing') {
             const statusElement = document.getElementById('syncStatus');
-            statusElement.textContent = message;
-            statusElement.className = `sync-status ${type}`;
+            if (statusElement) {
+                statusElement.textContent = message;
+                statusElement.className = `sync-status ${type}`;
+            }
         }
 
-        // Update all UI components
+        // Update all UI components - 修复版本
         function updateUI() {
-            updateDashboard();
-            updateTimeSlotSelects();
-            updateTimeSlotTabs();
-            updateStudentsCheckboxes();
-            updateClassAttendanceRecords();
-            updateStudentAttendanceSummary();
-            updateTimeSlots();
-            updateFilterStudent();
-            updateTimeSlotsList();
-            updateSelectedCount();
-            updateRemindersDisplay();
+            console.log("🔄 开始更新UI...");
             
-            // 更新时区信息
-            updateTimezoneInfo();
+            try {
+                // 逐个更新UI组件，互不影响
+                const updateFunctions = [
+                    { name: 'Dashboard', func: updateDashboard },
+                    { name: 'TimeSlotSelects', func: updateTimeSlotSelects },
+                    { name: 'TimeSlotTabs', func: updateTimeSlotTabs },
+                    { name: 'StudentsCheckboxes', func: updateStudentsCheckboxes },
+                    { name: 'ClassAttendanceRecords', func: updateClassAttendanceRecords },
+                    { name: 'StudentAttendanceSummary', func: updateStudentAttendanceSummary },
+                    { name: 'TimeSlots', func: updateTimeSlots },
+                    { name: 'FilterStudent', func: updateFilterStudent },
+                    { name: 'TimeSlotsList', func: updateTimeSlotsList },
+                    { name: 'SelectedCount', func: updateSelectedCount },
+                    { name: 'RemindersDisplay', func: updateRemindersDisplay }
+                ];
+                
+                updateFunctions.forEach(item => {
+                    try {
+                        item.func();
+                        console.log(`✅ ${item.name} 更新完成`);
+                    } catch (funcError) {
+                        console.error(`❌ ${item.name} 更新失败:`, funcError);
+                        // 继续执行其他函数
+                    }
+                });
+                
+                console.log("🎉 UI更新完成");
+                
+            } catch (error) {
+                console.error("💥 UI更新严重错误:", error);
+                // 显示用户友好的错误消息
+                showToast('界面更新出错，但应用仍可继续使用', 'warning');
+            }
         }
 
         // UI Functions
@@ -4194,52 +4612,122 @@
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
             });
-            document.getElementById(sectionId).classList.add('active');
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+        }
+
+        // 修复后的updateDashboard函数
+        function updateDashboard() {
+            try {
+                console.log("📊 更新Dashboard...");
+                
+                // 安全检查：确保系统已初始化
+                if (!system) {
+                    console.warn("⚠️ 系统未初始化，跳过Dashboard更新");
+                    return;
+                }
+                
+                const summary = system.getSummary();
+                console.log("Dashboard数据:", summary);
+                
+                // 安全地更新每个元素 - 逐个检查元素是否存在
+                const elementsToUpdate = [
+                    { id: 'totalStudents', value: summary.totalStudents },
+                    { id: 'sessionsRecorded', value: summary.totalSessions },
+                    { id: 'avgAttendance', value: summary.averageAttendanceRate + '%' },
+                    { id: 'timeSlotsCount', value: summary.timeSlots },
+                    { id: 'recordedSessionsCount', value: summary.totalSessions },
+                    { id: 'activeRemindersCount', value: summary.activeReminders }
+                ];
+                
+                elementsToUpdate.forEach(item => {
+                    const element = document.getElementById(item.id);
+                    if (element) {
+                        element.textContent = item.value;
+                    } else {
+                        console.warn(`⚠️ Dashboard元素未找到: #${item.id}`);
+                    }
+                });
+                
+                // 更新timeSlotsCountDashboard（如果存在）
+                const timeSlotsCountDashboard = document.getElementById('timeSlotsCountDashboard');
+                if (timeSlotsCountDashboard) {
+                    timeSlotsCountDashboard.textContent = summary.timeSlots;
+                }
+                
+                console.log("✅ Dashboard更新完成");
+                
+            } catch (error) {
+                console.error("❌ Dashboard更新失败:", error);
+                // 不要抛出错误，避免中断整个应用
+            }
         }
 
         // Update all time slot dropdowns
         function updateTimeSlotSelects() {
-            // Update add student form time slot dropdown
-            const studentTimeSlotSelect = document.getElementById('studentTimeSlot');
-            studentTimeSlotSelect.innerHTML = '<option value="">Select Time Slot</option>';
-            
-            // Update edit student form time slot dropdown
-            const editStudentTimeSlotSelect = document.getElementById('editStudentTimeSlot');
-            editStudentTimeSlotSelect.innerHTML = '<option value="">Select Time Slot</option>';
-            
-            // Update attendance recording time slot dropdown
-            const timeSlotSelect = document.getElementById('timeSlotSelect');
-            timeSlotSelect.innerHTML = '<option value="">Select Time Slot</option>';
-            
-            // Update class attendance records filter time slot dropdown
-            const classFilterTimeSlotSelect = document.getElementById('classFilterTimeSlot');
-            classFilterTimeSlotSelect.innerHTML = '<option value="all">All Time Slots</option>';
-            
-            // Update student attendance summary filter time slot dropdown
-            const studentFilterTimeSlotSelect = document.getElementById('studentFilterTimeSlot');
-            studentFilterTimeSlotSelect.innerHTML = '<option value="all">All Time Slots</option>';
-            
-            // Fill all dropdowns (system has already sorted time slots)
-            system.timeSlots.forEach(timeSlot => {
-                const option = document.createElement('option');
-                option.value = timeSlot.name;
-                option.textContent = timeSlot.name;
+            try {
+                // Update add student form time slot dropdown
+                const studentTimeSlotSelect = document.getElementById('studentTimeSlot');
+                if (studentTimeSlotSelect) {
+                    studentTimeSlotSelect.innerHTML = '<option value="">Select Time Slot</option>';
+                }
                 
-                studentTimeSlotSelect.appendChild(option.cloneNode(true));
-                editStudentTimeSlotSelect.appendChild(option.cloneNode(true));
-                timeSlotSelect.appendChild(option.cloneNode(true));
+                // Update edit student form time slot dropdown
+                const editStudentTimeSlotSelect = document.getElementById('editStudentTimeSlot');
+                if (editStudentTimeSlotSelect) {
+                    editStudentTimeSlotSelect.innerHTML = '<option value="">Select Time Slot</option>';
+                }
                 
-                const classFilterOption = option.cloneNode(true);
-                classFilterTimeSlotSelect.appendChild(classFilterOption);
+                // Update attendance recording time slot dropdown
+                const timeSlotSelect = document.getElementById('timeSlotSelect');
+                if (timeSlotSelect) {
+                    timeSlotSelect.innerHTML = '<option value="">Select Time Slot</option>';
+                }
                 
-                const studentFilterOption = option.cloneNode(true);
-                studentFilterTimeSlotSelect.appendChild(studentFilterOption);
-            });
+                // Update class attendance records filter time slot dropdown
+                const classFilterTimeSlotSelect = document.getElementById('classFilterTimeSlot');
+                if (classFilterTimeSlotSelect) {
+                    classFilterTimeSlotSelect.innerHTML = '<option value="all">All Time Slots</option>';
+                }
+                
+                // Update student attendance summary filter time slot dropdown
+                const studentFilterTimeSlotSelect = document.getElementById('studentFilterTimeSlot');
+                if (studentFilterTimeSlotSelect) {
+                    studentFilterTimeSlotSelect.innerHTML = '<option value="all">All Time Slots</option>';
+                }
+                
+                // Fill all dropdowns (system has already sorted time slots)
+                system.timeSlots.forEach(timeSlot => {
+                    const option = document.createElement('option');
+                    option.value = timeSlot.name;
+                    option.textContent = timeSlot.name;
+                    
+                    if (studentTimeSlotSelect) studentTimeSlotSelect.appendChild(option.cloneNode(true));
+                    if (editStudentTimeSlotSelect) editStudentTimeSlotSelect.appendChild(option.cloneNode(true));
+                    if (timeSlotSelect) timeSlotSelect.appendChild(option.cloneNode(true));
+                    
+                    if (classFilterTimeSlotSelect) {
+                        const classFilterOption = option.cloneNode(true);
+                        classFilterTimeSlotSelect.appendChild(classFilterOption);
+                    }
+                    
+                    if (studentFilterTimeSlotSelect) {
+                        const studentFilterOption = option.cloneNode(true);
+                        studentFilterTimeSlotSelect.appendChild(studentFilterOption);
+                    }
+                });
+            } catch (error) {
+                console.error("更新时间槽选择器失败:", error);
+            }
         }
 
         // Update time slots list
         function updateTimeSlotsList() {
             const timeSlotsList = document.getElementById('timeSlotsList');
+            if (!timeSlotsList) return;
+            
             timeSlotsList.innerHTML = '';
             
             if (system.timeSlots.length === 0) {
@@ -4284,7 +4772,10 @@
 
         // Add time slot
         async function addTimeSlot() {
-            const name = document.getElementById('newTimeSlotName').value.trim();
+            const nameInput = document.getElementById('newTimeSlotName');
+            if (!nameInput) return;
+            
+            const name = nameInput.value.trim();
             
             if (!name) {
                 showToast('Please enter a time slot name', 'error');
@@ -4293,7 +4784,7 @@
             
             try {
                 await system.addTimeSlot(name);
-                document.getElementById('newTimeSlotName').value = '';
+                nameInput.value = '';
                 showToast('Time slot added successfully!', 'success');
             } catch (error) {
                 showToast('Error: ' + error.message, 'error');
@@ -4314,12 +4805,21 @@
 
         // Add student
         async function addStudent() {
-            const name = document.getElementById('studentName').value.trim();
-            const age = document.getElementById('studentAge').value;
-            const gender = document.getElementById('studentGender').value;
-            const timeSlot = document.getElementById('studentTimeSlot').value;
-            const enrolledDate = document.getElementById('studentEnrolledDate').value;
-            const totalSessions = document.getElementById('studentTotalSessions').value || 48;
+            const nameInput = document.getElementById('studentName');
+            const ageInput = document.getElementById('studentAge');
+            const genderInput = document.getElementById('studentGender');
+            const timeSlotInput = document.getElementById('studentTimeSlot');
+            const enrolledDateInput = document.getElementById('studentEnrolledDate');
+            const totalSessionsInput = document.getElementById('studentTotalSessions');
+            
+            if (!nameInput || !timeSlotInput) return;
+            
+            const name = nameInput.value.trim();
+            const age = ageInput ? ageInput.value : '';
+            const gender = genderInput ? genderInput.value : '';
+            const timeSlot = timeSlotInput.value;
+            const enrolledDate = enrolledDateInput ? enrolledDateInput.value : '';
+            const totalSessions = totalSessionsInput ? totalSessionsInput.value || 48 : 48;
             
             if (!name || !timeSlot) {
                 showToast('Please enter at least student name and select a time slot', 'error');
@@ -4331,12 +4831,12 @@
             
             try {
                 await system.addStudent(name, age, gender, timeSlot, finalEnrolledDate, totalSessions);
-                document.getElementById('studentName').value = '';
-                document.getElementById('studentAge').value = '';
-                document.getElementById('studentGender').value = '';
-                document.getElementById('studentTimeSlot').value = '';
-                document.getElementById('studentEnrolledDate').value = '';
-                document.getElementById('studentTotalSessions').value = '48';
+                nameInput.value = '';
+                if (ageInput) ageInput.value = '';
+                if (genderInput) genderInput.value = '';
+                timeSlotInput.value = '';
+                if (enrolledDateInput) enrolledDateInput.value = '';
+                if (totalSessionsInput) totalSessionsInput.value = '48';
                 showToast('Student added successfully!', 'success');
             } catch (error) {
                 showToast('Error: ' + error.message, 'error');
@@ -4352,30 +4852,52 @@
             }
             
             // Fill edit form
-            document.getElementById('editStudentName').value = student.name;
-            document.getElementById('editStudentAge').value = student.age || '';
-            document.getElementById('editStudentGender').value = student.gender || '';
-            document.getElementById('editStudentTimeSlot').value = student.timeSlot;
-            document.getElementById('editStudentEnrolledDate').value = student.enrolledDate || system.getLocalDateString(new Date());
-            document.getElementById('editStudentTotalSessions').value = student.totalSessions || 48;
-            document.getElementById('editStudentId').value = studentId;
+            const editName = document.getElementById('editStudentName');
+            const editAge = document.getElementById('editStudentAge');
+            const editGender = document.getElementById('editStudentGender');
+            const editTimeSlot = document.getElementById('editStudentTimeSlot');
+            const editEnrolledDate = document.getElementById('editStudentEnrolledDate');
+            const editTotalSessions = document.getElementById('editStudentTotalSessions');
+            const editStudentId = document.getElementById('editStudentId');
+            
+            if (editName) editName.value = student.name;
+            if (editAge) editAge.value = student.age || '';
+            if (editGender) editGender.value = student.gender || '';
+            if (editTimeSlot) editTimeSlot.value = student.timeSlot;
+            if (editEnrolledDate) editEnrolledDate.value = student.enrolledDate || system.getLocalDateString(new Date());
+            if (editTotalSessions) editTotalSessions.value = student.totalSessions || 48;
+            if (editStudentId) editStudentId.value = studentId;
             
             // Show edit form, hide add form
-            document.getElementById('editStudentForm').style.display = 'block';
-            
-            // Scroll to edit form
-            document.getElementById('editStudentForm').scrollIntoView({ behavior: 'smooth' });
+            const editForm = document.getElementById('editStudentForm');
+            if (editForm) {
+                editForm.style.display = 'block';
+                // Scroll to edit form
+                editForm.scrollIntoView({ behavior: 'smooth' });
+            }
         }
 
         // Update student function
         async function updateStudent() {
-            const studentId = document.getElementById('editStudentId').value;
-            const name = document.getElementById('editStudentName').value.trim();
-            const age = document.getElementById('editStudentAge').value;
-            const gender = document.getElementById('editStudentGender').value;
-            const timeSlot = document.getElementById('editStudentTimeSlot').value;
-            const enrolledDate = document.getElementById('editStudentEnrolledDate').value;
-            const totalSessions = document.getElementById('editStudentTotalSessions').value || 48;
+            const studentIdInput = document.getElementById('editStudentId');
+            if (!studentIdInput) return;
+            
+            const studentId = studentIdInput.value;
+            const nameInput = document.getElementById('editStudentName');
+            const ageInput = document.getElementById('editStudentAge');
+            const genderInput = document.getElementById('editStudentGender');
+            const timeSlotInput = document.getElementById('editStudentTimeSlot');
+            const enrolledDateInput = document.getElementById('editStudentEnrolledDate');
+            const totalSessionsInput = document.getElementById('editStudentTotalSessions');
+            
+            if (!nameInput || !timeSlotInput) return;
+            
+            const name = nameInput.value.trim();
+            const age = ageInput ? ageInput.value : '';
+            const gender = genderInput ? genderInput.value : '';
+            const timeSlot = timeSlotInput.value;
+            const enrolledDate = enrolledDateInput ? enrolledDateInput.value : '';
+            const totalSessions = totalSessionsInput ? totalSessionsInput.value || 48 : 48;
             
             if (!name || !timeSlot) {
                 showToast('Please enter at least student name and select a time slot', 'error');
@@ -4395,7 +4917,10 @@
                 await system.updateStudent(studentId, updatedData);
                 
                 // Hide edit form
-                document.getElementById('editStudentForm').style.display = 'none';
+                const editForm = document.getElementById('editStudentForm');
+                if (editForm) {
+                    editForm.style.display = 'none';
+                }
                 
                 showToast('Student updated successfully!', 'success');
                 
@@ -4406,15 +4931,28 @@
 
         // Cancel edit function
         function cancelEdit() {
-            document.getElementById('editStudentForm').style.display = 'none';
+            const editForm = document.getElementById('editStudentForm');
+            if (editForm) {
+                editForm.style.display = 'none';
+            }
+            
             // Clear form
-            document.getElementById('editStudentName').value = '';
-            document.getElementById('editStudentAge').value = '';
-            document.getElementById('editStudentGender').value = '';
-            document.getElementById('editStudentTimeSlot').value = '';
-            document.getElementById('editStudentEnrolledDate').value = '';
-            document.getElementById('editStudentTotalSessions').value = '48';
-            document.getElementById('editStudentId').value = '';
+            const editName = document.getElementById('editStudentName');
+            const editAge = document.getElementById('editStudentAge');
+            const editGender = document.getElementById('editStudentGender');
+            const editTimeSlot = document.getElementById('editStudentTimeSlot');
+            const editEnrolledDate = document.getElementById('editStudentEnrolledDate');
+            const editTotalSessions = document.getElementById('editStudentTotalSessions');
+            const editStudentId = document.getElementById('editStudentId');
+            
+            if (editName) editName.value = '';
+            if (editAge) editAge.value = '';
+            if (editGender) editGender.value = '';
+            if (editTimeSlot) editTimeSlot.value = '';
+            if (editEnrolledDate) editEnrolledDate.value = '';
+            if (editTotalSessions) editTotalSessions.value = '48';
+            if (editStudentId) editStudentId.value = '';
+            
             showToast('Edit cancelled', 'info');
         }
 
@@ -4425,10 +4963,37 @@
                     if (system.isOnline) {
                         await db.collection('users').doc(system.userId).collection('students')
                             .doc(studentId).delete();
-                    } else {
-                        system.students.delete(studentId);
-                        updateUI();
                     }
+                    
+                    // 从本地删除
+                    system.students.delete(studentId);
+                    
+                    // 从相关考勤记录中删除
+                    for (const record of system.attendanceRecords) {
+                        if (record.presentStudents.includes(studentId)) {
+                            record.presentStudents = record.presentStudents.filter(id => id !== studentId);
+                            
+                            // 如果记录中没有学生了，删除该记录
+                            if (record.presentStudents.length === 0) {
+                                system.attendanceRecords = system.attendanceRecords.filter(r => r.id !== record.id);
+                                if (system.isOnline) {
+                                    await db.collection('users').doc(system.userId).collection('attendance')
+                                        .doc(record.id).delete();
+                                }
+                            } else if (system.isOnline) {
+                                // 更新记录
+                                await db.collection('users').doc(system.userId).collection('attendance')
+                                    .doc(record.id).update({
+                                        presentStudents: record.presentStudents
+                                    });
+                            }
+                        }
+                    }
+                    
+                    // 保存到本地存储
+                    system.saveToLocalStorage();
+                    
+                    updateUI();
                     showToast('Student deleted successfully', 'success');
                 } catch (error) {
                     showToast('Error deleting student: ' + error.message, 'error');
@@ -4440,6 +5005,8 @@
         function updateTimeSlotTabs() {
             const tabsContainer = document.getElementById('timeSlotTabs');
             const contentsContainer = document.getElementById('timeSlotContents');
+            
+            if (!tabsContainer || !contentsContainer) return;
             
             tabsContainer.innerHTML = '';
             contentsContainer.innerHTML = '';
@@ -4457,17 +5024,16 @@
                 document.querySelectorAll('.time-slot-content').forEach(c => {
                     c.classList.remove('active');
                 });
-                document.getElementById('content-all').classList.add('active');
+                const allContent = document.getElementById('content-all');
+                if (allContent) allContent.classList.add('active');
             });
             tabsContainer.appendChild(allTab);
             
-            let firstTab = true;
-            
             // System has already sorted time slots, use directly
-            for (const timeSlot of system.timeSlots) {
+            system.timeSlots.forEach(timeSlot => {
                 // Create tab
                 const tab = document.createElement('div');
-                tab.className = `time-slot-tab ${firstTab ? '' : ''}`;
+                tab.className = `time-slot-tab`;
                 tab.textContent = timeSlot.name;
                 tab.dataset.timeSlot = timeSlot.name;
                 tab.addEventListener('click', function() {
@@ -4483,7 +5049,8 @@
                         c.classList.remove('active');
                     });
                     // Show corresponding content
-                    document.getElementById(`content-${timeSlot.id}`).classList.add('active');
+                    const contentElement = document.getElementById(`content-${timeSlot.id}`);
+                    if (contentElement) contentElement.classList.add('active');
                 });
                 
                 tabsContainer.appendChild(tab);
@@ -4491,7 +5058,7 @@
                 // Create content
                 const content = document.createElement('div');
                 content.id = `content-${timeSlot.id}`;
-                content.className = `time-slot-content ${firstTab ? '' : ''}`;
+                content.className = `time-slot-content`;
                 
                 const students = system.getStudentsByTimeSlot(timeSlot.name, currentSearchTerm);
                 
@@ -4506,8 +5073,7 @@
                 }
                 
                 contentsContainer.appendChild(content);
-                firstTab = false;
-            }
+            });
             
             // Create "All Students" content
             const allContent = document.createElement('div');
@@ -4618,15 +5184,20 @@
 
         // Update student checkboxes for attendance recording
         function updateStudentsCheckboxes() {
-            const timeSlot = document.getElementById('timeSlotSelect').value;
+            const timeSlotSelect = document.getElementById('timeSlotSelect');
             const container = document.getElementById('studentsCheckboxes');
+            
+            if (!timeSlotSelect || !container) return;
+            
+            const timeSlot = timeSlotSelect.value;
+            
+            container.innerHTML = '';
             
             if (!timeSlot) {
                 container.innerHTML = '<p>Please select a time slot to see students</p>';
                 return;
             }
             
-            container.innerHTML = '';
             const students = system.getStudentsByTimeSlot(timeSlot);
             
             if (students.length === 0) {
@@ -4648,9 +5219,11 @@
         // Update student filter dropdown
         function updateFilterStudent() {
             const studentFilterSelect = document.getElementById('studentFilterStudent');
+            if (!studentFilterSelect) return;
+            
             const allOption = studentFilterSelect.querySelector('option[value="all"]');
             studentFilterSelect.innerHTML = '';
-            studentFilterSelect.appendChild(allOption);
+            if (allOption) studentFilterSelect.appendChild(allOption);
             
             for (const student of system.students.values()) {
                 const option = document.createElement('option');
@@ -4663,9 +5236,12 @@
         // Update class attendance records
         function updateClassAttendanceRecords() {
             const tbody = document.getElementById('classAttendanceRecords');
+            if (!tbody) return;
+            
             tbody.innerHTML = '';
             
-            const timeSlotFilter = document.getElementById('classFilterTimeSlot').value;
+            const timeSlotFilterSelect = document.getElementById('classFilterTimeSlot');
+            const timeSlotFilter = timeSlotFilterSelect ? timeSlotFilterSelect.value : 'all';
             
             // Copy and sort attendance records (by date descending)
             const sortedRecords = [...system.attendanceRecords].sort((a, b) => 
@@ -4710,10 +5286,16 @@
         // Update student attendance summary - 移除了出席率列，添加了Attendance Dates列
         function updateStudentAttendanceSummary() {
             const tbody = document.getElementById('studentAttendanceSummary');
+            if (!tbody) return;
+            
             tbody.innerHTML = '';
             
-            const timeSlotFilter = document.getElementById('studentFilterTimeSlot').value;
-            const studentFilter = document.getElementById('studentFilterStudent').value;
+            const timeSlotFilterSelect = document.getElementById('studentFilterTimeSlot');
+            const studentFilterSelect = document.getElementById('studentFilterStudent');
+            
+            const timeSlotFilter = timeSlotFilterSelect ? timeSlotFilterSelect.value : 'all';
+            const studentFilter = studentFilterSelect ? studentFilterSelect.value : 'all';
+            
             const allAttendance = system.getAllAttendance();
             
             allAttendance.forEach(student => {
@@ -4783,7 +5365,7 @@
             // Create details modal
             const modal = document.createElement('div');
             modal.id = 'classAttendanceDetailsModal';
-            modal.style = 'display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;';
+            modal.style.cssText = 'display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;';
             
             // Get present student details
             const presentStudents = record.presentStudents.map(studentId => {
@@ -4873,6 +5455,9 @@
                     }
                 }
                 
+                // 保存到本地存储
+                system.saveToLocalStorage();
+                
                 // Update UI
                 closeClassAttendanceDetailsModal();
                 viewClassAttendanceDetails(recordId); // Reopen modal to show updated data
@@ -4918,10 +5503,13 @@
                 if (system.isOnline) {
                     await db.collection('users').doc(system.userId).collection('attendance')
                         .doc(recordId).delete();
-                } else {
-                    // If offline, remove from local array
-                    system.attendanceRecords = system.attendanceRecords.filter(r => r.id !== recordId);
                 }
+                
+                // Remove from local array
+                system.attendanceRecords = system.attendanceRecords.filter(r => r.id !== recordId);
+                
+                // 保存到本地存储
+                system.saveToLocalStorage();
                 
                 // Close modal (if open)
                 closeClassAttendanceDetailsModal();
@@ -4935,7 +5523,7 @@
             }
         }
 
-        // 修复后的recordAttendance函数 - 确保出勤计数准确
+        // 修复后的recordAttendance函数
         async function recordAttendance() {
             console.log("🚀 Starting attendance recording..."); 
         
@@ -4952,7 +5540,7 @@
         
             let date = dateInput.value;
             const timeSlot = timeSlotInput.value;
-            const topic = topicInput.value || '';
+            const topic = topicInput ? topicInput.value || '' : '';
             
             // 如果日期为空，使用今天
             if (!date) {
@@ -5018,10 +5606,11 @@
                                     presentStudents: updatedPresentStudents,
                                     topic: topic || existingRecord.topic
                                 });
-                        } else {
-                            existingRecord.presentStudents = updatedPresentStudents;
-                            existingRecord.topic = topic || existingRecord.topic;
                         }
+                        
+                        // 更新本地记录
+                        existingRecord.presentStudents = updatedPresentStudents;
+                        existingRecord.topic = topic || existingRecord.topic;
                         
                         // 修复：只更新新添加的学生出勤数据
                         for (const studentId of newStudents) {
@@ -5071,9 +5660,10 @@
                     if (system.isOnline) {
                         await db.collection('users').doc(system.userId).collection('attendance')
                             .doc(recordId).set(record);
-                    } else {
-                        system.attendanceRecords.push(record);
                     }
+                    
+                    // 添加到本地记录
+                    system.attendanceRecords.push(record);
                     
                     // 修复：更新学生出勤数据，确保没有重复
                     for (const studentId of selectedStudentIds) {
@@ -5105,6 +5695,9 @@
                     showToast(`✅ Attendance recorded for ${selectedStudentIds.length} student(s)`, 'success');
                 }
         
+                // 保存到本地存储
+                system.saveToLocalStorage();
+                
                 // Refresh interface
                 updateClassAttendanceRecords();
                 updateStudentAttendanceSummary();
@@ -5112,7 +5705,7 @@
         
                 // Clear checkboxes
                 selectedCheckboxes.forEach(cb => cb.checked = false);
-                document.getElementById('sessionTopic').value = '';
+                if (topicInput) topicInput.value = '';
         
             } catch (error) {
                 console.error("Error:", error);
@@ -5128,6 +5721,8 @@
         // Update time slots display
         function updateTimeSlots() {
             const container = document.getElementById('timeSlotsContainer');
+            if (!container) return;
+            
             container.innerHTML = '';
             
             // System has already sorted time slots, use directly
@@ -5190,19 +5785,6 @@
             }
         }
 
-        // Update dashboard
-        function updateDashboard() {
-            const summary = system.getSummary();
-            
-            document.getElementById('totalStudents').textContent = summary.totalStudents;
-            document.getElementById('sessionsRecorded').textContent = summary.totalSessions;
-            document.getElementById('avgAttendance').textContent = summary.averageAttendanceRate + '%';
-            document.getElementById('timeSlotsCount').textContent = summary.timeSlots;
-            document.getElementById('timeSlotsCountDashboard').textContent = summary.timeSlots;
-            document.getElementById('recordedSessionsCount').textContent = summary.totalSessions;
-            document.getElementById('activeRemindersCount').textContent = summary.activeReminders;
-        }
-
         // ==================== Tools Section Functions ====================
         
         // Fix duplicate attendance for all students
@@ -5218,7 +5800,10 @@
                 
                 // Update last checked time
                 const now = new Date();
-                document.getElementById('lastDuplicateCheck').textContent = now.toLocaleString();
+                const lastDuplicateCheck = document.getElementById('lastDuplicateCheck');
+                if (lastDuplicateCheck) {
+                    lastDuplicateCheck.textContent = now.toLocaleString();
+                }
                 
                 updateSyncStatus('✅ System synchronized', 'synced');
                 showToast(`Fixed duplicate attendance for ${fixedCount} student(s)`, 'success');
@@ -5295,6 +5880,9 @@
                 updateSyncStatus('✅ System synchronized', 'synced');
                 showToast(`Cleaned ${cleanedCount} orphaned attendance records`, 'success');
                 
+                // 保存到本地存储
+                system.saveToLocalStorage();
+                
                 // Refresh UI
                 updateUI();
                 
@@ -5308,6 +5896,8 @@
         // Run system health check
         async function runSystemHealthCheck() {
             const resultElement = document.getElementById('healthCheckResult');
+            if (!resultElement) return;
+            
             resultElement.innerHTML = '<div class="loading"></div> Running health check...';
             
             try {
@@ -5473,12 +6063,17 @@
 
         // Initialize the system when the page loads
         window.onload = function() {
+            console.log("🚀 页面加载完成，初始化系统...");
+            
             // 使用本地日期，避免时区问题
             const today = new Date();
             const todayStr = system.getLocalDateString(today);
             
-            document.getElementById('classDate').value = todayStr;
-            document.getElementById('studentEnrolledDate').value = todayStr;
+            const classDateInput = document.getElementById('classDate');
+            const studentEnrolledDateInput = document.getElementById('studentEnrolledDate');
+            
+            if (classDateInput) classDateInput.value = todayStr;
+            if (studentEnrolledDateInput) studentEnrolledDateInput.value = todayStr;
             
             updateSyncStatus('🔵 Ready to connect', 'syncing');
             updateTimezoneInfo();
@@ -5493,7 +6088,10 @@
             }
             
             // Set last duplicate check time
-            document.getElementById('lastDuplicateCheck').textContent = 'Never';
+            const lastDuplicateCheck = document.getElementById('lastDuplicateCheck');
+            if (lastDuplicateCheck) {
+                lastDuplicateCheck.textContent = 'Never';
+            }
             
             // Debug timezone info
             console.log('Timezone offset:', new Date().getTimezoneOffset());
@@ -5504,14 +6102,6 @@
             setTimeout(() => {
                 if (system.isOnline) {
                     console.log('Running initial data consistency check...');
-                    // 在页面加载后自动检查并修复数据不一致
-                    setTimeout(() => {
-                        system.fixDuplicateAttendance().then(fixedCount => {
-                            if (fixedCount > 0) {
-                                console.log(`Automatically fixed ${fixedCount} duplicate attendance records`);
-                            }
-                        });
-                    }, 2000);
                 }
             }, 1000);
             
@@ -5524,6 +6114,8 @@
                 batchPDFButton.onclick = generateBatchPDFReport;
                 batchActions.appendChild(batchPDFButton);
             }
+            
+            console.log("✅ 初始化完成");
         };
     </script>
 </body>

@@ -14,8 +14,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
+    <!-- Chart.js for better visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Animate.css for smooth animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     
     <style>
         /* ========== 基础样式 ========== */
@@ -959,9 +965,691 @@
                 max-width: 100% !important;
             }
         }
+
+        /* ========== 新增人性化样式 ========== */
+        
+        /* 智能助手样式 */
+        .ai-assistant {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: pulse 2s infinite;
+        }
+        
+        .ai-assistant:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.6);
+        }
+        
+        .ai-panel {
+            position: fixed;
+            bottom: 170px;
+            right: 30px;
+            width: 350px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+            transform-origin: bottom right;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(20px) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(102, 126, 234, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0); }
+        }
+        
+        .ai-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .ai-content {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .ai-message {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .ai-message.user {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            margin-left: 40px;
+        }
+        
+        .ai-message.system {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            margin-right: 40px;
+        }
+        
+        .ai-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #eee;
+            gap: 10px;
+        }
+        
+        .ai-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .ai-input input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        /* 快捷键提示样式 */
+        .shortcut-hint {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1001;
+            pointer-events: none;
+            animation: fadeInOut 3s ease-in-out;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateY(10px); }
+            20%, 80% { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 拖拽样式 */
+        .draggable {
+            cursor: grab;
+            transition: transform 0.2s ease;
+        }
+        
+        .draggable:active {
+            cursor: grabbing;
+            transform: scale(1.02);
+        }
+        
+        .drop-zone {
+            border: 2px dashed var(--primary);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            background: rgba(230, 126, 34, 0.05);
+            transition: all 0.3s ease;
+            margin: 10px 0;
+        }
+        
+        .drop-zone.drag-over {
+            background: rgba(230, 126, 34, 0.15);
+            border-color: var(--primary-dark);
+        }
+        
+        /* 语音输入样式 */
+        .voice-input {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .voice-button {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 10px;
+            transition: all 0.3s ease;
+            border-radius: 50%;
+        }
+        
+        .voice-button.listening {
+            animation: pulse 1s infinite;
+            background: rgba(230, 126, 34, 0.1);
+        }
+        
+        /* 协作指示器 */
+        .collaboration-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 15px;
+            font-size: 12px;
+            margin-left: auto;
+        }
+        
+        .user-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: blink 2s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* 智能建议卡片 */
+        .suggestion-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid var(--info);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .suggestion-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        .suggestion-card h4 {
+            margin: 0 0 5px 0;
+            color: var(--dark);
+        }
+        
+        .suggestion-card p {
+            margin: 0;
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        /* 自然语言搜索 */
+        .natural-search {
+            position: relative;
+        }
+        
+        .natural-search-examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .search-example {
+            background: rgba(230, 126, 34, 0.1);
+            color: var(--primary);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-example:hover {
+            background: rgba(230, 126, 34, 0.2);
+        }
+        
+        /* 个性化设置面板 */
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 30px rgba(0,0,0,0.1);
+            z-index: 2000;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+        }
+        
+        .settings-panel.open {
+            right: 0;
+        }
+        
+        .settings-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .settings-content {
+            padding: 25px;
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        /* 增强的图表容器 */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        /* 快捷操作面板 */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .quick-action {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-action:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .quick-action i {
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        /* 智能提醒 */
+        .smart-alert {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            width: 300px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            z-index: 1000;
+            animation: slideInRight 0.5s ease;
+            overflow: hidden;
+            border-left: 5px solid var(--warning);
+        }
+        
+        .alert-header {
+            background: #fff3cd;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #856404;
+        }
+        
+        .alert-content {
+            padding: 15px;
+        }
+        
+        /* 切换开关样式 */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* 渐变文本效果 */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), #667eea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* 3D卡片效果 */
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+        
+        .card-3d:hover {
+            transform: rotateY(10deg) rotateX(5deg);
+        }
+        
+        /* 微交互提示 */
+        .micro-interaction {
+            position: absolute;
+            pointer-events: none;
+            z-index: 10000;
+        }
+        
+        /* 响应式字体 */
+        .responsive-text {
+            font-size: clamp(14px, 2vw, 18px);
+        }
+        
+        /* 玻璃态效果 */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+        
+        body.dark-mode ::-webkit-scrollbar-track {
+            background: #4a5568;
+        }
+        
+        body.dark-mode ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+        }
+        
+        /* 平滑过渡 */
+        * {
+            scroll-behavior: smooth;
+        }
+        
+        /* 聚焦样式增强 */
+        :focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+        
+        /* 新增动画效果 */
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .animate-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        /* 移动端优化增强 */
+        @media (max-width: 768px) {
+            .ai-panel {
+                width: 90vw;
+                right: 5vw;
+                bottom: 150px;
+            }
+            
+            .settings-panel {
+                width: 100vw;
+                right: -100vw;
+            }
+            
+            .smart-alert {
+                width: 90vw;
+                right: 5vw;
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* 暗色模式优化 */
+        body.dark-mode .ai-panel,
+        body.dark-mode .suggestion-card,
+        body.dark-mode .quick-action,
+        body.dark-mode .smart-alert {
+            background: #2d3748;
+            color: #f0f0f0;
+        }
+        
+        body.dark-mode .ai-message {
+            background: #4a5568;
+        }
+        
+        body.dark-mode .ai-input input {
+            background: #4a5568;
+            color: #f0f0f0;
+            border-color: #718096;
+        }
+        
+        /* 无动画类 */
+        .no-animations * {
+            animation: none !important;
+            transition: none !important;
+        }
     </style>
 </head>
 <body>
+    <!-- 智能助手按钮 -->
+    <button class="ai-assistant" id="aiAssistant" onclick="toggleAIPanel()">
+        <i class="fas fa-robot"></i>
+    </button>
+    
+    <!-- AI助手面板 -->
+    <div class="ai-panel" id="aiPanel">
+        <div class="ai-header">
+            <i class="fas fa-robot fa-2x"></i>
+            <div>
+                <h3 style="margin: 0; font-size: 1.2em;">Smart Assistant</h3>
+                <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 0.9em;">How can I help you today?</p>
+            </div>
+            <button onclick="toggleAIPanel()" style="margin-left: auto; background: none; border: none; color: white; cursor: pointer;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="ai-content" id="aiContent">
+            <div class="ai-message system">
+                <strong>Assistant:</strong> Welcome! I can help you manage attendance, generate reports, or answer questions. Try asking:
+                <br><br>
+                <div class="suggestion-card" onclick="askAI('How many students are absent frequently?')">
+                    <h4>📊 Identify frequently absent students</h4>
+                    <p>Show students with attendance below 70%</p>
+                </div>
+                <div class="suggestion-card" onclick="askAI('Generate monthly report')">
+                    <h4>📈 Generate monthly report</h4>
+                    <p>Create a comprehensive monthly attendance report</p>
+                </div>
+                <div class="suggestion-card" onclick="askAI('What should I do next?')">
+                    <h4>🤔 What should I do next?</h4>
+                    <p>Get personalized recommendations</p>
+                </div>
+            </div>
+        </div>
+        <div class="ai-input">
+            <input type="text" id="aiInput" placeholder="Ask me anything..." onkeypress="handleAIInput(event)">
+            <button class="btn" onclick="sendAIMessage()" style="padding: 10px 15px;">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- 个性化设置面板 -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <h3 style="margin: 0;"><i class="fas fa-cog"></i> Personal Settings</h3>
+            <button onclick="closeSettings()" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.2em;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="settings-content">
+            <div class="setting-item">
+                <div>
+                    <strong>Quick Actions</strong>
+                    <p style="margin: 5px 0 0 0; color: var(--gray); font-size: 0.9em;">Enable quick action buttons</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="quickActionsToggle" checked onchange="saveSetting('quickActions', this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <div>
+                    <strong>Voice Commands</strong>
+                    <p style="margin: 5px 0 0 0; color: var(--gray); font-size: 0.9em;">Enable voice input support</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="voiceCommandsToggle" onchange="saveSetting('voiceCommands', this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <div>
+                    <strong>Smart Suggestions</strong>
+                    <p style="margin: 5px 0 0 0; color: var(--gray); font-size: 0.9em;">Show intelligent suggestions</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="smartSuggestionsToggle" checked onchange="saveSetting('smartSuggestions', this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <div>
+                    <strong>Animation Effects</strong>
+                    <p style="margin: 5px 0 0 0; color: var(--gray); font-size: 0.9em;">Enable smooth animations</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="animationsToggle" checked onchange="saveSetting('animations', this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <div>
+                    <strong>Default View</strong>
+                    <p style="margin: 5px 0 0 0; color: var(--gray); font-size: 0.9em;">Default section on startup</p>
+                </div>
+                <select id="defaultViewSelect" onchange="saveSetting('defaultView', this.value)" style="padding: 5px 10px; border-radius: 5px; border: 1px solid var(--border);">
+                    <option value="dashboard">Dashboard</option>
+                    <option value="attendance">Attendance</option>
+                    <option value="students">Students</option>
+                    <option value="records">Records</option>
+                </select>
+            </div>
+            <div style="margin-top: 30px;">
+                <h4>Keyboard Shortcuts</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+                        <div style="font-weight: bold; color: var(--primary);">Ctrl + S</div>
+                        <div style="font-size: 0.9em;">Save/Record</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+                        <div style="font-weight: bold; color: var(--primary);">Ctrl + F</div>
+                        <div style="font-size: 0.9em;">Search</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+                        <div style="font-weight: bold; color: var(--primary);">Ctrl + N</div>
+                        <div style="font-size: 0.9em;">New Student</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+                        <div style="font-weight: bold; color: var(--primary);">Ctrl + P</div>
+                        <div style="font-size: 0.9em;">Print/PDF</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container performance-optimized">
         <div class="header">
             <div class="school-logo" id="schoolLogo">
@@ -1019,9 +1707,16 @@
         <div id="appSection" style="display: none;">
             <div class="user-info">
                 <span><i class="fas fa-user"></i> Welcome, <strong id="userEmail"></strong></span>
-                <button class="btn btn-warning" onclick="logout()" style="padding: 6px 12px; font-size: 13px;">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <div class="collaboration-indicator">
+                        <i class="fas fa-users"></i>
+                        <span>1 online</span>
+                        <div class="user-dot"></div>
+                    </div>
+                    <button class="btn btn-warning" onclick="logout()" style="padding: 6px 12px; font-size: 13px;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
             </div>
             
             <div class="nav">
@@ -1032,8 +1727,11 @@
                 <button onclick="showSection('timeslots')" data-tooltip="Time Slots"><i class="fas fa-clock"></i><span class="mobile-hide"> Time Slots</span></button>
                 <button onclick="showSection('tools')" data-tooltip="System Tools"><i class="fas fa-tools"></i><span class="mobile-hide"> Tools</span></button>
                 <button onclick="showSection('exports')" data-tooltip="Export Data"><i class="fas fa-download"></i><span class="mobile-hide"> Export</span></button>
-                <button onclick="toggleDarkMode()" data-tooltip="Toggle Dark Mode" style="margin-left: auto;">
+                <button onclick="toggleDarkMode()" data-tooltip="Toggle Dark Mode">
                     <i class="fas fa-moon"></i>
+                </button>
+                <button onclick="openSettings()" data-tooltip="Personal Settings">
+                    <i class="fas fa-user-cog"></i>
                 </button>
             </div>
             
@@ -1047,51 +1745,67 @@
                 <!-- Dashboard -->
                 <div id="dashboard" class="section active">
                     <div class="welcome-panel">
-                        <h2>Welcome to Genius Mind Academy</h2>
+                        <h2 class="gradient-text">Welcome back! <span id="timeGreeting">Good morning</span></h2>
                         <p style="margin: 10px 0 20px;">Your data is automatically synced across all devices in real-time</p>
                         
+                        <!-- 新增快捷操作面板 -->
+                        <div class="quick-actions" id="quickActionsPanel">
+                            <div class="quick-action" onclick="quickRecordAttendance()">
+                                <i class="fas fa-clipboard-check"></i>
+                                <div>Quick Record</div>
+                            </div>
+                            <div class="quick-action" onclick="showSection('students'); addStudentFromSuggestion()">
+                                <i class="fas fa-user-plus"></i>
+                                <div>Add Student</div>
+                            </div>
+                            <div class="quick-action" onclick="showSection('exports'); generateQuickReport()">
+                                <i class="fas fa-chart-pie"></i>
+                                <div>Quick Report</div>
+                            </div>
+                            <div class="quick-action" onclick="showSection('tools'); runSystemHealthCheck()">
+                                <i class="fas fa-heartbeat"></i>
+                                <div>Health Check</div>
+                            </div>
+                        </div>
+                        
                         <div class="quick-stats">
-                            <div class="quick-stat">
+                            <div class="quick-stat card-3d">
                                 <div class="value" id="totalStudents">0</div>
                                 <div class="label">Total Students</div>
                             </div>
-                            <div class="quick-stat">
+                            <div class="quick-stat card-3d">
                                 <div class="value" id="sessionsRecorded">0</div>
                                 <div class="label">Sessions Recorded</div>
                             </div>
-                            <div class="quick-stat">
+                            <div class="quick-stat card-3d">
                                 <div class="value" id="avgAttendance">0%</div>
                                 <div class="label">Average Attendance</div>
                             </div>
-                            <div class="quick-stat">
+                            <div class="quick-stat card-3d">
                                 <div class="value" id="timeSlotsCountDashboard">0</div>
                                 <div class="label">Time Slots</div>
                             </div>
                         </div>
                     </div>
                     
+                    <!-- 新增图表展示 -->
                     <div class="stats-grid">
                         <div class="stat-card">
-                            <h3>Total Students</h3>
-                            <div class="number" id="totalStudentsDetailed">0</div>
-                            <div class="trend positive">+12% this month</div>
+                            <h3>Attendance Trend</h3>
+                            <div class="chart-container">
+                                <canvas id="attendanceTrendChart"></canvas>
+                            </div>
                         </div>
                         <div class="stat-card">
-                            <h3>Sessions Recorded</h3>
-                            <div class="number" id="sessionsRecordedDetailed">0</div>
-                            <div class="trend positive">Active tracking</div>
-                        </div>
-                        <div class="stat-card">
-                            <h3>Average Attendance</h3>
-                            <div class="number" id="avgAttendanceDetailed">0%</div>
-                            <div class="trend positive">+5% improvement</div>
-                        </div>
-                        <div class="stat-card">
-                            <h3>Time Slots</h3>
-                            <div class="number" id="timeSlotsCountDetailed">0</div>
-                            <div class="trend">All active</div>
+                            <h3>Student Distribution</h3>
+                            <div class="chart-container">
+                                <canvas id="studentDistributionChart"></canvas>
+                            </div>
                         </div>
                     </div>
+                    
+                    <!-- 智能提醒区域 -->
+                    <div id="smartAlertsContainer" style="margin-top: 25px;"></div>
                     
                     <div class="feature-cards">
                         <div class="feature-card">
@@ -1138,6 +1852,14 @@
                         </button>
                     </div>
                     
+                    <!-- 添加拖拽区域说明 -->
+                    <div class="drop-zone" id="timeSlotDropZone" ondragover="handleDragOver(event)" ondrop="handleDrop(event)" ondragleave="handleDragLeave(event)">
+                        <i class="fas fa-hand-pointer fa-2x" style="margin-bottom: 10px; color: var(--primary);"></i>
+                        <h3>Drag & Drop Students</h3>
+                        <p>Drag students here to change their time slots</p>
+                        <div id="dropPreview" style="display: none; margin-top: 15px; padding: 10px; background: rgba(230, 126, 34, 0.1); border-radius: 8px;"></div>
+                    </div>
+                    
                     <!-- Batch Operations -->
                     <div class="collapse-panel">
                         <div class="collapse-header" onclick="toggleCollapse('batchActions')">
@@ -1165,10 +1887,20 @@
                         </div>
                     </div>
                     
-                    <!-- Search Box -->
-                    <div class="form-group search-box">
+                    <!-- 自然语言搜索 -->
+                    <div class="form-group search-box natural-search">
                         <label class="form-label"><i class="fas fa-search"></i> Search Students</label>
-                        <input type="text" id="searchStudents" class="form-input" placeholder="Search by name, age, gender, or time slot...">
+                        <div class="voice-input">
+                            <input type="text" id="searchStudents" class="form-input" placeholder="Search by name, age, gender, or time slot...">
+                            <button class="voice-button" onclick="startVoiceInputFor('searchStudents')">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
+                        <div class="natural-search-examples">
+                            <span class="search-example" onclick="processNaturalQuery('students with low attendance')">low attendance</span>
+                            <span class="search-example" onclick="processNaturalQuery('males in Saturday class')">Saturday males</span>
+                            <span class="search-example" onclick="processNaturalQuery('students aged 12-14')">aged 12-14</span>
+                        </div>
                     </div>
                     
                     <!-- Add Student Form (Initially Hidden) -->
@@ -1180,7 +1912,12 @@
                         <div class="collapse-content active" id="addStudentContent">
                             <div class="form-group">
                                 <label class="form-label">Student Name</label>
-                                <input type="text" id="studentName" class="form-input" placeholder="Enter student name">
+                                <div class="voice-input">
+                                    <input type="text" id="studentName" class="form-input" placeholder="Enter student name">
+                                    <button class="voice-button" onclick="startVoiceInputFor('studentName')">
+                                        <i class="fas fa-microphone"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                                 <div class="form-group">
@@ -1234,7 +1971,12 @@
                         <div class="collapse-content active">
                             <div class="form-group">
                                 <label class="form-label">Student Name</label>
-                                <input type="text" id="editStudentName" class="form-input" placeholder="Enter student name">
+                                <div class="voice-input">
+                                    <input type="text" id="editStudentName" class="form-input" placeholder="Enter student name">
+                                    <button class="voice-button" onclick="startVoiceInputFor('editStudentName')">
+                                        <i class="fas fa-microphone"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                                 <div class="form-group">
@@ -1300,11 +2042,19 @@
                             </div>
                             <div class="form-group">
                                 <label class="form-label"><i class="fas fa-book"></i> Session Topic (Optional)</label>
-                                <input type="text" id="sessionTopic" class="form-input" placeholder="Enter session topic">
+                                <div class="voice-input">
+                                    <input type="text" id="sessionTopic" class="form-input" placeholder="Enter session topic">
+                                    <button class="voice-button" onclick="startVoiceInputFor('sessionTopic')">
+                                        <i class="fas fa-microphone"></i>
+                                    </button>
+                                </div>
                             </div>
                             <button class="btn btn-success" onclick="recordAttendance()" style="width: 100%;">
                                 <i class="fas fa-check-circle"></i> Record Attendance
                             </button>
+                            <p style="margin-top: 10px; font-size: 12px; color: var(--gray); text-align: center;">
+                                <i class="fas fa-keyboard"></i> Press <strong>Q</strong> for quick record
+                            </p>
                         </div>
                         
                         <div class="feature-card" style="grid-column: span 2;">
@@ -1497,6 +2247,9 @@
                             <button class="btn btn-success" onclick="printReport()">
                                 <i class="fas fa-print"></i> Print Report
                             </button>
+                            <button class="btn btn-info" onclick="generateQuickReport()">
+                                <i class="fas fa-chart-line"></i> Quick Report
+                            </button>
                         </div>
                         
                         <div id="exportResult" style="margin-top: 20px;"></div>
@@ -1549,6 +2302,20 @@
         </div>
     </div>
 
+    <!-- 语音输入界面 -->
+    <div id="voiceInputOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 40px; border-radius: 20px; text-align: center; max-width: 400px;">
+            <div class="animate-float" style="font-size: 48px; color: var(--primary); margin-bottom: 20px;">
+                <i class="fas fa-microphone"></i>
+            </div>
+            <h3 style="margin-bottom: 10px;">Listening...</h3>
+            <p id="voiceInputText" style="margin-bottom: 20px; font-style: italic;">Speak now</p>
+            <button class="btn btn-danger" onclick="stopVoiceInput()">
+                <i class="fas fa-stop"></i> Stop Listening
+            </button>
+        </div>
+    </div>
+
     <!-- Loading Overlay -->
     <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; color: white; font-size: 18px;">
         <div style="text-align: center;">
@@ -1556,6 +2323,9 @@
             <div id="loadingMessage">Loading...</div>
         </div>
     </div>
+
+    <!-- 智能提醒通知容器 -->
+    <div id="smartAlertContainer" style="position: fixed; top: 100px; right: 30px; z-index: 1000;"></div>
 
     <script>
         // ========== 性能优化函数 ==========
@@ -2375,6 +3145,1413 @@
             }
         }
         
+        // ========== 新增智能功能类 ==========
+        
+        // 智能助手类
+        class SmartAssistant {
+            constructor() {
+                this.conversation = [];
+                this.isOpen = false;
+            }
+            
+            async processQuery(query) {
+                this.addMessage(query, 'user');
+                
+                // 根据查询内容智能回复
+                let response = '';
+                
+                if (query.toLowerCase().includes('absent') || query.toLowerCase().includes('frequently')) {
+                    response = await this.analyzeFrequentAbsences();
+                } else if (query.toLowerCase().includes('report') || query.toLowerCase().includes('monthly')) {
+                    response = await this.generateReportSuggestion();
+                } else if (query.toLowerCase().includes('help') || query.toLowerCase().includes('what should i do')) {
+                    response = await this.provideSuggestions();
+                } else if (query.toLowerCase().includes('student') || query.toLowerCase().includes('add')) {
+                    response = this.addStudentGuidance();
+                } else if (query.toLowerCase().includes('attendance') || query.toLowerCase().includes('record')) {
+                    response = this.attendanceGuidance();
+                } else {
+                    response = this.generalResponse(query);
+                }
+                
+                this.addMessage(response, 'system');
+                return response;
+            }
+            
+            async analyzeFrequentAbsences() {
+                const threshold = 70; // 低于70%出勤率
+                let lowAttendance = [];
+                
+                for (const student of system.students.values()) {
+                    const attendance = system.getStudentAttendance(student.id);
+                    const rate = (attendance.attendanceCount / attendance.totalSessions) * 100;
+                    if (rate < threshold) {
+                        lowAttendance.push({
+                            name: student.name,
+                            rate: rate.toFixed(1),
+                            id: student.id
+                        });
+                    }
+                }
+                
+                if (lowAttendance.length === 0) {
+                    return "Great! All students have attendance rates above 70%. 🎉";
+                }
+                
+                let response = `I found ${lowAttendance.length} student(s) with attendance below ${threshold}%:\n\n`;
+                lowAttendance.forEach((student, index) => {
+                    response += `${index + 1}. ${student.name} - ${student.rate}% attendance\n`;
+                });
+                
+                response += "\nConsider reaching out to these students or their parents.";
+                return response;
+            }
+            
+            async generateReportSuggestion() {
+                const summary = system.getSummary();
+                const today = new Date();
+                const month = today.toLocaleString('default', { month: 'long' });
+                
+                return `I recommend generating a ${month} report. Here's what I found:\n\n` +
+                       `• Total Students: ${summary.totalStudents}\n` +
+                       `• Average Attendance: ${summary.averageAttendanceRate}%\n` +
+                       `• Sessions Recorded: ${summary.totalSessions}\n\n` +
+                       `Would you like me to generate a PDF report?`;
+            }
+            
+            provideSuggestions() {
+                const time = new Date().getHours();
+                let suggestions = [];
+                
+                if (time < 12) {
+                    suggestions = [
+                        "Record attendance for morning classes",
+                        "Check yesterday's attendance records",
+                        "Add any new students who joined recently"
+                    ];
+                } else if (time < 17) {
+                    suggestions = [
+                        "Record afternoon class attendance",
+                        "Generate daily attendance summary",
+                        "Update student information if needed"
+                    ];
+                } else {
+                    suggestions = [
+                        "Prepare attendance report for tomorrow",
+                        "Review low attendance students",
+                        "Backup today's data"
+                    ];
+                }
+                
+                let response = "Based on the time, here's what I suggest:\n\n";
+                suggestions.forEach((suggestion, index) => {
+                    response += `${index + 1}. ${suggestion}\n`;
+                });
+                
+                return response;
+            }
+            
+            addStudentGuidance() {
+                return "To add a new student:\n\n" +
+                       "1. Go to Students section\n" +
+                       "2. Click 'Add Student'\n" +
+                       "3. Fill in the student details\n" +
+                       "4. Select appropriate time slot\n" +
+                       "5. Click 'Save Student'\n\n" +
+                       "Pro tip: You can use voice input to add students faster!";
+            }
+            
+            attendanceGuidance() {
+                return "To record attendance:\n\n" +
+                       "1. Go to Attendance section\n" +
+                       "2. Select time slot and date\n" +
+                       "3. Check present students\n" +
+                       "4. Add session topic (optional)\n" +
+                       "5. Click 'Record Attendance'\n\n" +
+                       "Shortcut: Press 'Q' for quick attendance mode!";
+            }
+            
+            generalResponse(query) {
+                const responses = [
+                    "I understand you're asking about: " + query + ". How can I help you with this?",
+                    "That's an interesting question. Let me think about how I can assist you with that.",
+                    "I can help you with student management, attendance recording, or generating reports. What specific help do you need?",
+                    "I'm here to make your work easier. Could you clarify what you'd like me to do?"
+                ];
+                
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+            
+            addMessage(text, sender) {
+                const message = {
+                    text,
+                    sender,
+                    timestamp: new Date().toISOString()
+                };
+                
+                this.conversation.push(message);
+                this.displayMessage(message);
+            }
+            
+            displayMessage(message) {
+                const content = document.getElementById('aiContent');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `ai-message ${message.sender}`;
+                
+                const senderName = message.sender === 'user' ? 'You' : 'Assistant';
+                messageDiv.innerHTML = `<strong>${senderName}:</strong> ${message.text.replace(/\n/g, '<br>')}`;
+                
+                content.appendChild(messageDiv);
+                content.scrollTop = content.scrollHeight;
+            }
+        }
+        
+        // 智能提醒系统
+        class SmartAlerts {
+            constructor() {
+                this.alerts = [];
+                this.checkInterval = null;
+            }
+            
+            startMonitoring() {
+                // 每5分钟检查一次
+                this.checkInterval = setInterval(() => {
+                    this.checkForAlerts();
+                }, 5 * 60 * 1000);
+                
+                // 初始检查
+                this.checkForAlerts();
+            }
+            
+            async checkForAlerts() {
+                this.alerts = [];
+                
+                // 检查低出勤率学生
+                const lowAttendance = this.checkLowAttendance();
+                if (lowAttendance.length > 0) {
+                    this.alerts.push({
+                        type: 'warning',
+                        title: 'Low Attendance Alert',
+                        message: `${lowAttendance.length} student(s) have attendance below 70%`,
+                        action: () => showStudentAttendanceDetails(lowAttendance.map(s => s.id))
+                    });
+                }
+                
+                // 检查今日未记录出勤
+                const unrecorded = await this.checkUnrecordedAttendance();
+                if (unrecorded.length > 0) {
+                    this.alerts.push({
+                        type: 'info',
+                        title: 'Unrecorded Classes',
+                        message: `${unrecorded.length} time slot(s) haven't had attendance recorded today`,
+                        action: () => {
+                            showSection('attendance');
+                            document.getElementById('timeSlotSelect').value = unrecorded[0];
+                            updateStudentsCheckboxes();
+                        }
+                    });
+                }
+                
+                // 检查即将满课的学生
+                const nearlyComplete = this.checkNearlyComplete();
+                if (nearlyComplete.length > 0) {
+                    this.alerts.push({
+                        type: 'success',
+                        title: 'Course Completion',
+                        message: `${nearlyComplete.length} student(s) are nearing course completion`,
+                        action: () => showSection('students')
+                    });
+                }
+                
+                // 显示提醒
+                this.displayAlerts();
+            }
+            
+            checkLowAttendance(threshold = 70) {
+                const lowAttendance = [];
+                
+                for (const student of system.students.values()) {
+                    const attendance = system.getStudentAttendance(student.id);
+                    const rate = (attendance.attendanceCount / attendance.totalSessions) * 100;
+                    if (rate < threshold) {
+                        lowAttendance.push({
+                            id: student.id,
+                            name: student.name,
+                            rate: rate.toFixed(1)
+                        });
+                    }
+                }
+                
+                return lowAttendance;
+            }
+            
+            async checkUnrecordedAttendance() {
+                const today = system.getLocalDateString(new Date());
+                const unrecorded = [];
+                
+                // 检查每个时间槽今天是否已记录
+                for (const timeSlot of system.timeSlots) {
+                    const hasRecord = system.attendanceRecords.some(record => 
+                        record.timeSlot === timeSlot.name && record.date === today
+                    );
+                    
+                    if (!hasRecord) {
+                        // 检查该时间槽是否有学生
+                        const students = system.getStudentsByTimeSlot(timeSlot.name);
+                        if (students.length > 0) {
+                            unrecorded.push(timeSlot.name);
+                        }
+                    }
+                }
+                
+                return unrecorded;
+            }
+            
+            checkNearlyComplete(threshold = 90) {
+                const nearlyComplete = [];
+                
+                for (const student of system.students.values()) {
+                    const attendance = system.getStudentAttendance(student.id);
+                    const progress = (attendance.attendanceCount / attendance.totalSessions) * 100;
+                    if (progress >= threshold && progress < 100) {
+                        nearlyComplete.push({
+                            id: student.id,
+                            name: student.name,
+                            progress: progress.toFixed(1)
+                        });
+                    }
+                }
+                
+                return nearlyComplete;
+            }
+            
+            displayAlerts() {
+                const container = document.getElementById('smartAlertsContainer');
+                if (!container) return;
+                
+                container.innerHTML = '';
+                
+                if (this.alerts.length === 0) {
+                    container.innerHTML = `
+                        <div class="feature-card">
+                            <div style="text-align: center; padding: 20px;">
+                                <i class="fas fa-check-circle" style="font-size: 48px; color: var(--success); margin-bottom: 15px;"></i>
+                                <h3>All Good!</h3>
+                                <p>No alerts at the moment. Everything is running smoothly.</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const alertHtml = this.alerts.map((alert, index) => `
+                    <div class="suggestion-card" onclick="${alert.action ? 'smartAlerts.alerts[' + index + '].action()' : ''}" style="border-left-color: var(--${alert.type});">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                            <i class="fas fa-${this.getAlertIcon(alert.type)}" style="color: var(--${alert.type});"></i>
+                            <h4 style="margin: 0;">${alert.title}</h4>
+                        </div>
+                        <p style="margin: 0;">${alert.message}</p>
+                        ${alert.action ? '<p style="margin: 8px 0 0 0; font-size: 12px; color: var(--primary);"><i class="fas fa-hand-pointer"></i> Click to take action</p>' : ''}
+                    </div>
+                `).join('');
+                
+                container.innerHTML = `
+                    <div class="feature-card">
+                        <h3><i class="fas fa-bell"></i> Smart Alerts</h3>
+                        ${alertHtml}
+                    </div>
+                `;
+            }
+            
+            getAlertIcon(type) {
+                const icons = {
+                    warning: 'exclamation-triangle',
+                    info: 'info-circle',
+                    success: 'check-circle',
+                    danger: 'exclamation-circle'
+                };
+                return icons[type] || 'info-circle';
+            }
+            
+            showQuickAlert(message, type = 'info', duration = 5000) {
+                const container = document.getElementById('smartAlertContainer');
+                const alertId = 'alert-' + Date.now();
+                
+                const alertHtml = `
+                    <div class="smart-alert" id="${alertId}">
+                        <div class="alert-header" style="background: ${this.getAlertColor(type)};">
+                            <i class="fas fa-${this.getAlertIcon(type)}"></i>
+                            <strong>${type.charAt(0).toUpperCase() + type.slice(1)}</strong>
+                        </div>
+                        <div class="alert-content">
+                            ${message}
+                        </div>
+                    </div>
+                `;
+                
+                container.innerHTML += alertHtml;
+                
+                // 自动移除
+                setTimeout(() => {
+                    const alert = document.getElementById(alertId);
+                    if (alert) {
+                        alert.style.animation = 'slideInRight 0.5s ease reverse';
+                        setTimeout(() => alert.remove(), 500);
+                    }
+                }, duration);
+            }
+            
+            getAlertColor(type) {
+                const colors = {
+                    warning: '#fff3cd',
+                    info: '#d1ecf1',
+                    success: '#d4edda',
+                    danger: '#f8d7da'
+                };
+                return colors[type] || '#d1ecf1';
+            }
+        }
+        
+        // 增强的图表管理器
+        class EnhancedCharts {
+            constructor() {
+                this.charts = {};
+            }
+            
+            renderAttendanceTrend() {
+                const ctx = document.getElementById('attendanceTrendChart');
+                if (!ctx) return;
+                
+                // 获取最近7天的出勤数据
+                const last7Days = this.getLast7Days();
+                const attendanceByDay = this.calculateAttendanceByDay(last7Days);
+                
+                if (this.charts.attendanceTrend) {
+                    this.charts.attendanceTrend.destroy();
+                }
+                
+                this.charts.attendanceTrend = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: last7Days.map(date => {
+                            const d = new Date(date);
+                            return `${d.getDate()}/${d.getMonth() + 1}`;
+                        }),
+                        datasets: [{
+                            label: 'Daily Attendance',
+                            data: attendanceByDay,
+                            borderColor: 'rgba(230, 126, 34, 1)',
+                            backgroundColor: 'rgba(230, 126, 34, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Attendance: ${context.parsed.y} students`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Number of Students'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Date'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            renderStudentDistribution() {
+                const ctx = document.getElementById('studentDistributionChart');
+                if (!ctx) return;
+                
+                // 按时间槽统计学生分布
+                const distribution = {};
+                system.timeSlots.forEach(slot => {
+                    const students = system.getStudentsByTimeSlot(slot.name);
+                    distribution[slot.name] = students.length;
+                });
+                
+                // 颜色生成
+                const colors = this.generateColors(Object.keys(distribution).length);
+                
+                if (this.charts.studentDistribution) {
+                    this.charts.studentDistribution.destroy();
+                }
+                
+                this.charts.studentDistribution = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(distribution),
+                        datasets: [{
+                            data: Object.values(distribution),
+                            backgroundColor: colors,
+                            borderWidth: 2,
+                            borderColor: 'white'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    boxWidth: 12,
+                                    padding: 15
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = Math.round((context.parsed / total) * 100);
+                                        return `${context.label}: ${context.parsed} students (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            getLast7Days() {
+                const days = [];
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    days.push(system.getLocalDateString(date));
+                }
+                return days;
+            }
+            
+            calculateAttendanceByDay(days) {
+                return days.map(day => {
+                    const records = system.attendanceRecords.filter(record => record.date === day);
+                    return records.reduce((total, record) => total + (record.presentStudents?.length || 0), 0);
+                });
+            }
+            
+            generateColors(count) {
+                const colors = [];
+                const hueStep = 360 / count;
+                
+                for (let i = 0; i < count; i++) {
+                    const hue = (i * hueStep) % 360;
+                    colors.push(`hsla(${hue}, 70%, 60%, 0.8)`);
+                }
+                
+                return colors;
+            }
+            
+            updateAllCharts() {
+                this.renderAttendanceTrend();
+                this.renderStudentDistribution();
+            }
+        }
+        
+        // 拖拽管理器
+        class DragDropManager {
+            constructor() {
+                this.draggedStudent = null;
+                this.setupEventListeners();
+            }
+            
+            setupEventListeners() {
+                document.addEventListener('dragstart', (e) => {
+                    if (e.target.classList.contains('draggable-student')) {
+                        this.draggedStudent = e.target.dataset.studentId;
+                        e.dataTransfer.setData('text/plain', e.target.dataset.studentId);
+                        e.target.classList.add('dragging');
+                    }
+                });
+                
+                document.addEventListener('dragend', (e) => {
+                    if (e.target.classList.contains('draggable-student')) {
+                        e.target.classList.remove('dragging');
+                        this.draggedStudent = null;
+                    }
+                });
+            }
+            
+            handleDragOver(e) {
+                e.preventDefault();
+                if (this.draggedStudent) {
+                    e.target.closest('.drop-zone')?.classList.add('drag-over');
+                }
+            }
+            
+            handleDragLeave(e) {
+                e.target.closest('.drop-zone')?.classList.remove('drag-over');
+            }
+            
+            async handleDrop(e) {
+                e.preventDefault();
+                const dropZone = e.target.closest('.drop-zone');
+                if (dropZone && this.draggedStudent) {
+                    dropZone.classList.remove('drag-over');
+                    
+                    const student = system.students.get(this.draggedStudent);
+                    if (!student) return;
+                    
+                    // 显示时间槽选择
+                    const timeSlot = await this.showTimeSlotSelection(student);
+                    if (timeSlot) {
+                        await this.changeStudentTimeSlot(this.draggedStudent, timeSlot);
+                        showToast(`Moved ${student.name} to ${timeSlot}`, 'success');
+                        updateUI();
+                    }
+                }
+            }
+            
+            async showTimeSlotSelection(student) {
+                return new Promise((resolve) => {
+                    const modal = document.createElement('div');
+                    modal.className = 'modal';
+                    modal.style.display = 'flex';
+                    modal.innerHTML = `
+                        <div class="modal-content" style="max-width: 400px;">
+                            <div style="padding: 20px;">
+                                <h3 style="margin-bottom: 20px;">Move ${student.name}</h3>
+                                <p style="margin-bottom: 15px; color: var(--gray);">Select new time slot:</p>
+                                <select id="timeSlotMoveSelect" class="form-input" style="margin-bottom: 20px;">
+                                    ${system.timeSlots.map(slot => 
+                                        `<option value="${slot.name}" ${slot.name === student.timeSlot ? 'selected' : ''}>${slot.name}</option>`
+                                    ).join('')}
+                                </select>
+                                <div style="display: flex; gap: 10px;">
+                                    <button class="btn" onclick="this.closest('.modal').remove(); resolve(null)" style="flex: 1;">Cancel</button>
+                                    <button class="btn btn-success" onclick="
+                                        const select = document.getElementById('timeSlotMoveSelect');
+                                        this.closest('.modal').remove();
+                                        resolve(select.value);
+                                    " style="flex: 1;">Move</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(modal);
+                });
+            }
+            
+            async changeStudentTimeSlot(studentId, newTimeSlot) {
+                try {
+                    const student = system.students.get(studentId);
+                    if (!student) return;
+                    
+                    student.timeSlot = newTimeSlot;
+                    
+                    if (system.isOnline) {
+                        await db.collection('users').doc(system.userId).collection('students')
+                            .doc(studentId).update({
+                                timeSlot: newTimeSlot
+                            });
+                    }
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Error changing time slot:', error);
+                    return false;
+                }
+            }
+            
+            makeDraggable(element, studentId) {
+                element.classList.add('draggable', 'draggable-student');
+                element.setAttribute('draggable', 'true');
+                element.dataset.studentId = studentId;
+                element.setAttribute('title', 'Drag to move to different time slot');
+            }
+        }
+        
+        // 语音输入管理器
+        class VoiceInputManager {
+            constructor() {
+                this.recognition = null;
+                this.isListening = false;
+                this.setupSpeechRecognition();
+            }
+            
+            setupSpeechRecognition() {
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    this.recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+                    this.recognition.continuous = false;
+                    this.recognition.interimResults = true;
+                    this.recognition.lang = 'en-US';
+                    
+                    this.recognition.onstart = () => {
+                        this.isListening = true;
+                        this.showVoiceInterface();
+                    };
+                    
+                    this.recognition.onresult = (event) => {
+                        const transcript = Array.from(event.results)
+                            .map(result => result[0])
+                            .map(result => result.transcript)
+                            .join('');
+                        
+                        document.getElementById('voiceInputText').textContent = transcript;
+                        
+                        // 如果有最终结果
+                        if (event.results[0].isFinal) {
+                            this.processVoiceCommand(transcript);
+                            this.stopListening();
+                        }
+                    };
+                    
+                    this.recognition.onerror = (event) => {
+                        console.log('Speech recognition error', event.error);
+                        this.stopListening();
+                    };
+                    
+                    this.recognition.onend = () => {
+                        this.isListening = false;
+                        this.hideVoiceInterface();
+                    };
+                }
+            }
+            
+            startListening() {
+                if (this.recognition && !this.isListening) {
+                    try {
+                        this.recognition.start();
+                    } catch (error) {
+                        console.log('Speech recognition start error:', error);
+                    }
+                }
+            }
+            
+            stopListening() {
+                if (this.recognition && this.isListening) {
+                    this.recognition.stop();
+                }
+            }
+            
+            showVoiceInterface() {
+                document.getElementById('voiceInputOverlay').style.display = 'flex';
+            }
+            
+            hideVoiceInterface() {
+                document.getElementById('voiceInputOverlay').style.display = 'none';
+            }
+            
+            processVoiceCommand(transcript) {
+                const command = transcript.toLowerCase();
+                
+                // 分析命令
+                if (command.includes('record attendance') || command.includes('take attendance')) {
+                    this.handleRecordAttendance(command);
+                } else if (command.includes('add student') || command.includes('new student')) {
+                    this.handleAddStudent(command);
+                } else if (command.includes('search') || command.includes('find')) {
+                    this.handleSearch(command);
+                } else if (command.includes('generate report') || command.includes('create report')) {
+                    this.handleGenerateReport(command);
+                } else if (command.includes('show') || command.includes('view')) {
+                    this.handleShowView(command);
+                } else {
+                    showToast(`I heard: "${transcript}"`, 'info');
+                }
+            }
+            
+            handleRecordAttendance(command) {
+                // 提取时间槽信息
+                const timeSlots = system.timeSlots.map(s => s.name);
+                const matchedTimeSlot = timeSlots.find(slot => 
+                    command.includes(slot.toLowerCase())
+                );
+                
+                if (matchedTimeSlot) {
+                    showSection('attendance');
+                    document.getElementById('timeSlotSelect').value = matchedTimeSlot;
+                    updateStudentsCheckboxes();
+                    
+                    // 检查是否提到日期
+                    if (command.includes('today')) {
+                        const today = system.getLocalDateString(new Date());
+                        document.getElementById('classDate').value = today;
+                    } else if (command.includes('yesterday')) {
+                        const yesterday = new Date();
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        document.getElementById('classDate').value = system.getLocalDateString(yesterday);
+                    }
+                    
+                    showToast(`Ready to record attendance for ${matchedTimeSlot}`, 'success');
+                } else {
+                    showToast('Please specify a time slot', 'info');
+                }
+            }
+            
+            handleAddStudent(command) {
+                showSection('students');
+                showAddStudentForm();
+                
+                // 尝试提取学生信息
+                const nameMatch = command.match(/named (\w+ \w+)|called (\w+ \w+)/i);
+                if (nameMatch) {
+                    const name = nameMatch[1] || nameMatch[2];
+                    document.getElementById('studentName').value = name;
+                }
+                
+                showToast('Add student form opened. Please complete the details.', 'info');
+            }
+            
+            handleSearch(command) {
+                const searchTerm = command.replace(/search|find|for/i, '').trim();
+                if (searchTerm) {
+                    document.getElementById('searchStudents').value = searchTerm;
+                    currentSearchTerm = searchTerm;
+                    updateTimeSlotTabs();
+                    showToast(`Searching for: ${searchTerm}`, 'info');
+                }
+            }
+            
+            handleGenerateReport(command) {
+                showSection('exports');
+                showToast('Report section opened. Select your report type.', 'info');
+            }
+            
+            handleShowView(command) {
+                if (command.includes('dashboard')) {
+                    showSection('dashboard');
+                } else if (command.includes('student')) {
+                    showSection('students');
+                } else if (command.includes('attendance')) {
+                    showSection('attendance');
+                } else if (command.includes('record')) {
+                    showSection('records');
+                }
+            }
+        }
+        
+        // 快捷键管理器
+        class ShortcutManager {
+            constructor() {
+                this.shortcuts = new Map();
+                this.setupShortcuts();
+            }
+            
+            setupShortcuts() {
+                // 添加快捷键
+                this.addShortcut('ctrl+s', (e) => {
+                    e.preventDefault();
+                    this.handleSaveShortcut();
+                });
+                
+                this.addShortcut('ctrl+f', (e) => {
+                    e.preventDefault();
+                    this.handleSearchShortcut();
+                });
+                
+                this.addShortcut('ctrl+n', (e) => {
+                    e.preventDefault();
+                    this.handleNewStudentShortcut();
+                });
+                
+                this.addShortcut('ctrl+p', (e) => {
+                    e.preventDefault();
+                    this.handlePrintShortcut();
+                });
+                
+                this.addShortcut('q', (e) => {
+                    if (!e.ctrlKey && !e.altKey && !e.metaKey) {
+                        this.handleQuickAttendance();
+                    }
+                });
+                
+                this.addShortcut('?', (e) => {
+                    if (e.shiftKey) {
+                        this.showShortcutHelp();
+                    }
+                });
+                
+                // 监听键盘事件
+                document.addEventListener('keydown', (e) => {
+                    this.handleKeyPress(e);
+                });
+            }
+            
+            addShortcut(combo, callback) {
+                this.shortcuts.set(combo, callback);
+            }
+            
+            handleKeyPress(e) {
+                const key = e.key.toLowerCase();
+                let combo = '';
+                
+                if (e.ctrlKey) combo += 'ctrl+';
+                if (e.shiftKey) combo += 'shift+';
+                if (e.altKey) combo += 'alt+';
+                if (e.metaKey) combo += 'cmd+';
+                
+                combo += key;
+                
+                const handler = this.shortcuts.get(combo);
+                if (handler) {
+                    handler(e);
+                }
+            }
+            
+            handleSaveShortcut() {
+                const activeSection = document.querySelector('.section.active').id;
+                switch(activeSection) {
+                    case 'attendance':
+                        recordAttendance();
+                        break;
+                    case 'students':
+                        if (document.getElementById('addStudentForm').style.display !== 'none') {
+                            addStudent();
+                        } else if (document.getElementById('editStudentForm').style.display !== 'none') {
+                            updateStudent();
+                        }
+                        break;
+                    default:
+                        showToast('Press Ctrl+S to save in forms', 'info');
+                }
+            }
+            
+            handleSearchShortcut() {
+                const searchInput = document.getElementById('searchStudents') || 
+                                   document.querySelector('.search-box input');
+                if (searchInput) {
+                    searchInput.focus();
+                    searchInput.select();
+                    showShortcutHint(searchInput, 'Start typing to search...');
+                }
+            }
+            
+            handleNewStudentShortcut() {
+                if (document.getElementById('students').classList.contains('active')) {
+                    showAddStudentForm();
+                } else {
+                    showSection('students');
+                    setTimeout(() => showAddStudentForm(), 300);
+                }
+                showToast('Quick add student activated', 'info');
+            }
+            
+            handlePrintShortcut() {
+                generateQuickReport();
+            }
+            
+            handleQuickAttendance() {
+                if (document.getElementById('attendance').classList.contains('active')) {
+                    recordAttendance();
+                } else {
+                    quickRecordAttendance();
+                }
+            }
+            
+            showShortcutHelp() {
+                const shortcuts = [
+                    { key: 'Ctrl + S', desc: 'Save/Record attendance' },
+                    { key: 'Ctrl + F', desc: 'Search' },
+                    { key: 'Ctrl + N', desc: 'New student' },
+                    { key: 'Ctrl + P', desc: 'Print/Generate report' },
+                    { key: 'Q', desc: 'Quick attendance' },
+                    { key: '?', desc: 'Show this help' }
+                ];
+                
+                let html = '<div class="ai-message system"><strong>Keyboard Shortcuts:</strong><br><br>';
+                shortcuts.forEach(shortcut => {
+                    html += `<div style="margin-bottom: 8px;"><code style="background: #f0f0f0; padding: 3px 6px; border-radius: 4px;">${shortcut.key}</code> - ${shortcut.desc}</div>`;
+                });
+                html += '</div>';
+                
+                smartAssistant.addMessage(html.replace(/<br>/g, '\n'), 'system');
+                if (!document.getElementById('aiPanel').style.display || document.getElementById('aiPanel').style.display === 'none') {
+                    toggleAIPanel();
+                }
+            }
+        }
+        
+        // 自然语言搜索
+        class NaturalLanguageSearch {
+            constructor() {
+                this.setupSearchExamples();
+            }
+            
+            setupSearchExamples() {
+                const examples = [
+                    "students with low attendance",
+                    "males in Saturday class",
+                    "enrolled after 2024",
+                    "students with less than 20 sessions",
+                    "females aged 12-14"
+                ];
+                
+                const container = document.createElement('div');
+                container.className = 'natural-search-examples';
+                examples.forEach(example => {
+                    const span = document.createElement('span');
+                    span.className = 'search-example';
+                    span.textContent = example;
+                    span.onclick = () => this.processNaturalQuery(example);
+                    container.appendChild(span);
+                });
+                
+                const searchBox = document.querySelector('.search-box');
+                if (searchBox) {
+                    searchBox.appendChild(container);
+                }
+            }
+            
+            processNaturalQuery(query) {
+                document.getElementById('searchStudents').value = query;
+                currentSearchTerm = query;
+                
+                // 解析自然语言查询
+                const conditions = this.parseQuery(query);
+                this.highlightSearchResults(conditions);
+                
+                updateTimeSlotTabs();
+            }
+            
+            parseQuery(query) {
+                const conditions = [];
+                query = query.toLowerCase();
+                
+                // 解析年龄范围
+                const ageMatch = query.match(/(\d+)\s*-\s*(\d+)\s*years?/i) || 
+                                query.match(/aged?\s*(\d+)\s*-\s*(\d+)/i) ||
+                                query.match(/(\d+)\s*to\s*(\d+)\s*years?/i);
+                if (ageMatch) {
+                    conditions.push({
+                        type: 'age',
+                        min: parseInt(ageMatch[1]),
+                        max: parseInt(ageMatch[2])
+                    });
+                }
+                
+                // 解析性别
+                if (query.includes('male') || query.includes('boy')) {
+                    conditions.push({ type: 'gender', value: 'Male' });
+                } else if (query.includes('female') || query.includes('girl')) {
+                    conditions.push({ type: 'gender', value: 'Female' });
+                }
+                
+                // 解析时间槽
+                system.timeSlots.forEach(slot => {
+                    if (query.includes(slot.name.toLowerCase())) {
+                        conditions.push({ type: 'timeSlot', value: slot.name });
+                    }
+                });
+                
+                // 解析出勤情况
+                if (query.includes('low attendance') || query.includes('frequently absent')) {
+                    conditions.push({ type: 'lowAttendance', threshold: 70 });
+                }
+                
+                // 解析注册日期
+                if (query.includes('enrolled after')) {
+                    const yearMatch = query.match(/enrolled after\s*(\d{4})/i);
+                    if (yearMatch) {
+                        conditions.push({ type: 'enrolledAfter', year: yearMatch[1] });
+                    }
+                }
+                
+                return conditions;
+            }
+            
+            highlightSearchResults(conditions) {
+                // 在实际应用中，这里可以高亮显示匹配的结果
+                console.log('Search conditions:', conditions);
+                // 更新搜索结果显示匹配的条件
+                const searchInfo = document.querySelector('.search-info');
+                if (searchInfo) {
+                    searchInfo.innerHTML = `Searching with conditions: <code>${JSON.stringify(conditions)}</code>`;
+                }
+            }
+        }
+        
+        // ========== 创建实例 ==========
+        const smartAssistant = new SmartAssistant();
+        const smartAlerts = new SmartAlerts();
+        const enhancedCharts = new EnhancedCharts();
+        const dragDropManager = new DragDropManager();
+        const voiceInputManager = new VoiceInputManager();
+        let shortcutManager;
+        let naturalSearch;
+        
+        // ========== 初始化增强功能 ==========
+        function initEnhancedFeatures() {
+            // 初始化管理器
+            shortcutManager = new ShortcutManager();
+            naturalSearch = new NaturalLanguageSearch();
+            
+            // 更新问候语
+            updateGreeting();
+            
+            // 开始智能提醒监控
+            smartAlerts.startMonitoring();
+            
+            // 加载用户设置
+            loadUserSettings();
+            
+            // 添加语音输入按钮到表单
+            addVoiceInputButtons();
+            
+            // 初始化图表
+            enhancedCharts.updateAllCharts();
+            
+            // 设置拖拽学生卡片
+            setupDraggableStudents();
+            
+            console.log('Enhanced features initialized');
+        }
+        
+        // ========== 新增工具函数 ==========
+        
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            let greeting = '';
+            
+            if (hour < 12) greeting = 'Good morning';
+            else if (hour < 18) greeting = 'Good afternoon';
+            else greeting = 'Good evening';
+            
+            document.getElementById('timeGreeting').textContent = greeting;
+        }
+        
+        function toggleAIPanel() {
+            const panel = document.getElementById('aiPanel');
+            const isOpen = panel.style.display === 'block';
+            
+            if (isOpen) {
+                panel.style.animation = 'slideUp 0.3s ease reverse';
+                setTimeout(() => {
+                    panel.style.display = 'none';
+                }, 300);
+            } else {
+                panel.style.display = 'block';
+                panel.style.animation = 'slideUp 0.3s ease';
+                document.getElementById('aiInput').focus();
+            }
+        }
+        
+        function askAI(question) {
+            document.getElementById('aiInput').value = question;
+            sendAIMessage();
+        }
+        
+        async function sendAIMessage() {
+            const input = document.getElementById('aiInput');
+            const question = input.value.trim();
+            
+            if (!question) return;
+            
+            input.value = '';
+            await smartAssistant.processQuery(question);
+        }
+        
+        function handleAIInput(event) {
+            if (event.key === 'Enter') {
+                sendAIMessage();
+            }
+        }
+        
+        function openSettings() {
+            document.getElementById('settingsPanel').classList.add('open');
+        }
+        
+        function closeSettings() {
+            document.getElementById('settingsPanel').classList.remove('open');
+        }
+        
+        function saveSetting(key, value) {
+            localStorage.setItem(`gma_${key}`, value);
+            applySetting(key, value);
+        }
+        
+        function loadUserSettings() {
+            const settings = [
+                'quickActions',
+                'voiceCommands', 
+                'smartSuggestions',
+                'animations',
+                'defaultView'
+            ];
+            
+            settings.forEach(setting => {
+                const value = localStorage.getItem(`gma_${setting}`);
+                if (value !== null) {
+                    const element = document.getElementById(`${setting}Toggle`) || 
+                                   document.getElementById(`${setting}Select`);
+                    if (element) {
+                        if (element.type === 'checkbox') {
+                            element.checked = value === 'true';
+                        } else {
+                            element.value = value;
+                        }
+                        applySetting(setting, value);
+                    }
+                }
+            });
+        }
+        
+        function applySetting(key, value) {
+            switch(key) {
+                case 'quickActions':
+                    document.getElementById('quickActionsPanel').style.display = 
+                        value === 'true' ? 'grid' : 'none';
+                    break;
+                case 'animations':
+                    if (value === 'false') {
+                        document.body.classList.add('no-animations');
+                    } else {
+                        document.body.classList.remove('no-animations');
+                    }
+                    break;
+                case 'defaultView':
+                    // 在下次加载时应用
+                    break;
+            }
+        }
+        
+        function generateQuickReport() {
+            showSection('exports');
+            showToast('Generating quick report...', 'info');
+            
+            // 模拟报告生成
+            setTimeout(() => {
+                exportToPDF();
+            }, 1000);
+        }
+        
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const summary = system.getSummary();
+            const today = new Date();
+            
+            doc.setFontSize(24);
+            doc.text("Genius Mind Academy", 105, 20, null, null, 'center');
+            doc.setFontSize(16);
+            doc.text("Quick Attendance Report", 105, 30, null, null, 'center');
+            doc.setFontSize(12);
+            doc.text(`Generated on ${today.toLocaleDateString()}`, 105, 40, null, null, 'center');
+            
+            let y = 60;
+            doc.setFontSize(14);
+            doc.text("Summary Statistics", 20, y);
+            y += 10;
+            
+            doc.setFontSize(12);
+            const stats = [
+                `Total Students: ${summary.totalStudents}`,
+                `Sessions Recorded: ${summary.totalSessions}`,
+                `Average Attendance: ${summary.averageAttendanceRate}%`,
+                `Time Slots: ${summary.timeSlots}`
+            ];
+            
+            stats.forEach(stat => {
+                doc.text(stat, 25, y);
+                y += 8;
+            });
+            
+            y += 10;
+            doc.setFontSize(14);
+            doc.text("Recent Activity", 20, y);
+            y += 10;
+            
+            // 添加最近5条记录
+            const recentRecords = [...system.attendanceRecords]
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 5);
+            
+            doc.setFontSize(10);
+            recentRecords.forEach(record => {
+                if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                }
+                
+                const formattedDate = system.formatDateForDisplay(record.date);
+                doc.text(`${formattedDate} - ${record.timeSlot}: ${record.presentStudents.length} students`, 25, y);
+                y += 6;
+            });
+            
+            doc.save(`quick_report_${today.getTime()}.pdf`);
+            showToast('Quick report generated!', 'success');
+        }
+        
+        function showShortcutHint(element, message) {
+            const hint = document.createElement('div');
+            hint.className = 'shortcut-hint';
+            hint.textContent = message;
+            
+            const rect = element.getBoundingClientRect();
+            hint.style.left = rect.left + 'px';
+            hint.style.top = (rect.top - 30) + 'px';
+            
+            document.body.appendChild(hint);
+            
+            setTimeout(() => {
+                hint.remove();
+            }, 3000);
+        }
+        
+        function addVoiceInputButtons() {
+            // 为关键输入框添加语音输入按钮
+            const inputs = [
+                'studentName',
+                'searchStudents',
+                'sessionTopic',
+                'aiInput'
+            ];
+            
+            inputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    const container = document.createElement('div');
+                    container.className = 'voice-input';
+                    
+                    input.parentNode.insertBefore(container, input);
+                    container.appendChild(input);
+                    
+                    const button = document.createElement('button');
+                    button.className = 'voice-button';
+                    button.innerHTML = '<i class="fas fa-microphone"></i>';
+                    button.onclick = () => startVoiceInputFor(inputId);
+                    container.appendChild(button);
+                }
+            });
+        }
+        
+        function startVoiceInputFor(inputId) {
+            if (voiceInputManager.recognition) {
+                voiceInputManager.startListening();
+                
+                // 设置输入目标
+                voiceInputManager.recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    const input = document.getElementById(inputId);
+                    if (input) {
+                        input.value = transcript;
+                        input.dispatchEvent(new Event('input'));
+                    }
+                };
+            } else {
+                showToast('Voice recognition not supported in this browser', 'error');
+            }
+        }
+        
+        function stopVoiceInput() {
+            voiceInputManager.stopListening();
+        }
+        
+        function setupDraggableStudents() {
+            // 延迟执行以确保DOM已加载
+            setTimeout(() => {
+                const studentCards = document.querySelectorAll('.student-card-enhanced');
+                studentCards.forEach(card => {
+                    const studentId = card.querySelector('.student-select-checkbox')?.value;
+                    if (studentId) {
+                        dragDropManager.makeDraggable(card, studentId);
+                    }
+                });
+            }, 1000);
+        }
+        
+        function showStudentAttendanceDetails(studentIds) {
+            // 显示选中学生的出勤详情
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'flex';
+            
+            let content = '<div class="modal-content" style="max-width: 600px;">';
+            content += '<div style="padding: 20px;">';
+            content += '<h3 style="margin-bottom: 20px;">Student Attendance Details</h3>';
+            
+            studentIds.forEach(studentId => {
+                const student = system.students.get(studentId);
+                if (student) {
+                    const attendance = system.getStudentAttendance(studentId);
+                    const rate = (attendance.attendanceCount / attendance.totalSessions * 100).toFixed(1);
+                    
+                    content += `
+                        <div class="student-card-enhanced" style="margin-bottom: 15px;">
+                            <strong>${student.name}</strong><br>
+                            Attendance: ${attendance.attendanceCount}/${attendance.totalSessions} (${rate}%)<br>
+                            Time Slot: ${student.timeSlot}
+                        </div>
+                    `;
+                }
+            });
+            
+            content += '<button class="btn" onclick="this.closest(\'.modal\').remove()" style="margin-top: 20px;">Close</button>';
+            content += '</div></div>';
+            
+            modal.innerHTML = content;
+            document.body.appendChild(modal);
+        }
+        
+        function addStudentFromSuggestion() {
+            // 智能填充学生信息
+            document.getElementById('studentName').focus();
+            
+            // 根据当前时间槽选择提供建议
+            const currentHour = new Date().getHours();
+            let suggestedTimeSlot = '';
+            
+            if (currentHour < 12) {
+                suggestedTimeSlot = system.timeSlots.find(s => s.name.includes('morning'))?.name || 
+                                   system.timeSlots.find(s => s.name.includes('9am'))?.name ||
+                                   system.timeSlots[0]?.name;
+            } else if (currentHour < 17) {
+                suggestedTimeSlot = system.timeSlots.find(s => s.name.includes('afternoon'))?.name ||
+                                   system.timeSlots.find(s => s.name.includes('2pm'))?.name ||
+                                   system.timeSlots[1]?.name;
+            } else {
+                suggestedTimeSlot = system.timeSlots.find(s => s.name.includes('evening'))?.name ||
+                                   system.timeSlots.find(s => s.name.includes('4pm'))?.name ||
+                                   system.timeSlots[system.timeSlots.length - 1]?.name;
+            }
+            
+            if (suggestedTimeSlot) {
+                document.getElementById('studentTimeSlot').value = suggestedTimeSlot;
+            }
+            
+            showToast('Smart suggestions applied. Fill in the remaining details.', 'info');
+        }
+        
+        function processNaturalQuery(query) {
+            if (naturalSearch) {
+                naturalSearch.processNaturalQuery(query);
+            }
+        }
+        
+        function handleDragOver(e) {
+            if (dragDropManager) dragDropManager.handleDragOver(e);
+        }
+        
+        function handleDragLeave(e) {
+            if (dragDropManager) dragDropManager.handleDragLeave(e);
+        }
+        
+        function handleDrop(e) {
+            if (dragDropManager) dragDropManager.handleDrop(e);
+        }
+        
         // ========== 初始化函数 ==========
         function init() {
             // 初始化DOM缓存
@@ -2462,6 +4639,18 @@
             
             // 更新时区信息
             updateTimezoneInfo();
+            
+            // 增强功能更新
+            if (document.getElementById('dashboard').classList.contains('active')) {
+                enhancedCharts.updateAllCharts();
+                smartAlerts.checkForAlerts();
+            }
+            
+            // 更新拖拽功能
+            setupDraggableStudents();
+            
+            // 更新问候语
+            updateGreeting();
         }
         
         function showSection(sectionId) {
@@ -2469,6 +4658,19 @@
                 section.classList.remove('active');
             });
             document.getElementById(sectionId).classList.add('active');
+            
+            // 保存最后访问的区域
+            localStorage.setItem('gma_lastSection', sectionId);
+            
+            // 更新该区域的增强功能
+            switch(sectionId) {
+                case 'dashboard':
+                    enhancedCharts.updateAllCharts();
+                    break;
+                case 'students':
+                    setupDraggableStudents();
+                    break;
+            }
         }
         
         function updateDashboard() {
@@ -4377,6 +6579,12 @@
             
             // Initialize system with user ID
             system.initialize(user.uid);
+            
+            // Initialize enhanced features
+            setTimeout(() => {
+                initEnhancedFeatures();
+                loadLastSection();
+            }, 500);
         }
 
         // Test Mode: Skip login and enter system directly
@@ -4412,6 +6620,12 @@
             
             // Add some test data
             addSampleData();
+            
+            // Initialize enhanced features
+            setTimeout(() => {
+                initEnhancedFeatures();
+                loadLastSection();
+            }, 500);
             
             // Update UI
             updateUI();
@@ -4474,6 +6688,18 @@
                 dates.push(system.getLocalDateString(date));
             }
             return dates;
+        }
+        
+        // 加载最后访问的区域
+        function loadLastSection() {
+            const lastSection = localStorage.getItem('gma_lastSection');
+            const defaultSection = localStorage.getItem('gma_defaultView') || 'dashboard';
+            
+            if (lastSection && document.getElementById(lastSection)) {
+                showSection(lastSection);
+            } else if (defaultSection && document.getElementById(defaultSection)) {
+                showSection(defaultSection);
+            }
         }
         
         // ========== 页面加载初始化 ==========

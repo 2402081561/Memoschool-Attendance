@@ -2126,7 +2126,7 @@
         let dateSelectionStudentId = '';
         let dateSelectionStudentIds = [];
 
-        // ========== Reminder Manager Class ==========
+        // ========== Enhanced Reminder Manager Class ==========
         class ReminderManager {
             constructor() {
                 this.reminders = [];
@@ -2142,13 +2142,19 @@
                 this.progressReportThresholds = [12, 24, 26, 48];
                 
                 // Brain test thresholds
-                this.brainTestThresholds = [24]; // 45 is calculated as totalSessions - 3
+                this.brainTestThresholds = [24, 45]; // 24 classes and last 3 classes (45 for 48-class students)
             }
             
             // Initialize reminder manager
             initialize() {
                 this.loadRemindersFromStorage();
                 this.setupReminderChecking();
+                
+                // Auto-check reminders on initialization
+                setTimeout(() => {
+                    this.checkAllReminders();
+                    console.log("✅ Reminder system initialized and checked all students");
+                }, 1000);
             }
             
             // Load reminders from local storage
@@ -2170,6 +2176,7 @@
             // Check all students for reminders
             checkAllReminders() {
                 console.log('🔍 Checking reminders for all students...');
+                showLoading('Checking reminders for all students...');
                 
                 let newReminders = 0;
                 let updatedReminders = 0;
@@ -2183,6 +2190,7 @@
                 
                 // Update UI
                 this.updateReminderDisplay();
+                hideLoading();
                 
                 console.log(`✅ Found ${newReminders} new reminders, updated ${updatedReminders} existing reminders`);
                 showToast(`Checked all students: ${newReminders} new reminders, ${updatedReminders} updated`, 'success');
@@ -2238,71 +2246,40 @@
                 }
                 
                 // Check brain test reminders
-                // 1. At 24 classes
-                const brainTest24Threshold = 24;
-                const brainTest24Id = `brain_test_${studentId}_${brainTest24Threshold}`;
-                const existingBrainTest24 = this.reminders.find(r => r.id === brainTest24Id);
-                
-                if (attendanceCount >= brainTest24Threshold) {
-                    if (!existingBrainTest24) {
-                        // Create new reminder
-                        this.reminders.push({
-                            id: brainTest24Id,
-                            studentId: studentId,
-                            studentName: student.name,
-                            type: 'brain_test',
-                            subtype: 'brain_test_24',
-                            threshold: brainTest24Threshold,
-                            currentCount: attendanceCount,
-                            totalSessions: totalSessions,
-                            timeSlot: student.timeSlot,
-                            status: 'pending',
-                            createdDate: new Date().toISOString(),
-                            dueDate: this.calculateDueDate(attendanceCount, brainTest24Threshold),
-                            urgency: this.calculateUrgency(attendanceCount, brainTest24Threshold, true),
-                            notes: `Student has attended ${attendanceCount} classes. Brain test needed at 24 classes.`
-                        });
-                        newReminders++;
-                    } else if (existingBrainTest24.status === 'pending') {
-                        // Update existing reminder
-                        existingBrainTest24.currentCount = attendanceCount;
-                        existingBrainTest24.urgency = this.calculateUrgency(attendanceCount, brainTest24Threshold, true);
-                        existingBrainTest24.notes = `Student has attended ${attendanceCount} classes. Brain test needed at 24 classes.`;
-                        updatedReminders++;
-                    }
-                }
-                
-                // 2. Last 3 classes (45 classes for 48-class students)
-                const lastThreeThreshold = totalSessions - 3;
-                if (lastThreeThreshold > 0) {
-                    const brainTestLast3Id = `brain_test_${studentId}_last3`;
-                    const existingBrainTestLast3 = this.reminders.find(r => r.id === brainTestLast3Id);
+                for (const threshold of this.brainTestThresholds) {
+                    const reminderId = `brain_test_${studentId}_${threshold}`;
+                    const existingReminder = this.reminders.find(r => r.id === reminderId);
                     
-                    if (attendanceCount >= lastThreeThreshold) {
-                        if (!existingBrainTestLast3) {
+                    // For 45 classes threshold (last 3 classes), only apply to 48-class students
+                    if (threshold === 45 && totalSessions !== 48) {
+                        continue;
+                    }
+                    
+                    if (attendanceCount >= threshold) {
+                        if (!existingReminder) {
                             // Create new reminder
                             this.reminders.push({
-                                id: brainTestLast3Id,
+                                id: reminderId,
                                 studentId: studentId,
                                 studentName: student.name,
                                 type: 'brain_test',
-                                subtype: 'brain_test_last3',
-                                threshold: lastThreeThreshold,
+                                subtype: `brain_test_${threshold}`,
+                                threshold: threshold,
                                 currentCount: attendanceCount,
                                 totalSessions: totalSessions,
                                 timeSlot: student.timeSlot,
                                 status: 'pending',
                                 createdDate: new Date().toISOString(),
-                                dueDate: this.calculateDueDate(attendanceCount, lastThreeThreshold),
-                                urgency: this.calculateUrgency(attendanceCount, lastThreeThreshold, true),
-                                notes: `Student has attended ${attendanceCount} classes. Brain test needed in last 3 classes (${lastThreeThreshold}/${totalSessions}).`
+                                dueDate: this.calculateDueDate(attendanceCount, threshold),
+                                urgency: this.calculateUrgency(attendanceCount, threshold, true),
+                                notes: `Student has attended ${attendanceCount} classes. Brain test needed at ${threshold} classes.`
                             });
                             newReminders++;
-                        } else if (existingBrainTestLast3.status === 'pending') {
+                        } else if (existingReminder.status === 'pending') {
                             // Update existing reminder
-                            existingBrainTestLast3.currentCount = attendanceCount;
-                            existingBrainTestLast3.urgency = this.calculateUrgency(attendanceCount, lastThreeThreshold, true);
-                            existingBrainTestLast3.notes = `Student has attended ${attendanceCount} classes. Brain test needed in last 3 classes (${lastThreeThreshold}/${totalSessions}).`;
+                            existingReminder.currentCount = attendanceCount;
+                            existingReminder.urgency = this.calculateUrgency(attendanceCount, threshold, true);
+                            existingReminder.notes = `Student has attended ${attendanceCount} classes. Brain test needed at ${threshold} classes.`;
                             updatedReminders++;
                         }
                     }
@@ -2935,14 +2912,14 @@
                 // Group by type
                 const grouped = {
                     '24_classes': [],
-                    'last_3_classes': []
+                    '45_classes': []
                 };
                 
                 brainTestReminders.forEach(reminder => {
-                    if (reminder.subtype === 'brain_test_24') {
+                    if (reminder.threshold === 24) {
                         grouped['24_classes'].push(reminder);
-                    } else if (reminder.subtype === 'brain_test_last3') {
-                        grouped['last_3_classes'].push(reminder);
+                    } else if (reminder.threshold === 45) {
+                        grouped['45_classes'].push(reminder);
                     }
                 });
                 
@@ -2959,9 +2936,9 @@
                     report += '\n';
                 }
                 
-                if (grouped['last_3_classes'].length > 0) {
-                    report += `=== Last 3 Classes Brain Tests (${grouped['last_3_classes'].length} students) ===\n`;
-                    grouped['last_3_classes'].forEach(reminder => {
+                if (grouped['45_classes'].length > 0) {
+                    report += `=== Last 3 Classes Brain Tests (${grouped['45_classes'].length} students) ===\n`;
+                    grouped['45_classes'].forEach(reminder => {
                         const student = system.students.get(reminder.studentId);
                         const classesLeft = reminder.totalSessions - reminder.currentCount;
                         report += `• ${reminder.studentName} (${student ? student.timeSlot : 'Unknown'}) - ${classesLeft} classes left\n`;
@@ -3052,6 +3029,11 @@
                 // Initialize reminder manager
                 reminderManager.initialize();
                 reminderManager.updateReminderDisplay();
+                
+                // Auto-check reminders on initialization
+                setTimeout(() => {
+                    reminderManager.checkAllReminders();
+                }, 2000);
             }
             
             async loadFromFirestore() {
@@ -5906,10 +5888,10 @@
         function addSampleData() {
             // Add some sample students
             const sampleStudents = [
-                { name: 'John Doe', age: 12, gender: 'Male', timeSlot: 'Friday 2pm-3:30pm' },
-                { name: 'Jane Smith', age: 13, gender: 'Female', timeSlot: 'Saturday 9am-10:30am' },
-                { name: 'Michael Brown', age: 11, gender: 'Male', timeSlot: 'Saturday 11am-12:30pm' },
-                { name: 'Emily Johnson', age: 14, gender: 'Female', timeSlot: 'Sunday 9am-10:30am' }
+                { name: 'John Doe', age: 12, gender: 'Male', timeSlot: 'Friday 2pm-3:30pm', totalSessions: 48, attendanceCount: 25 },
+                { name: 'Jane Smith', age: 13, gender: 'Female', timeSlot: 'Saturday 9am-10:30am', totalSessions: 48, attendanceCount: 12 },
+                { name: 'Michael Brown', age: 11, gender: 'Male', timeSlot: 'Saturday 11am-12:30pm', totalSessions: 48, attendanceCount: 48 },
+                { name: 'Emily Johnson', age: 14, gender: 'Female', timeSlot: 'Sunday 9am-10:30am', totalSessions: 48, attendanceCount: 45 }
             ];
             
             sampleStudents.forEach((student, index) => {
@@ -5921,9 +5903,9 @@
                     gender: student.gender,
                     timeSlot: student.timeSlot,
                     enrolledDate: '2024-01-01',
-                    totalSessions: 48,
-                    attendanceCount: Math.floor(Math.random() * 30) + 10,
-                    attendanceDates: generateSampleDates(30),
+                    totalSessions: student.totalSessions,
+                    attendanceCount: student.attendanceCount,
+                    attendanceDates: generateSampleDates(student.attendanceCount),
                     createdAt: new Date().toISOString()
                 };
                 system.students.set(studentId, studentData);
@@ -5946,55 +5928,10 @@
                 system.attendanceRecords.push(record);
             }
             
-            // Add sample reminders
-            addSampleReminderData();
-        }
-        
-        // Add sample reminder data
-        function addSampleReminderData() {
-            // Add sample reminders for each student
-            system.students.forEach((student, studentId) => {
-                // Progress report reminders
-                reminderManager.reminders.push({
-                    id: `progress_report_${studentId}_12`,
-                    studentId: studentId,
-                    studentName: student.name,
-                    type: 'progress_report',
-                    subtype: 'progress_report_12',
-                    threshold: 12,
-                    currentCount: student.attendanceCount,
-                    totalSessions: student.totalSessions,
-                    timeSlot: student.timeSlot,
-                    status: 'pending',
-                    createdDate: new Date().toISOString(),
-                    dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-                    urgency: 'normal',
-                    notes: `Student has attended ${student.attendanceCount} classes. Progress report needed for 12 classes.`
-                });
-                
-                // Brain test reminder
-                if (student.attendanceCount >= 24) {
-                    reminderManager.reminders.push({
-                        id: `brain_test_${studentId}_24`,
-                        studentId: studentId,
-                        studentName: student.name,
-                        type: 'brain_test',
-                        subtype: 'brain_test_24',
-                        threshold: 24,
-                        currentCount: student.attendanceCount,
-                        totalSessions: student.totalSessions,
-                        timeSlot: student.timeSlot,
-                        status: 'pending',
-                        createdDate: new Date().toISOString(),
-                        dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-                        urgency: 'urgent',
-                        notes: `Student has attended ${student.attendanceCount} classes. Brain test needed at 24 classes.`
-                    });
-                }
-            });
-            
-            // Save reminders
-            reminderManager.saveRemindersToStorage();
+            // Auto-check reminders for sample data
+            setTimeout(() => {
+                reminderManager.checkAllReminders();
+            }, 1000);
         }
         
         // Generate sample attendance dates

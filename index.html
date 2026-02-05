@@ -1194,94 +1194,6 @@
             font-weight: 600;
         }
 
-        /* Enroll Month Group Styles */
-        .enroll-month-group {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            border-left: 4px solid #3498db;
-        }
-        
-        .enroll-month-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .enroll-month-title {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: var(--dark);
-        }
-        
-        .enroll-month-stats {
-            display: flex;
-            gap: 15px;
-            font-size: 0.9em;
-            color: var(--gray);
-        }
-        
-        .enroll-month-content {
-            display: none;
-        }
-        
-        .enroll-month-content.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .enroll-month-toggle {
-            background: #e8f4fd;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .enroll-month-toggle:hover {
-            background: #d1e7ff;
-            transform: rotate(90deg);
-        }
-        
-        .enroll-month-tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .enroll-month-tab {
-            padding: 10px 20px;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            border: 1px solid var(--border);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        
-        .enroll-month-tab:hover {
-            background: rgba(52, 152, 219, 0.1);
-            border-color: #3498db;
-        }
-        
-        .enroll-month-tab.active {
-            background: #3498db;
-            color: white;
-            border-color: #3498db;
-        }
-
         @media (max-width: 768px) {
             .nav {
                 flex-direction: column;
@@ -1339,13 +1251,6 @@
             }
             .reminder-summary {
                 flex-direction: column;
-            }
-            .enroll-month-tabs {
-                flex-direction: column;
-            }
-            .enroll-month-stats {
-                flex-direction: column;
-                gap: 5px;
             }
         }
         
@@ -1697,16 +1602,6 @@
                     <h2>🔔 Reminders & Alerts</h2>
                     <p>Track progress reports and brain test reminders for all students.</p>
                     
-                    <!-- Enroll Month Filter -->
-                    <div class="form-group">
-                        <label class="form-label">Group by Enroll Month</label>
-                        <div class="reminder-filters" style="margin-bottom: 10px;">
-                            <button class="filter-btn active" onclick="groupRemindersBy('all')">All Students</button>
-                            <button class="filter-btn" onclick="groupRemindersBy('enrollMonth')">By Enroll Month</button>
-                            <button class="filter-btn" onclick="groupRemindersBy('timeSlot')">By Time Slot</button>
-                        </div>
-                    </div>
-                    
                     <!-- Reminder Summary Cards -->
                     <div class="reminder-summary">
                         <div class="summary-card urgent">
@@ -1737,14 +1632,8 @@
                         <button class="filter-btn" onclick="filterReminders('completed')">Completed</button>
                     </div>
                     
-                    <!-- Enroll Month Tabs (only shown when grouped by enroll month) -->
-                    <div class="enroll-month-tabs" id="enrollMonthTabs" style="display: none;"></div>
-                    
-                    <!-- Enroll Month Groups Container -->
-                    <div id="enrollMonthGroupsContainer"></div>
-                    
-                    <!-- Progress Reports Section (shown when not grouped by enroll month) -->
-                    <div id="progressReportsSection" style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 30px;">
+                    <!-- Progress Reports Section -->
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 30px;">
                         <h3 style="margin-bottom: 20px; color: var(--dark);">📋 Progress Reports</h3>
                         <p style="margin-bottom: 15px; color: var(--gray);">Progress reports are due when students reach 12, 24, 26, and 48 classes.</p>
                         
@@ -1753,8 +1642,8 @@
                         </div>
                     </div>
                     
-                    <!-- Brain Test Section (shown when not grouped by enroll month) -->
-                    <div id="brainTestsSection" style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 30px;">
+                    <!-- Brain Test Section -->
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 30px;">
                         <h3 style="margin-bottom: 20px; color: var(--dark);">🧠 Brain Tests</h3>
                         <p style="margin-bottom: 15px; color: var(--gray);">Brain tests are due at 24 classes and the last 3 classes (based on total sessions).</p>
                         
@@ -1772,7 +1661,6 @@
                             <button class="btn btn-info" onclick="exportProgressReports()">📄 Export Progress Reports</button>
                             <button class="btn" onclick="exportBrainTests()">🧠 Export Brain Tests</button>
                             <button class="btn btn-success" onclick="exportAllReminders()">📋 Export All Reminders</button>
-                            <button class="btn btn-secondary" onclick="exportRemindersByEnrollMonth()">📅 Export by Enroll Month</button>
                         </div>
                     </div>
                 </div>
@@ -2007,9 +1895,6 @@
         let currentReminderFilter = 'all';
         let allReminders = [];
         let processedReminders = new Set(); // Store processed reminder IDs
-        
-        // Enroll month grouping
-        let currentGroupBy = 'all'; // 'all', 'enrollMonth', 'timeSlot'
 
         // 日期修复工具类
         class DateFixer {
@@ -2121,7 +2006,6 @@
                                 studentId: student.id,
                                 studentName: student.name,
                                 studentTimeSlot: student.timeSlot,
-                                studentEnrollMonth: this.getEnrollMonth(student.enrolledDate),
                                 type: 'progress',
                                 threshold: threshold,
                                 attendanceCount: attendanceCount,
@@ -2148,7 +2032,6 @@
                             studentId: student.id,
                             studentName: student.name,
                             studentTimeSlot: student.timeSlot,
-                            studentEnrollMonth: this.getEnrollMonth(student.enrolledDate),
                             type: 'brain',
                             threshold: 24,
                             attendanceCount: attendanceCount,
@@ -2177,7 +2060,6 @@
                             studentId: student.id,
                             studentName: student.name,
                             studentTimeSlot: student.timeSlot,
-                            studentEnrollMonth: this.getEnrollMonth(student.enrolledDate),
                             type: 'brain',
                             threshold: 'last3',
                             attendanceCount: attendanceCount,
@@ -2193,13 +2075,6 @@
                 }
                 
                 return reminders;
-            }
-            
-            // Get enroll month from date string (YYYY-MM)
-            getEnrollMonth(dateString) {
-                if (!dateString) return 'Unknown';
-                // Extract YYYY-MM from date string
-                return dateString.substring(0, 7);
             }
             
             // Check if a reminder has been marked as completed
@@ -2289,79 +2164,9 @@
                 }
             }
             
-            // Group reminders by enroll month
-            groupRemindersByEnrollMonth() {
-                const groups = {};
-                
-                this.reminders.forEach(reminder => {
-                    const month = reminder.studentEnrollMonth || 'Unknown';
-                    if (!groups[month]) {
-                        groups[month] = {
-                            month: month,
-                            reminders: [],
-                            progressCount: 0,
-                            brainCount: 0,
-                            urgentCount: 0,
-                            studentCount: new Set()
-                        };
-                    }
-                    
-                    groups[month].reminders.push(reminder);
-                    if (reminder.type === 'progress') groups[month].progressCount++;
-                    if (reminder.type === 'brain') groups[month].brainCount++;
-                    if (reminder.isUrgent) groups[month].urgentCount++;
-                    groups[month].studentCount.add(reminder.studentId);
-                });
-                
-                // Convert studentCount Set to number
-                Object.keys(groups).forEach(month => {
-                    groups[month].studentCount = groups[month].studentCount.size;
-                });
-                
-                // Sort months in descending order (newest first)
-                const sortedGroups = {};
-                Object.keys(groups).sort((a, b) => b.localeCompare(a)).forEach(month => {
-                    sortedGroups[month] = groups[month];
-                });
-                
-                return sortedGroups;
-            }
-            
-            // Group reminders by time slot
-            groupRemindersByTimeSlot() {
-                const groups = {};
-                
-                this.reminders.forEach(reminder => {
-                    const timeSlot = reminder.studentTimeSlot || 'Unknown';
-                    if (!groups[timeSlot]) {
-                        groups[timeSlot] = {
-                            timeSlot: timeSlot,
-                            reminders: [],
-                            progressCount: 0,
-                            brainCount: 0,
-                            urgentCount: 0,
-                            studentCount: new Set()
-                        };
-                    }
-                    
-                    groups[timeSlot].reminders.push(reminder);
-                    if (reminder.type === 'progress') groups[timeSlot].progressCount++;
-                    if (reminder.type === 'brain') groups[timeSlot].brainCount++;
-                    if (reminder.isUrgent) groups[timeSlot].urgentCount++;
-                    groups[timeSlot].studentCount.add(reminder.studentId);
-                });
-                
-                // Convert studentCount Set to number
-                Object.keys(groups).forEach(timeSlot => {
-                    groups[timeSlot].studentCount = groups[timeSlot].studentCount.size;
-                });
-                
-                return groups;
-            }
-            
             // Export reminders as CSV
             exportRemindersCSV(filterType = 'all') {
-                let csv = 'Student Name,Time Slot,Enroll Month,Type,Threshold,Attendance Count,Total Sessions,Status,Message\n';
+                let csv = 'Student Name,Time Slot,Type,Threshold,Attendance Count,Total Sessions,Status,Message\n';
                 
                 const filteredReminders = this.filterReminders(filterType);
                 
@@ -2372,32 +2177,7 @@
                     const statusLabel = reminder.status === 'completed' ? 'Completed' : 
                                       reminder.status === 'dismissed' ? 'Dismissed' : 'Pending';
                     
-                    csv += `"${reminder.studentName}","${reminder.studentTimeSlot}","${reminder.studentEnrollMonth}","${typeLabel}","${thresholdLabel}",${reminder.attendanceCount},${reminder.totalSessions},"${statusLabel}","${reminder.message}"\n`;
-                });
-                
-                return csv;
-            }
-            
-            // Export reminders grouped by enroll month
-            exportRemindersByEnrollMonthCSV() {
-                let csv = 'Enroll Month,Student Count,Progress Reports,Brain Tests,Urgent Reminders\n';
-                
-                const groups = this.groupRemindersByEnrollMonth();
-                
-                Object.keys(groups).forEach(month => {
-                    const group = groups[month];
-                    csv += `"${month}",${group.studentCount},${group.progressCount},${group.brainCount},${group.urgentCount}\n`;
-                    
-                    // Add details for each reminder in this month
-                    group.reminders.forEach(reminder => {
-                        const typeLabel = reminder.type === 'progress' ? 'Progress Report' : 'Brain Test';
-                        const thresholdLabel = reminder.type === 'brain' && reminder.threshold === 'last3' ? 
-                                              'Last 3 Classes' : `${reminder.threshold} Classes`;
-                        const statusLabel = reminder.status === 'completed' ? 'Completed' : 
-                                          reminder.status === 'dismissed' ? 'Dismissed' : 'Pending';
-                        
-                        csv += `,"${reminder.studentName}","${reminder.studentTimeSlot}","${typeLabel}","${thresholdLabel}",${reminder.attendanceCount},${reminder.totalSessions},"${statusLabel}"\n`;
-                    });
+                    csv += `"${reminder.studentName}","${reminder.studentTimeSlot}","${typeLabel}","${thresholdLabel}",${reminder.attendanceCount},${reminder.totalSessions},"${statusLabel}","${reminder.message}"\n`;
                 });
                 
                 return csv;
@@ -3109,20 +2889,6 @@
                 
                 return recalculatedCount;
             }
-            
-            // Get unique enroll months from all students
-            getEnrollMonths() {
-                const months = new Set();
-                for (const student of this.students.values()) {
-                    if (student.enrolledDate) {
-                        // Extract YYYY-MM from enrolled date
-                        const month = student.enrolledDate.substring(0, 7);
-                        months.add(month);
-                    }
-                }
-                // Sort in descending order (newest first)
-                return Array.from(months).sort((a, b) => b.localeCompare(a));
-            }
         }
 
         // Create system instance
@@ -3130,7 +2896,7 @@
 
         // ==================== Reminder Functions ====================
         
-        // Update reminders display based on grouping
+        // Update reminders display
         function updateRemindersDisplay() {
             // Calculate all reminders
             allReminders = system.reminderManager.calculateAllReminders();
@@ -3146,309 +2912,47 @@
             // Update dashboard count
             document.getElementById('activeRemindersCount').textContent = stats.total;
             
-            // Show/hide appropriate sections based on grouping
-            const progressSection = document.getElementById('progressReportsSection');
-            const brainSection = document.getElementById('brainTestsSection');
-            const enrollMonthTabs = document.getElementById('enrollMonthTabs');
-            const enrollMonthContainer = document.getElementById('enrollMonthGroupsContainer');
-            
-            if (currentGroupBy === 'enrollMonth') {
-                // Show enroll month grouping
-                progressSection.style.display = 'none';
-                brainSection.style.display = 'none';
-                enrollMonthTabs.style.display = 'flex';
-                
-                displayRemindersByEnrollMonth();
-            } else if (currentGroupBy === 'timeSlot') {
-                // Show time slot grouping
-                progressSection.style.display = 'none';
-                brainSection.style.display = 'none';
-                enrollMonthTabs.style.display = 'none';
-                
-                displayRemindersByTimeSlot();
-            } else {
-                // Show normal view (no grouping)
-                progressSection.style.display = 'block';
-                brainSection.style.display = 'block';
-                enrollMonthTabs.style.display = 'none';
-                enrollMonthContainer.innerHTML = '';
-                
-                // Filter reminders based on current filter
-                const filteredReminders = system.reminderManager.filterReminders(currentReminderFilter);
-                
-                // Clear containers
-                document.getElementById('progressReportsContainer').innerHTML = '';
-                document.getElementById('brainTestsContainer').innerHTML = '';
-                
-                // Separate reminders by type
-                const progressReminders = filteredReminders.filter(r => r.type === 'progress');
-                const brainReminders = filteredReminders.filter(r => r.type === 'brain');
-                
-                // Display progress reports
-                if (progressReminders.length === 0) {
-                    document.getElementById('progressReportsContainer').innerHTML = 
-                        '<div style="text-align: center; padding: 40px; color: var(--gray);">' +
-                        '<p>No progress report reminders found.</p>' +
-                        '<p>Reminders will appear when students reach 12, 24, 26, or 48 classes.</p>' +
-                        '</div>';
-                } else {
-                    progressReminders.forEach(reminder => {
-                        createReminderCard(reminder, 'progressReportsContainer');
-                    });
-                }
-                
-                // Display brain tests
-                if (brainReminders.length === 0) {
-                    document.getElementById('brainTestsContainer').innerHTML = 
-                        '<div style="text-align: center; padding: 40px; color: var(--gray);">' +
-                        '<p>No brain test reminders found.</p>' +
-                        '<p>Reminders will appear when students reach 24 classes or the last 3 classes.</p>' +
-                        '</div>';
-                } else {
-                    brainReminders.forEach(reminder => {
-                        createReminderCard(reminder, 'brainTestsContainer');
-                    });
-                }
-            }
-        }
-        
-        // Display reminders grouped by enroll month
-        function displayRemindersByEnrollMonth() {
-            const container = document.getElementById('enrollMonthGroupsContainer');
-            container.innerHTML = '';
-            
-            // Get reminders grouped by enroll month
-            const groups = system.reminderManager.groupRemindersByEnrollMonth();
-            
-            // Create tabs for each month
-            const tabsContainer = document.getElementById('enrollMonthTabs');
-            tabsContainer.innerHTML = '<button class="enroll-month-tab active" onclick="showEnrollMonthGroup(\'all\')">All Months</button>';
-            
-            Object.keys(groups).forEach(month => {
-                const group = groups[month];
-                const tab = document.createElement('button');
-                tab.className = 'enroll-month-tab';
-                tab.textContent = `${month} (${group.reminders.length})`;
-                tab.onclick = () => showEnrollMonthGroup(month);
-                tabsContainer.appendChild(tab);
-            });
-            
-            // Display all groups initially
-            showEnrollMonthGroup('all');
-        }
-        
-        // Show specific enroll month group or all groups
-        function showEnrollMonthGroup(month) {
-            const container = document.getElementById('enrollMonthGroupsContainer');
-            const tabs = document.querySelectorAll('.enroll-month-tab');
-            
-            // Update active tab
-            tabs.forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.textContent.includes(month) || (month === 'all' && tab.textContent === 'All Months')) {
-                    tab.classList.add('active');
-                }
-            });
-            
-            container.innerHTML = '';
-            
-            // Get reminders grouped by enroll month
-            const groups = system.reminderManager.groupRemindersByEnrollMonth();
-            
             // Filter reminders based on current filter
             const filteredReminders = system.reminderManager.filterReminders(currentReminderFilter);
             
-            if (month === 'all') {
-                // Show all groups
-                Object.keys(groups).forEach(monthKey => {
-                    const group = groups[monthKey];
-                    // Filter group reminders by current filter
-                    const groupFilteredReminders = group.reminders.filter(reminder => 
-                        filteredReminders.some(r => r.id === reminder.id)
-                    );
-                    
-                    if (groupFilteredReminders.length > 0) {
-                        createEnrollMonthGroup(monthKey, group, groupFilteredReminders);
-                    }
+            // Clear containers
+            document.getElementById('progressReportsContainer').innerHTML = '';
+            document.getElementById('brainTestsContainer').innerHTML = '';
+            
+            // Separate reminders by type
+            const progressReminders = filteredReminders.filter(r => r.type === 'progress');
+            const brainReminders = filteredReminders.filter(r => r.type === 'brain');
+            
+            // Display progress reports
+            if (progressReminders.length === 0) {
+                document.getElementById('progressReportsContainer').innerHTML = 
+                    '<div style="text-align: center; padding: 40px; color: var(--gray);">' +
+                    '<p>No progress report reminders found.</p>' +
+                    '<p>Reminders will appear when students reach 12, 24, 26, or 48 classes.</p>' +
+                    '</div>';
+            } else {
+                progressReminders.forEach(reminder => {
+                    createReminderCard(reminder, 'progressReportsContainer');
                 });
+            }
+            
+            // Display brain tests
+            if (brainReminders.length === 0) {
+                document.getElementById('brainTestsContainer').innerHTML = 
+                    '<div style="text-align: center; padding: 40px; color: var(--gray);">' +
+                    '<p>No brain test reminders found.</p>' +
+                    '<p>Reminders will appear when students reach 24 classes or the last 3 classes.</p>' +
+                    '</div>';
             } else {
-                // Show specific month group
-                const group = groups[month];
-                if (group) {
-                    // Filter group reminders by current filter
-                    const groupFilteredReminders = group.reminders.filter(reminder => 
-                        filteredReminders.some(r => r.id === reminder.id)
-                    );
-                    
-                    if (groupFilteredReminders.length > 0) {
-                        createEnrollMonthGroup(month, group, groupFilteredReminders);
-                    } else {
-                        container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--gray);">
-                            <p>No reminders found for ${month} with current filter.</p>
-                        </div>`;
-                    }
-                }
-            }
-            
-            if (container.innerHTML === '') {
-                container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--gray);">
-                    <p>No reminders found with current filter.</p>
-                </div>`;
-            }
-        }
-        
-        // Create enroll month group display
-        function createEnrollMonthGroup(month, group, filteredReminders) {
-            const container = document.getElementById('enrollMonthGroupsContainer');
-            
-            const groupDiv = document.createElement('div');
-            groupDiv.className = 'enroll-month-group';
-            
-            // Separate reminders by type
-            const progressReminders = filteredReminders.filter(r => r.type === 'progress');
-            const brainReminders = filteredReminders.filter(r => r.type === 'brain');
-            
-            // Format month for display
-            const monthDate = new Date(month + '-01');
-            const monthDisplay = monthDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
-            
-            groupDiv.innerHTML = `
-                <div class="enroll-month-header">
-                    <div class="enroll-month-title">📅 ${monthDisplay} (Enrolled)</div>
-                    <div class="enroll-month-stats">
-                        <span>${group.studentCount} Students</span>
-                        <span>${progressReminders.length} Progress Reports</span>
-                        <span>${brainReminders.length} Brain Tests</span>
-                        <span>${group.urgentCount} Urgent</span>
-                    </div>
-                    <button class="enroll-month-toggle" onclick="toggleEnrollMonthGroup(this)">▼</button>
-                </div>
-                <div class="enroll-month-content active">
-                    ${progressReminders.length > 0 ? `
-                        <h4 style="margin: 15px 0 10px 0; color: var(--dark);">📋 Progress Reports</h4>
-                        <div id="progress-${month}" class="reminders-container"></div>
-                    ` : ''}
-                    ${brainReminders.length > 0 ? `
-                        <h4 style="margin: 15px 0 10px 0; color: var(--dark);">🧠 Brain Tests</h4>
-                        <div id="brain-${month}" class="reminders-container"></div>
-                    ` : ''}
-                    ${filteredReminders.length === 0 ? `
-                        <div style="text-align: center; padding: 20px; color: var(--gray);">
-                            <p>No reminders in this category.</p>
-                        </div>
-                    ` : ''}
-                </div>
-            `;
-            
-            container.appendChild(groupDiv);
-            
-            // Add reminder cards
-            progressReminders.forEach(reminder => {
-                createReminderCard(reminder, `progress-${month}`);
-            });
-            
-            brainReminders.forEach(reminder => {
-                createReminderCard(reminder, `brain-${month}`);
-            });
-        }
-        
-        // Display reminders grouped by time slot
-        function displayRemindersByTimeSlot() {
-            const container = document.getElementById('enrollMonthGroupsContainer');
-            container.innerHTML = '';
-            
-            // Get reminders grouped by time slot
-            const groups = system.reminderManager.groupRemindersByTimeSlot();
-            
-            // Filter reminders based on current filter
-            const filteredReminders = system.reminderManager.filterReminders(currentReminderFilter);
-            
-            Object.keys(groups).forEach(timeSlot => {
-                const group = groups[timeSlot];
-                // Filter group reminders by current filter
-                const groupFilteredReminders = group.reminders.filter(reminder => 
-                    filteredReminders.some(r => r.id === reminder.id)
-                );
-                
-                if (groupFilteredReminders.length > 0) {
-                    createTimeSlotGroup(timeSlot, group, groupFilteredReminders);
-                }
-            });
-            
-            if (container.innerHTML === '') {
-                container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--gray);">
-                    <p>No reminders found with current filter.</p>
-                </div>`;
-            }
-        }
-        
-        // Create time slot group display
-        function createTimeSlotGroup(timeSlot, group, filteredReminders) {
-            const container = document.getElementById('enrollMonthGroupsContainer');
-            
-            const groupDiv = document.createElement('div');
-            groupDiv.className = 'enroll-month-group';
-            groupDiv.style.borderLeftColor = 'var(--primary)';
-            
-            // Separate reminders by type
-            const progressReminders = filteredReminders.filter(r => r.type === 'progress');
-            const brainReminders = filteredReminders.filter(r => r.type === 'brain');
-            
-            groupDiv.innerHTML = `
-                <div class="enroll-month-header">
-                    <div class="enroll-month-title">⏰ ${timeSlot}</div>
-                    <div class="enroll-month-stats">
-                        <span>${group.studentCount} Students</span>
-                        <span>${progressReminders.length} Progress Reports</span>
-                        <span>${brainReminders.length} Brain Tests</span>
-                        <span>${group.urgentCount} Urgent</span>
-                    </div>
-                    <button class="enroll-month-toggle" onclick="toggleEnrollMonthGroup(this)">▼</button>
-                </div>
-                <div class="enroll-month-content active">
-                    ${progressReminders.length > 0 ? `
-                        <h4 style="margin: 15px 0 10px 0; color: var(--dark);">📋 Progress Reports</h4>
-                        <div id="progress-${timeSlot.replace(/\s+/g, '-')}" class="reminders-container"></div>
-                    ` : ''}
-                    ${brainReminders.length > 0 ? `
-                        <h4 style="margin: 15px 0 10px 0; color: var(--dark);">🧠 Brain Tests</h4>
-                        <div id="brain-${timeSlot.replace(/\s+/g, '-')}" class="reminders-container"></div>
-                    ` : ''}
-                </div>
-            `;
-            
-            container.appendChild(groupDiv);
-            
-            // Add reminder cards
-            progressReminders.forEach(reminder => {
-                createReminderCard(reminder, `progress-${timeSlot.replace(/\s+/g, '-')}`);
-            });
-            
-            brainReminders.forEach(reminder => {
-                createReminderCard(reminder, `brain-${timeSlot.replace(/\s+/g, '-')}`);
-            });
-        }
-        
-        // Toggle enroll month group visibility
-        function toggleEnrollMonthGroup(button) {
-            const header = button.parentElement;
-            const content = header.nextElementSibling;
-            
-            if (content.classList.contains('active')) {
-                content.classList.remove('active');
-                content.style.display = 'none';
-                button.textContent = '▶';
-            } else {
-                content.classList.add('active');
-                content.style.display = 'block';
-                button.textContent = '▼';
+                brainReminders.forEach(reminder => {
+                    createReminderCard(reminder, 'brainTestsContainer');
+                });
             }
         }
         
         // Create reminder card
         function createReminderCard(reminder, containerId) {
             const container = document.getElementById(containerId);
-            if (!container) return;
             
             const card = document.createElement('div');
             card.className = `reminder-card ${reminder.type}-report`;
@@ -3487,7 +2991,6 @@
                             <span class="reminder-type type-${reminder.type}">${reminder.type === 'progress' ? 'Progress' : 'Brain Test'}</span>
                         </div>
                         <div class="reminder-student">${reminder.studentName} - ${reminder.studentTimeSlot}</div>
-                        ${reminder.studentEnrollMonth ? `<div class="reminder-meta">Enrolled: ${reminder.studentEnrollMonth}</div>` : ''}
                     </div>
                     <div class="reminder-status-toggle">
                         <span class="status-indicator" style="background-color: ${statusColor};"></span>
@@ -3521,25 +3024,12 @@
             container.appendChild(card);
         }
         
-        // Group reminders by criteria
-        function groupRemindersBy(criteria) {
-            currentGroupBy = criteria;
-            
-            // Update group buttons
-            document.querySelectorAll('.reminder-filters button[onclick^="groupRemindersBy"]').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            updateRemindersDisplay();
-        }
-        
         // Filter reminders
         function filterReminders(filterType) {
             currentReminderFilter = filterType;
             
             // Update filter buttons
-            document.querySelectorAll('.filter-btn:not([onclick^="groupRemindersBy"])').forEach(btn => {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
@@ -3600,13 +3090,6 @@
             const csv = system.reminderManager.exportRemindersCSV('all');
             downloadFile(csv, 'genius_mind_all_reminders.csv', 'text/csv');
             showToast('All reminders exported successfully!', 'success');
-        }
-        
-        // Export reminders by enroll month
-        function exportRemindersByEnrollMonth() {
-            const csv = system.reminderManager.exportRemindersByEnrollMonthCSV();
-            downloadFile(csv, 'genius_mind_reminders_by_enroll_month.csv', 'text/csv');
-            showToast('Reminders by enroll month exported successfully!', 'success');
         }
         
         // ==================== PDF Report Generation ====================

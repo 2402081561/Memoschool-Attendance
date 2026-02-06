@@ -633,6 +633,81 @@
             background: var(--danger);
         }
         
+        /* ========== 提醒卡片样式 ========== */
+        .reminder-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--warning);
+            transition: var(--transition);
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .reminder-card.priority {
+            border-left-color: var(--danger);
+            background: linear-gradient(135deg, #fff9f0 0%, #fff5e6 100%);
+        }
+        
+        .reminder-card.resolved {
+            border-left-color: var(--success);
+            background: linear-gradient(135deg, #f0fff4 0%, #e6fff0 100%);
+            opacity: 0.9;
+        }
+        
+        .reminder-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        
+        .reminder-card .reminder-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .reminder-card .reminder-details {
+            color: var(--gray);
+            font-size: 0.9em;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .reminder-card .reminder-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85em;
+        }
+        
+        .reminder-card .reminder-stat {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .reminder-card .reminder-stat .label {
+            color: var(--gray);
+            font-size: 0.8em;
+        }
+        
+        .reminder-card .reminder-stat .value {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .reminder-card .reminder-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+            justify-content: flex-end;
+        }
+        
         /* ========== 空状态样式 ========== */
         .empty-state {
             text-align: center;
@@ -767,6 +842,143 @@
             margin-bottom: 25px;
         }
         
+        /* ========== 提醒徽章样式 ========== */
+        .reminder-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        /* ========== 提醒过滤器样式 ========== */
+        .reminder-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .reminder-filter-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+        }
+        
+        .reminder-filter-btn:hover {
+            background: #f8f9fa;
+        }
+        
+        .reminder-filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* ========== 月份分组样式 ========== */
+        .month-group-container {
+            margin-bottom: 25px;
+        }
+        
+        .month-group-header {
+            background: linear-gradient(135deg, var(--info), var(--secondary));
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .month-group-header h3 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        
+        .month-group-badge {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .month-group-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 15px;
+        }
+        
+        /* ========== 提醒摘要样式 ========== */
+        .reminder-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .reminder-summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--primary);
+        }
+        
+        .reminder-summary-card.priority {
+            border-top-color: var(--danger);
+        }
+        
+        .reminder-summary-card.warning {
+            border-top-color: var(--warning);
+        }
+        
+        .reminder-summary-card.success {
+            border-top-color: var(--success);
+        }
+        
+        .reminder-summary-card .count {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .reminder-summary-card.priority .count {
+            color: var(--danger);
+        }
+        
+        .reminder-summary-card.warning .count {
+            color: var(--warning);
+        }
+        
+        .reminder-summary-card.success .count {
+            color: var(--success);
+        }
+        
         /* ========== 性能优化样式 ========== */
         .performance-optimized {
             will-change: transform;
@@ -815,7 +1027,9 @@
         body.dark-mode .stat-card,
         body.dark-mode .quick-stat,
         body.dark-mode .student-card-enhanced,
-        body.dark-mode .collapse-panel {
+        body.dark-mode .collapse-panel,
+        body.dark-mode .reminder-card,
+        body.dark-mode .reminder-summary-card {
             background: #2d3748;
             color: #f0f0f0;
             border-color: #4a5568;
@@ -824,6 +1038,14 @@
         body.dark-mode .collapse-header {
             background: #4a5568;
             border-color: #718096;
+        }
+        
+        body.dark-mode .reminder-card.priority {
+            background: linear-gradient(135deg, #4a3c2a 0%, #3d2e1a 100%);
+        }
+        
+        body.dark-mode .reminder-card.resolved {
+            background: linear-gradient(135deg, #2d3a2d 0%, #233123 100%);
         }
         
         /* ========== 移动端优化样式 ========== */
@@ -901,6 +1123,14 @@
             .modal-content {
                 max-height: 85vh;
             }
+            
+            .reminder-summary {
+                grid-template-columns: 1fr;
+            }
+            
+            .month-group-content {
+                grid-template-columns: 1fr;
+            }
         }
         
         @media (max-width: 480px) {
@@ -924,6 +1154,10 @@
             .tab {
                 padding: 8px 14px;
                 font-size: 13px;
+            }
+            
+            .reminder-filters {
+                flex-direction: column;
             }
         }
         
@@ -958,6 +1192,98 @@
                 box-shadow: none !important;
                 max-width: 100% !important;
             }
+        }
+        
+        /* ========== 可点击的出勤日期样式 ========== */
+        .attendance-date {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .attendance-date:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .attendance-date.deleting {
+            background-color: #ffebee !important;
+            border-color: #f44336 !important;
+            animation: pulseDelete 1s infinite;
+        }
+        
+        @keyframes pulseDelete {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .date-delete-btn {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 18px;
+            height: 18px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .attendance-date:hover .date-delete-btn {
+            opacity: 1;
+        }
+        
+        .date-delete-btn:hover {
+            background: #c0392b;
+            transform: scale(1.1);
+        }
+        
+        /* ========== 删除确认对话框样式 ========== */
+        .delete-confirmation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .delete-confirmation-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .delete-confirmation-content h3 {
+            color: var(--danger);
+            margin-bottom: 15px;
+        }
+        
+        .delete-confirmation-content p {
+            margin-bottom: 25px;
+            color: var(--gray);
+        }
+        
+        .delete-confirmation-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
         }
     </style>
 </head>
@@ -1030,6 +1356,10 @@
                 <button onclick="showSection('attendance')" data-tooltip="Record Attendance"><i class="fas fa-clipboard-check"></i><span class="mobile-hide"> Attendance</span></button>
                 <button onclick="showSection('records')" data-tooltip="View Records"><i class="fas fa-history"></i><span class="mobile-hide"> Records</span></button>
                 <button onclick="showSection('timeslots')" data-tooltip="Time Slots"><i class="fas fa-clock"></i><span class="mobile-hide"> Time Slots</span></button>
+                <button onclick="showSection('reminders')" data-tooltip="Progress & Test Reminders">
+                    <i class="fas fa-bell"></i><span class="mobile-hide"> Reminders</span>
+                    <div id="reminderBadge" class="reminder-badge" style="display: none;"></div>
+                </button>
                 <button onclick="showSection('tools')" data-tooltip="System Tools"><i class="fas fa-tools"></i><span class="mobile-hide"> Tools</span></button>
                 <button onclick="showSection('exports')" data-tooltip="Export Data"><i class="fas fa-download"></i><span class="mobile-hide"> Export</span></button>
                 <button onclick="toggleDarkMode()" data-tooltip="Toggle Dark Mode" style="margin-left: auto;">
@@ -1119,11 +1449,11 @@
                             </button>
                         </div>
                         <div class="feature-card">
-                            <div class="icon"><i class="fas fa-tools"></i></div>
-                            <h3>System Tools</h3>
-                            <p>Fix data issues, clean duplicates, and optimize system performance.</p>
-                            <button class="btn" onclick="showSection('tools')">
-                                <i class="fas fa-wrench"></i> Open Tools
+                            <div class="icon"><i class="fas fa-bell"></i></div>
+                            <h3>Progress Reminders</h3>
+                            <p>Get automatic reminders for progress reports and brain tests.</p>
+                            <button class="btn" onclick="showSection('reminders')">
+                                <i class="fas fa-bell"></i> View Reminders
                             </button>
                         </div>
                     </div>
@@ -1412,6 +1742,96 @@
                     <div id="timeSlotsContainer"></div>
                 </div>
 
+                <!-- Reminders Section -->
+                <div id="reminders" class="section">
+                    <h2><i class="fas fa-bell"></i> Progress & Test Reminders</h2>
+                    <p>Automated reminders for student progress reports and brain tests.</p>
+                    
+                    <!-- Reminder Summary -->
+                    <div class="reminder-summary" id="reminderSummary">
+                        <!-- Summary will be populated by JavaScript -->
+                    </div>
+                    
+                    <!-- Reminder Filters -->
+                    <div class="reminder-filters">
+                        <button class="reminder-filter-btn active" onclick="filterReminders('all')">
+                            <i class="fas fa-list"></i> All Reminders
+                        </button>
+                        <button class="reminder-filter-btn" onclick="filterReminders('unresolved')">
+                            <i class="fas fa-clock"></i> Unresolved
+                        </button>
+                        <button class="reminder-filter-btn" onclick="filterReminders('progress')">
+                            <i class="fas fa-chart-line"></i> Progress Reports
+                        </button>
+                        <button class="reminder-filter-btn" onclick="filterReminders('brainTest')">
+                            <i class="fas fa-brain"></i> Brain Tests
+                        </button>
+                        <button class="reminder-filter-btn" onclick="filterReminders('priority')">
+                            <i class="fas fa-exclamation-circle"></i> Priority
+                        </button>
+                        <button class="reminder-filter-btn" onclick="filterReminders('byMonth')">
+                            <i class="fas fa-calendar-alt"></i> By Enrolled Month
+                        </button>
+                    </div>
+                    
+                    <!-- 月份选择器 (默认隐藏) -->
+                    <div id="monthSelector" class="form-group" style="display: none; margin-bottom: 20px;">
+                        <label class="form-label"><i class="fas fa-filter"></i> Filter by Enrollment Month</label>
+                        <select id="enrolledMonthFilter" class="form-input" onchange="filterByEnrolledMonth()">
+                            <option value="all">All Months</option>
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Active (Unresolved) Reminders Container -->
+                    <div class="reminders-section">
+                        <h3><i class="fas fa-clock"></i> Active Reminders (<span id="activeRemindersCount">0</span>)</h3>
+                        <div id="activeRemindersContainer">
+                            <!-- Active reminders will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- Resolved Reminders Container (Collapsible) -->
+                    <div class="collapse-panel" id="resolvedRemindersPanel" style="margin-top: 30px;">
+                        <div class="collapse-header" onclick="toggleCollapse('resolvedRemindersContent')">
+                            <span><i class="fas fa-check-circle"></i> Resolved Reminders (<span id="resolvedRemindersCount">0</span>)</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="collapse-content" id="resolvedRemindersContent" style="display: none;">
+                            <div id="resolvedRemindersContainer">
+                                <!-- Resolved reminders will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="batch-actions" style="margin-top: 25px;">
+                        <button class="btn btn-info" onclick="checkAllReminders()">
+                            <i class="fas fa-sync-alt"></i> Check for New Reminders
+                        </button>
+                        <button class="btn btn-success" onclick="markAllAsResolved()">
+                            <i class="fas fa-check-double"></i> Mark All as Resolved
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportReminders()">
+                            <i class="fas fa-download"></i> Export Reminders
+                        </button>
+                        <button class="btn btn-warning" onclick="clearResolvedReminders()">
+                            <i class="fas fa-trash"></i> Clear Resolved
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Tools Section -->
                 <div id="tools" class="section">
                     <h2><i class="fas fa-tools"></i> System Tools</h2>
@@ -1549,11 +1969,47 @@
         </div>
     </div>
 
+    <!-- Class Attendance Details Modal -->
+    <div id="classAttendanceModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div style="padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin: 0; font-size: 1.3em; color: var(--dark);">
+                        <i class="fas fa-calendar-check"></i> Class Attendance Details
+                    </h3>
+                    <button class="btn" onclick="closeClassAttendanceModal()" style="padding: 8px 12px; background: var(--gray);">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div id="classAttendanceContent">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Loading Overlay -->
     <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; color: white; font-size: 18px;">
         <div style="text-align: center;">
             <div class="loading" style="width: 40px; height: 40px; border-width: 4px; margin: 0 auto 15px;"></div>
             <div id="loadingMessage">Loading...</div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteConfirmationModal" class="delete-confirmation" style="display: none;">
+        <div class="delete-confirmation-content">
+            <h3><i class="fas fa-exclamation-triangle"></i> Delete Attendance Date</h3>
+            <p id="deleteConfirmationText">Are you sure you want to delete this attendance date?</p>
+            <div class="delete-confirmation-actions">
+                <button class="btn btn-danger" onclick="confirmDeleteAttendanceDate()">
+                    <i class="fas fa-trash"></i> Yes, Delete
+                </button>
+                <button class="btn btn-secondary" onclick="cancelDeleteAttendanceDate()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1634,6 +2090,10 @@
             "Sunday 4pm-5:30pm"
         ];
 
+        const PROGRESS_REPORT_THRESHOLDS = [12, 24, 26, 48];
+        const BRAIN_TEST_THRESHOLD = 24;
+        const FINAL_BRAIN_TEST_THRESHOLD = 3; // Last 3 sessions
+
         let currentSearchTerm = '';
         let currentSelectedStudentId = '';
         let selectedDates = new Set();
@@ -1641,6 +2101,16 @@
         let dateSelectionMode = '';
         let dateSelectionStudentId = '';
         let dateSelectionStudentIds = [];
+        let currentReminderFilter = 'all';
+        let currentEnrolledMonth = 'all';
+        let currentEditingRecordId = null;
+        
+        // 删除相关变量
+        let pendingDelete = {
+            studentId: '',
+            date: '',
+            element: null
+        };
 
         // ========== 系统类 ==========
         class MemoschoolAttendanceSystem {
@@ -1648,6 +2118,7 @@
                 this.students = new Map();
                 this.attendanceRecords = [];
                 this.timeSlots = [];
+                this.reminders = new Map();
                 this.userId = null;
                 this.isOnline = false;
             }
@@ -1656,6 +2127,8 @@
                 this.userId = userId;
                 await this.loadFromFirestore();
                 this.startRealtimeSync();
+                // 检查提醒
+                this.checkAllReminders();
             }
             
             async loadFromFirestore() {
@@ -1697,6 +2170,15 @@
                         // Sort immediately after loading
                         this.sortTimeSlots();
                     }
+                    
+                    // Load reminders
+                    const remindersSnapshot = await db.collection('users').doc(this.userId)
+                        .collection('reminders').get();
+                    
+                    this.reminders.clear();
+                    remindersSnapshot.forEach(doc => {
+                        this.reminders.set(doc.id, doc.data());
+                    });
                     
                     updateSyncStatus('✅ Data loaded from cloud', 'synced');
                     this.isOnline = true;
@@ -1866,6 +2348,8 @@
                         });
                         updateUI();
                         updateSyncStatus('✅ Real-time sync active', 'synced');
+                        // 检查提醒
+                        this.checkAllReminders();
                     });
                 
                 // Real-time listener for attendance records
@@ -1874,6 +2358,8 @@
                         this.attendanceRecords = snapshot.docs.map(doc => doc.data());
                         updateUI();
                         updateSyncStatus('✅ Real-time sync active', 'synced');
+                        // 检查提醒
+                        this.checkAllReminders();
                     });
                 
                 // Real-time listener for time slots
@@ -1886,6 +2372,17 @@
                         // Sort after each update
                         this.sortTimeSlots();
                         updateUI();
+                        updateSyncStatus('✅ Real-time sync active', 'synced');
+                    });
+                
+                // Real-time listener for reminders
+                db.collection('users').doc(this.userId).collection('reminders')
+                    .onSnapshot((snapshot) => {
+                        this.reminders.clear();
+                        snapshot.forEach(doc => {
+                            this.reminders.set(doc.id, doc.data());
+                        });
+                        updateRemindersUI();
                         updateSyncStatus('✅ Real-time sync active', 'synced');
                     });
             }
@@ -1916,6 +2413,9 @@
                     this.students.set(studentId, student);
                 }
                 
+                // 检查提醒
+                this.checkRemindersForStudent(studentId);
+                
                 return student;
             }
 
@@ -1936,6 +2436,9 @@
                 } else {
                     this.students.set(studentId, updatedStudent);
                 }
+                
+                // 检查提醒
+                this.checkRemindersForStudent(studentId);
                 
                 return updatedStudent;
             }
@@ -1997,6 +2500,9 @@
                                         attendanceCount: uniqueDates.length
                                     });
                             }
+                            
+                            // 检查提醒
+                            this.checkRemindersForStudent(studentId);
                         }
                     }
                 }
@@ -2148,7 +2654,8 @@
                         timeSlots: this.timeSlots
                     },
                     students: Array.from(this.students.values()),
-                    attendanceRecords: this.attendanceRecords
+                    attendanceRecords: this.attendanceRecords,
+                    reminders: Array.from(this.reminders.values())
                 };
                 return JSON.stringify(data, null, 2);
             }
@@ -2314,6 +2821,522 @@
                 
                 return cleanedCount;
             }
+            
+            // ========== 提醒系统方法 ==========
+            
+            // 检查所有学生的提醒
+            async checkAllReminders() {
+                console.log('🔔 Checking all reminders...');
+                
+                for (const studentId of this.students.keys()) {
+                    await this.checkRemindersForStudent(studentId);
+                }
+                
+                updateRemindersUI();
+            }
+            
+            // 检查单个学生的提醒
+            async checkRemindersForStudent(studentId) {
+                const student = this.students.get(studentId);
+                if (!student) return;
+                
+                const attendanceInfo = this.getStudentAttendance(studentId);
+                const attendedSessions = attendanceInfo.attendanceCount;
+                const totalSessions = student.totalSessions || 48;
+                
+                // 检查进度报告提醒
+                for (const threshold of PROGRESS_REPORT_THRESHOLDS) {
+                    if (attendedSessions >= threshold) {
+                        await this.createReminderIfNotExists({
+                            studentId: studentId,
+                            studentName: student.name,
+                            timeSlot: student.timeSlot,
+                            type: 'progress',
+                            threshold: threshold,
+                            currentSessions: attendedSessions,
+                            totalSessions: totalSessions,
+                            message: `Progress Report needed: ${student.name} has completed ${attendedSessions} sessions (Reached ${threshold} session milestone)`,
+                            priority: threshold >= 48 ? 'high' : 'medium'
+                        });
+                    }
+                }
+                
+                // 检查大脑测试提醒 (24节课)
+                if (attendedSessions >= BRAIN_TEST_THRESHOLD) {
+                    await this.createReminderIfNotExists({
+                        studentId: studentId,
+                        studentName: student.name,
+                        timeSlot: student.timeSlot,
+                        type: 'brainTest',
+                        threshold: BRAIN_TEST_THRESHOLD,
+                        currentSessions: attendedSessions,
+                        totalSessions: totalSessions,
+                        message: `Brain Test needed: ${student.name} has completed ${attendedSessions} sessions (Reached ${BRAIN_TEST_THRESHOLD} session milestone)`,
+                        priority: 'medium'
+                    });
+                }
+                
+                // 检查最后3节课的大脑测试提醒
+                const remainingSessions = totalSessions - attendedSessions;
+                if (remainingSessions <= FINAL_BRAIN_TEST_THRESHOLD && remainingSessions > 0) {
+                    await this.createReminderIfNotExists({
+                        studentId: studentId,
+                        studentName: student.name,
+                        timeSlot: student.timeSlot,
+                        type: 'brainTest',
+                        threshold: 'final',
+                        currentSessions: attendedSessions,
+                        totalSessions: totalSessions,
+                        message: `Final Brain Test needed: ${student.name} has ${remainingSessions} sessions remaining (Last ${FINAL_BRAIN_TEST_THRESHOLD} sessions)`,
+                        priority: 'high'
+                    });
+                }
+            }
+            
+            // 创建提醒（如果不存在）
+            async createReminderIfNotExists(reminderData) {
+                const reminderId = `${reminderData.studentId}-${reminderData.type}-${reminderData.threshold}`;
+                
+                // 检查提醒是否已存在
+                const existingReminder = this.reminders.get(reminderId);
+                if (existingReminder) {
+                    // 如果已存在但已解决，且学生已达到新的里程碑，重新激活提醒
+                    if (existingReminder.resolved && 
+                        reminderData.currentSessions > existingReminder.currentSessions) {
+                        await this.updateReminder(reminderId, {
+                            currentSessions: reminderData.currentSessions,
+                            resolved: false,
+                            resolvedAt: null,
+                            lastChecked: new Date().toISOString()
+                        });
+                    }
+                    return;
+                }
+                
+                const reminder = {
+                    id: reminderId,
+                    ...reminderData,
+                    createdAt: new Date().toISOString(),
+                    lastChecked: new Date().toISOString(),
+                    resolved: false,
+                    resolvedAt: null
+                };
+                
+                if (this.isOnline) {
+                    await db.collection('users').doc(this.userId).collection('reminders')
+                        .doc(reminderId).set(reminder);
+                } else {
+                    this.reminders.set(reminderId, reminder);
+                }
+            }
+            
+            // 更新提醒
+            async updateReminder(reminderId, updateData) {
+                const reminder = this.reminders.get(reminderId);
+                if (!reminder) return;
+                
+                const updatedReminder = {
+                    ...reminder,
+                    ...updateData,
+                    lastChecked: new Date().toISOString()
+                };
+                
+                if (this.isOnline) {
+                    await db.collection('users').doc(this.userId).collection('reminders')
+                        .doc(reminderId).update(updateData);
+                } else {
+                    this.reminders.set(reminderId, updatedReminder);
+                }
+                
+                return updatedReminder;
+            }
+            
+            // 标记提醒为已解决
+            async markReminderAsResolved(reminderId) {
+                return await this.updateReminder(reminderId, {
+                    resolved: true,
+                    resolvedAt: new Date().toISOString()
+                });
+            }
+            
+            // 标记提醒为未解决
+            async markReminderAsUnresolved(reminderId) {
+                return await this.updateReminder(reminderId, {
+                    resolved: false,
+                    resolvedAt: null
+                });
+            }
+            
+            // 删除提醒
+            async deleteReminder(reminderId) {
+                if (this.isOnline) {
+                    await db.collection('users').doc(this.userId).collection('reminders')
+                        .doc(reminderId).delete();
+                }
+                this.reminders.delete(reminderId);
+            }
+            
+            // 获取未解决的提醒
+            getUnresolvedReminders() {
+                return Array.from(this.reminders.values()).filter(reminder => !reminder.resolved);
+            }
+            
+            // 获取已解决的提醒
+            getResolvedReminders() {
+                return Array.from(this.reminders.values()).filter(reminder => reminder.resolved);
+            }
+            
+            // 获取优先提醒
+            getPriorityReminders() {
+                return Array.from(this.reminders.values()).filter(reminder => 
+                    !reminder.resolved && reminder.priority === 'high'
+                );
+            }
+            
+            // 获取进度报告提醒
+            getProgressReminders() {
+                return Array.from(this.reminders.values()).filter(reminder => 
+                    !reminder.resolved && reminder.type === 'progress'
+                );
+            }
+            
+            // 获取大脑测试提醒
+            getBrainTestReminders() {
+                return Array.from(this.reminders.values()).filter(reminder => 
+                    !reminder.resolved && reminder.type === 'brainTest'
+                );
+            }
+            
+            // 获取提醒摘要
+            getReminderSummary() {
+                const allReminders = Array.from(this.reminders.values());
+                const unresolved = allReminders.filter(r => !r.resolved);
+                const resolved = allReminders.filter(r => r.resolved);
+                const priority = unresolved.filter(r => r.priority === 'high');
+                const progress = unresolved.filter(r => r.type === 'progress');
+                const brainTest = unresolved.filter(r => r.type === 'brainTest');
+                
+                return {
+                    total: allReminders.length,
+                    unresolved: unresolved.length,
+                    resolved: resolved.length,
+                    priority: priority.length,
+                    progress: progress.length,
+                    brainTest: brainTest.length
+                };
+            }
+            
+            // 获取按入学月份分组的提醒
+            getRemindersByEnrollmentMonth() {
+                const monthGroups = {};
+                
+                for (const reminder of this.reminders.values()) {
+                    const student = this.students.get(reminder.studentId);
+                    if (!student || !student.enrolledDate) {
+                        // 如果没有入学日期，放在"未知"组
+                        if (!monthGroups.unknown) {
+                            monthGroups.unknown = [];
+                        }
+                        monthGroups.unknown.push(reminder);
+                        continue;
+                    }
+                    
+                    // 从入学日期提取月份
+                    const enrolledDate = new Date(student.enrolledDate);
+                    if (isNaN(enrolledDate.getTime())) {
+                        // 如果日期无效，放在"未知"组
+                        if (!monthGroups.unknown) {
+                            monthGroups.unknown = [];
+                        }
+                        monthGroups.unknown.push(reminder);
+                        continue;
+                    }
+                    
+                    const month = enrolledDate.getMonth() + 1; // 月份从0开始，加1得到1-12
+                    const year = enrolledDate.getFullYear();
+                    const key = `${year}-${month}`;
+                    
+                    if (!monthGroups[key]) {
+                        monthGroups[key] = [];
+                    }
+                    monthGroups[key].push(reminder);
+                }
+                
+                return monthGroups;
+            }
+            
+            // 获取特定月份的提醒
+            getRemindersByMonth(month) {
+                if (month === 'all') {
+                    return Array.from(this.reminders.values());
+                }
+                
+                const monthNum = parseInt(month);
+                const filteredReminders = [];
+                
+                for (const reminder of this.reminders.values()) {
+                    const student = this.students.get(reminder.studentId);
+                    if (!student || !student.enrolledDate) {
+                        continue;
+                    }
+                    
+                    const enrolledDate = new Date(student.enrolledDate);
+                    if (isNaN(enrolledDate.getTime())) {
+                        continue;
+                    }
+                    
+                    if (enrolledDate.getMonth() + 1 === monthNum) {
+                        filteredReminders.push(reminder);
+                    }
+                }
+                
+                return filteredReminders;
+            }
+            
+            // 导出提醒数据
+            exportRemindersToCSV() {
+                let csv = 'Type,Student Name,Time Slot,Threshold,Current Sessions,Total Sessions,Message,Priority,Status,Created At,Resolved At\n';
+                for (const reminder of this.reminders.values()) {
+                    const status = reminder.resolved ? 'Resolved' : 'Unresolved';
+                    const createdAt = new Date(reminder.createdAt).toLocaleDateString();
+                    const resolvedAt = reminder.resolvedAt ? new Date(reminder.resolvedAt).toLocaleDateString() : '';
+                    csv += `"${reminder.type}","${reminder.studentName}","${reminder.timeSlot}",${reminder.threshold},${reminder.currentSessions},${reminder.totalSessions},"${reminder.message}","${reminder.priority}","${status}","${createdAt}","${resolvedAt}"\n`;
+                }
+                return csv;
+            }
+            
+            // 清除所有已解决的提醒
+            async clearResolvedReminders() {
+                let clearedCount = 0;
+                const resolvedReminders = this.getResolvedReminders();
+                
+                for (const reminder of resolvedReminders) {
+                    if (this.isOnline) {
+                        await db.collection('users').doc(this.userId).collection('reminders')
+                            .doc(reminder.id).delete();
+                    }
+                    this.reminders.delete(reminder.id);
+                    clearedCount++;
+                }
+                
+                return clearedCount;
+            }
+            
+            // ========== 记录管理方法 ==========
+            
+            // 获取特定的出勤记录
+            getAttendanceRecord(recordId) {
+                return this.attendanceRecords.find(record => record.id === recordId);
+            }
+            
+            // 更新出勤记录
+            async updateAttendanceRecord(recordId, updatedData) {
+                const record = this.getAttendanceRecord(recordId);
+                if (!record) {
+                    throw new Error('Attendance record not found');
+                }
+                
+                // 保存旧的学生列表
+                const oldPresentStudents = [...record.presentStudents];
+                const newPresentStudents = updatedData.presentStudents || oldPresentStudents;
+                
+                // 更新记录
+                const updatedRecord = {
+                    ...record,
+                    ...updatedData,
+                    presentStudents: newPresentStudents
+                };
+                
+                // 更新数据库
+                if (this.isOnline) {
+                    await db.collection('users').doc(this.userId).collection('attendance')
+                        .doc(recordId).update(updatedData);
+                } else {
+                    const index = this.attendanceRecords.findIndex(r => r.id === recordId);
+                    if (index !== -1) {
+                        this.attendanceRecords[index] = updatedRecord;
+                    }
+                }
+                
+                // 更新学生出勤数据
+                await this.updateStudentAttendanceFromRecord(oldPresentStudents, newPresentStudents, record.date);
+                
+                return updatedRecord;
+            }
+            
+            // 更新学生出勤数据（基于记录变化）
+            async updateStudentAttendanceFromRecord(oldPresentStudents, newPresentStudents, date) {
+                // 找出被移除的学生
+                const removedStudents = oldPresentStudents.filter(
+                    studentId => !newPresentStudents.includes(studentId)
+                );
+                
+                // 找出新增的学生
+                const addedStudents = newPresentStudents.filter(
+                    studentId => !oldPresentStudents.includes(studentId)
+                );
+                
+                // 为新增的学生添加出勤日期
+                for (const studentId of addedStudents) {
+                    const student = this.students.get(studentId);
+                    if (student && date >= student.enrolledDate) {
+                        if (!student.attendanceDates) student.attendanceDates = [];
+                        
+                        // 检查该日期是否已存在
+                        if (!student.attendanceDates.includes(date)) {
+                            student.attendanceDates.push(date);
+                            
+                            // 移除重复项
+                            const uniqueDates = [...new Set(student.attendanceDates)];
+                            student.attendanceDates = uniqueDates;
+                            student.attendanceCount = uniqueDates.length;
+                            
+                            if (this.isOnline) {
+                                await db.collection('users').doc(this.userId).collection('students')
+                                    .doc(studentId).update({
+                                        attendanceDates: uniqueDates,
+                                        attendanceCount: uniqueDates.length
+                                    });
+                            }
+                            
+                            // 检查提醒
+                            this.checkRemindersForStudent(studentId);
+                        }
+                    }
+                }
+                
+                // 为被移除的学生删除出勤日期
+                for (const studentId of removedStudents) {
+                    const student = this.students.get(studentId);
+                    if (student && student.attendanceDates) {
+                        // 移除该日期
+                        const filteredDates = student.attendanceDates.filter(d => d !== date);
+                        
+                        // 只有当日期确实存在时才更新
+                        if (filteredDates.length !== student.attendanceDates.length) {
+                            student.attendanceDates = filteredDates;
+                            student.attendanceCount = filteredDates.length;
+                            
+                            if (this.isOnline) {
+                                await db.collection('users').doc(this.userId).collection('students')
+                                    .doc(studentId).update({
+                                        attendanceDates: filteredDates,
+                                        attendanceCount: filteredDates.length
+                                    });
+                            }
+                            
+                            // 检查提醒
+                            this.checkRemindersForStudent(studentId);
+                        }
+                    }
+                }
+            }
+            
+            // 删除出勤记录
+            async deleteAttendanceRecord(recordId) {
+                const record = this.getAttendanceRecord(recordId);
+                if (!record) {
+                    throw new Error('Attendance record not found');
+                }
+                
+                // 从学生出勤数据中移除该日期
+                for (const studentId of record.presentStudents) {
+                    const student = this.students.get(studentId);
+                    if (student && student.attendanceDates) {
+                        const filteredDates = student.attendanceDates.filter(d => d !== record.date);
+                        
+                        if (filteredDates.length !== student.attendanceDates.length) {
+                            student.attendanceDates = filteredDates;
+                            student.attendanceCount = filteredDates.length;
+                            
+                            if (this.isOnline) {
+                                await db.collection('users').doc(this.userId).collection('students')
+                                    .doc(studentId).update({
+                                        attendanceDates: filteredDates,
+                                        attendanceCount: filteredDates.length
+                                    });
+                            }
+                            
+                            // 检查提醒
+                            this.checkRemindersForStudent(studentId);
+                        }
+                    }
+                }
+                
+                // 删除记录
+                if (this.isOnline) {
+                    await db.collection('users').doc(this.userId).collection('attendance')
+                        .doc(recordId).delete();
+                } else {
+                    this.attendanceRecords = this.attendanceRecords.filter(r => r.id !== recordId);
+                }
+                
+                return true;
+            }
+            
+            // ========== 删除学生出勤日期方法 ==========
+            async deleteStudentAttendanceDate(studentId, dateToDelete) {
+                const student = this.students.get(studentId);
+                if (!student) {
+                    throw new Error('Student not found');
+                }
+                
+                if (!student.attendanceDates || !student.attendanceDates.includes(dateToDelete)) {
+                    throw new Error('Attendance date not found for this student');
+                }
+                
+                try {
+                    // 从学生的出勤日期中移除
+                    const updatedDates = student.attendanceDates.filter(date => date !== dateToDelete);
+                    student.attendanceDates = updatedDates;
+                    student.attendanceCount = updatedDates.length;
+                    
+                    // 从相关的出勤记录中移除该学生
+                    const attendanceRecord = this.attendanceRecords.find(record => 
+                        record.timeSlot === student.timeSlot && 
+                        record.date === dateToDelete
+                    );
+                    
+                    if (attendanceRecord) {
+                        // 从记录中移除该学生
+                        const updatedPresentStudents = attendanceRecord.presentStudents.filter(id => id !== studentId);
+                        
+                        if (updatedPresentStudents.length === 0) {
+                            // 如果没有学生出席，删除整个记录
+                            await this.deleteAttendanceRecord(attendanceRecord.id);
+                        } else {
+                            // 更新记录中的学生列表
+                            attendanceRecord.presentStudents = updatedPresentStudents;
+                            
+                            if (this.isOnline) {
+                                const recordId = `${student.timeSlot.replace(/\s+/g, '-')}-${dateToDelete}`.replace(/[^a-zA-Z0-9\-]/g, '');
+                                await db.collection('users').doc(this.userId).collection('attendance')
+                                    .doc(recordId).update({
+                                        presentStudents: updatedPresentStudents
+                                    });
+                            }
+                        }
+                    }
+                    
+                    // 更新学生数据
+                    if (this.isOnline) {
+                        await db.collection('users').doc(this.userId).collection('students')
+                            .doc(studentId).update({
+                                attendanceDates: updatedDates,
+                                attendanceCount: updatedDates.length
+                            });
+                    }
+                    
+                    // 刷新提醒
+                    this.checkRemindersForStudent(studentId);
+                    
+                    return { success: true, message: 'Attendance date deleted successfully' };
+                    
+                } catch (error) {
+                    console.error('Error deleting attendance date:', error);
+                    throw error;
+                }
+            }
         }
 
         // 创建系统实例
@@ -2383,6 +3406,7 @@
             domCache.loginSection = document.getElementById('loginSection');
             domCache.appSection = document.getElementById('appSection');
             domCache.fabButton = document.getElementById('fabButton');
+            domCache.reminderBadge = document.getElementById('reminderBadge');
             
             // 设置默认日期
             const today = new Date();
@@ -2459,6 +3483,7 @@
             updateTimeSlots();
             updateFilterStudent();
             updateSelectedCount();
+            updateRemindersUI();
             
             // 更新时区信息
             updateTimezoneInfo();
@@ -2469,6 +3494,11 @@
                 section.classList.remove('active');
             });
             document.getElementById(sectionId).classList.add('active');
+            
+            // 如果显示提醒页面，更新提醒UI
+            if (sectionId === 'reminders') {
+                updateRemindersUI();
+            }
         }
         
         function updateDashboard() {
@@ -2484,6 +3514,567 @@
             document.getElementById('sessionsRecordedDetailed').textContent = summary.totalSessions;
             document.getElementById('avgAttendanceDetailed').textContent = summary.averageAttendanceRate + '%';
             document.getElementById('timeSlotsCountDetailed').textContent = summary.timeSlots;
+        }
+        
+        // ========== 提醒UI更新函数 ==========
+        function updateRemindersUI() {
+            const summary = system.getReminderSummary();
+            
+            // 更新提醒徽章（只显示未解决的数量）
+            if (domCache.reminderBadge) {
+                if (summary.unresolved > 0) {
+                    domCache.reminderBadge.textContent = summary.unresolved;
+                    domCache.reminderBadge.style.display = 'flex';
+                } else {
+                    domCache.reminderBadge.style.display = 'none';
+                }
+            }
+            
+            // 更新数量显示
+            document.getElementById('activeRemindersCount').textContent = summary.unresolved;
+            document.getElementById('resolvedRemindersCount').textContent = summary.resolved;
+            
+            // 更新提醒摘要
+            updateReminderSummary(summary);
+            
+            // 更新提醒列表
+            updateRemindersList();
+        }
+        
+        function updateReminderSummary(summary) {
+            const container = document.getElementById('reminderSummary');
+            if (!container) return;
+            
+            container.innerHTML = `
+                <div class="reminder-summary-card priority">
+                    <div class="count">${summary.priority}</div>
+                    <div class="label">Priority Reminders</div>
+                    <div class="sub-label">Final brain tests</div>
+                </div>
+                <div class="reminder-summary-card warning">
+                    <div class="count">${summary.progress}</div>
+                    <div class="label">Progress Reports</div>
+                    <div class="sub-label">12, 24, 26, 48 sessions</div>
+                </div>
+                <div class="reminder-summary-card success">
+                    <div class="count">${summary.brainTest}</div>
+                    <div class="label">Brain Tests</div>
+                    <div class="sub-label">24 sessions milestone</div>
+                </div>
+                <div class="reminder-summary-card">
+                    <div class="count">${summary.unresolved}</div>
+                    <div class="label">Active Reminders</div>
+                    <div class="sub-label">of ${summary.total} total</div>
+                </div>
+                <div class="reminder-summary-card">
+                    <div class="count">${summary.resolved}</div>
+                    <div class="label">Resolved</div>
+                    <div class="sub-label">Completed reminders</div>
+                </div>
+            `;
+        }
+        
+        function updateRemindersList() {
+            // 更新活动提醒列表
+            updateActiveRemindersList();
+            
+            // 更新已解决提醒列表
+            updateResolvedRemindersList();
+        }
+        
+        function updateActiveRemindersList() {
+            const container = document.getElementById('activeRemindersContainer');
+            if (!container) return;
+            
+            let reminders = [];
+            
+            // 根据当前过滤器获取提醒
+            if (currentReminderFilter === 'byMonth') {
+                if (currentEnrolledMonth === 'all') {
+                    // 显示按月份分组的提醒
+                    displayRemindersByMonthGroup();
+                    return;
+                } else {
+                    // 显示特定月份的提醒
+                    reminders = system.getRemindersByMonth(currentEnrolledMonth);
+                }
+            } else {
+                // 获取未解决的提醒
+                reminders = system.getUnresolvedReminders();
+                
+                // 应用过滤器
+                switch (currentReminderFilter) {
+                    case 'progress':
+                        reminders = reminders.filter(r => r.type === 'progress');
+                        break;
+                    case 'brainTest':
+                        reminders = reminders.filter(r => r.type === 'brainTest');
+                        break;
+                    case 'priority':
+                        reminders = reminders.filter(r => r.priority === 'high');
+                        break;
+                    case 'unresolved':
+                        // 已经是未解决的提醒，不需要过滤
+                        break;
+                    // 'all' 显示所有未解决的提醒
+                }
+            }
+            
+            // 按创建时间排序（最新的在前）
+            reminders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            if (reminders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-bell-slash"></i>
+                        <p style="font-size: 1.2em; margin-bottom: 10px;">No active reminders</p>
+                        <p>${currentReminderFilter === 'all' ? 'All reminders are resolved!' : 'No reminders match the selected filter'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            reminders.forEach(reminder => {
+                const reminderCard = document.createElement('div');
+                reminderCard.className = `reminder-card ${reminder.priority === 'high' ? 'priority' : ''}`;
+                
+                // 格式化日期
+                const createdAt = new Date(reminder.createdAt);
+                const formattedDate = createdAt.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                // 获取图标和颜色
+                const icon = reminder.type === 'progress' ? 'fa-chart-line' : 'fa-brain';
+                const typeLabel = reminder.type === 'progress' ? 'Progress Report' : 'Brain Test';
+                
+                // 计算剩余课程
+                const remainingSessions = reminder.totalSessions - reminder.currentSessions;
+                
+                reminderCard.innerHTML = `
+                    <div class="reminder-title">
+                        <i class="fas ${icon}"></i>
+                        <span>${typeLabel} - ${reminder.studentName}</span>
+                        ${reminder.priority === 'high' ? '<span class="badge badge-danger" style="margin-left: auto;">PRIORITY</span>' : ''}
+                    </div>
+                    <div class="reminder-details">
+                        ${reminder.message}
+                    </div>
+                    <div class="reminder-stats">
+                        <div class="reminder-stat">
+                            <div class="label">Time Slot</div>
+                            <div class="value">${reminder.timeSlot}</div>
+                        </div>
+                        <div class="reminder-stat">
+                            <div class="label">Attended</div>
+                            <div class="value">${reminder.currentSessions}</div>
+                        </div>
+                        <div class="reminder-stat">
+                            <div class="label">Total</div>
+                            <div class="value">${reminder.totalSessions}</div>
+                        </div>
+                        <div class="reminder-stat">
+                            <div class="label">Remaining</div>
+                            <div class="value">${remainingSessions}</div>
+                        </div>
+                    </div>
+                    <div class="reminder-actions">
+                        <button class="btn btn-info" onclick="viewStudentDetails('${reminder.studentId}')" style="padding: 6px 12px; font-size: 12px;">
+                            <i class="fas fa-user"></i> View Student
+                        </button>
+                        <button class="btn btn-success" onclick="markReminderAsResolved('${reminder.id}')" style="padding: 6px 12px; font-size: 12px;">
+                            <i class="fas fa-check"></i> Mark Done
+                        </button>
+                        <button class="btn btn-secondary" onclick="deleteReminder('${reminder.id}')" style="padding: 6px 12px; font-size: 12px;">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.8em; color: var(--gray);">
+                        <i class="fas fa-clock"></i> Created: ${formattedDate}
+                    </div>
+                `;
+                
+                container.appendChild(reminderCard);
+            });
+        }
+        
+        function updateResolvedRemindersList() {
+            const container = document.getElementById('resolvedRemindersContainer');
+            if (!container) return;
+            
+            const resolvedReminders = system.getResolvedReminders();
+            
+            // 按解决时间排序（最新的在前）
+            resolvedReminders.sort((a, b) => {
+                const dateA = a.resolvedAt ? new Date(a.resolvedAt) : new Date(0);
+                const dateB = b.resolvedAt ? new Date(b.resolvedAt) : new Date(0);
+                return dateB - dateA;
+            });
+            
+            if (resolvedReminders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-check-circle"></i>
+                        <p style="font-size: 1.2em; margin-bottom: 10px;">No resolved reminders</p>
+                        <p>Mark reminders as done to see them here</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            resolvedReminders.forEach(reminder => {
+                const reminderCard = document.createElement('div');
+                reminderCard.className = `reminder-card resolved`;
+                
+                // 格式化日期
+                const createdAt = new Date(reminder.createdAt);
+                const resolvedAt = new Date(reminder.resolvedAt);
+                const formattedCreatedDate = createdAt.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                const formattedResolvedDate = resolvedAt.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                // 获取图标和颜色
+                const icon = reminder.type === 'progress' ? 'fa-chart-line' : 'fa-brain';
+                const typeLabel = reminder.type === 'progress' ? 'Progress Report' : 'Brain Test';
+                
+                reminderCard.innerHTML = `
+                    <div class="reminder-title">
+                        <i class="fas ${icon}"></i>
+                        <span>${typeLabel} - ${reminder.studentName}</span>
+                        <span class="badge badge-success" style="margin-left: auto;">RESOLVED</span>
+                    </div>
+                    <div class="reminder-details">
+                        ${reminder.message}
+                    </div>
+                    <div class="reminder-stats">
+                        <div class="reminder-stat">
+                            <div class="label">Time Slot</div>
+                            <div class="value">${reminder.timeSlot}</div>
+                        </div>
+                        <div class="reminder-stat">
+                            <div class="label">Attended</div>
+                            <div class="value">${reminder.currentSessions}</div>
+                        </div>
+                        <div class="reminder-stat">
+                            <div class="label">Total</div>
+                            <div class="value">${reminder.totalSessions}</div>
+                        </div>
+                    </div>
+                    <div class="reminder-actions">
+                        <button class="btn btn-info" onclick="viewStudentDetails('${reminder.studentId}')" style="padding: 6px 12px; font-size: 12px;">
+                            <i class="fas fa-user"></i> View Student
+                        </button>
+                        <button class="btn btn-warning" onclick="markReminderAsUnresolved('${reminder.id}')" style="padding: 6px 12px; font-size: 12px;">
+                            <i class="fas fa-redo"></i> Reopen
+                        </button>
+                        <button class="btn btn-secondary" onclick="deleteReminder('${reminder.id}')" style="padding: 6px 12px; font-size: 12px;">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.8em; color: var(--gray);">
+                        <i class="fas fa-clock"></i> Created: ${formattedCreatedDate}
+                        <i class="fas fa-check-circle" style="margin-left: 15px;"></i> Resolved: ${formattedResolvedDate}
+                    </div>
+                `;
+                
+                container.appendChild(reminderCard);
+            });
+        }
+        
+        // 显示按月份分组的提醒
+        function displayRemindersByMonthGroup() {
+            const container = document.getElementById('activeRemindersContainer');
+            if (!container) return;
+            
+            const monthGroups = system.getRemindersByEnrollmentMonth();
+            const monthNames = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+            
+            // 如果没有提醒
+            if (Object.keys(monthGroups).length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-bell-slash"></i>
+                        <p style="font-size: 1.2em; margin-bottom: 10px;">No reminders found</p>
+                        <p>No reminders have been generated yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            // 对月份组进行排序（最新的月份在前）
+            const sortedGroups = Object.entries(monthGroups).sort((a, b) => {
+                // 未知组放在最后
+                if (a[0] === 'unknown') return 1;
+                if (b[0] === 'unknown') return -1;
+                
+                // 按年份和月份排序
+                const [yearA, monthA] = a[0].split('-').map(Number);
+                const [yearB, monthB] = b[0].split('-').map(Number);
+                
+                if (yearB !== yearA) return yearB - yearA;
+                return monthB - monthA;
+            });
+            
+            sortedGroups.forEach(([monthKey, reminders]) => {
+                const monthGroupContainer = document.createElement('div');
+                monthGroupContainer.className = 'month-group-container';
+                
+                // 创建月份标题
+                let monthTitle = '';
+                if (monthKey === 'unknown') {
+                    monthTitle = 'Unknown Enrollment Date';
+                } else {
+                    const [year, month] = monthKey.split('-').map(Number);
+                    monthTitle = `${monthNames[month - 1]} ${year}`;
+                }
+                
+                // 只统计未解决的提醒
+                const unresolvedCount = reminders.filter(r => !r.resolved).length;
+                const totalCount = reminders.length;
+                
+                monthGroupContainer.innerHTML = `
+                    <div class="month-group-header">
+                        <h3>${monthTitle}</h3>
+                        <div class="month-group-badge">
+                            ${unresolvedCount}/${totalCount} unresolved
+                        </div>
+                    </div>
+                    <div class="month-group-content" id="month-group-${monthKey.replace(/[^a-zA-Z0-9]/g, '-')}"></div>
+                `;
+                
+                container.appendChild(monthGroupContainer);
+                
+                // 添加提醒卡片到月份组
+                const monthContent = document.getElementById(`month-group-${monthKey.replace(/[^a-zA-Z0-9]/g, '-')}`);
+                
+                // 按创建时间排序（最新的在前）
+                reminders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                
+                reminders.forEach(reminder => {
+                    const reminderCard = document.createElement('div');
+                    reminderCard.className = `reminder-card ${reminder.priority === 'high' ? 'priority' : ''} ${reminder.resolved ? 'resolved' : ''}`;
+                    
+                    // 格式化日期
+                    const createdAt = new Date(reminder.createdAt);
+                    const formattedDate = createdAt.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                    
+                    // 获取图标和颜色
+                    const icon = reminder.type === 'progress' ? 'fa-chart-line' : 'fa-brain';
+                    const typeLabel = reminder.type === 'progress' ? 'Progress Report' : 'Brain Test';
+                    
+                    // 计算剩余课程
+                    const remainingSessions = reminder.totalSessions - reminder.currentSessions;
+                    
+                    reminderCard.innerHTML = `
+                        <div class="reminder-title">
+                            <i class="fas ${icon}"></i>
+                            <span>${typeLabel} - ${reminder.studentName}</span>
+                            ${reminder.priority === 'high' && !reminder.resolved ? '<span class="badge badge-danger" style="margin-left: auto;">PRIORITY</span>' : ''}
+                            ${reminder.resolved ? '<span class="badge badge-success" style="margin-left: auto;">RESOLVED</span>' : ''}
+                        </div>
+                        <div class="reminder-details">
+                            ${reminder.message}
+                        </div>
+                        <div class="reminder-stats">
+                            <div class="reminder-stat">
+                                <div class="label">Time Slot</div>
+                                <div class="value">${reminder.timeSlot}</div>
+                            </div>
+                            <div class="reminder-stat">
+                                <div class="label">Attended</div>
+                                <div class="value">${reminder.currentSessions}</div>
+                            </div>
+                            <div class="reminder-stat">
+                                <div class="label">Total</div>
+                                <div class="value">${reminder.totalSessions}</div>
+                            </div>
+                            <div class="reminder-stat">
+                                <div class="label">Remaining</div>
+                                <div class="value">${remainingSessions}</div>
+                            </div>
+                        </div>
+                        <div class="reminder-actions">
+                            <button class="btn btn-info" onclick="viewStudentDetails('${reminder.studentId}')" style="padding: 6px 12px; font-size: 12px;">
+                                <i class="fas fa-user"></i> View Student
+                            </button>
+                            ${!reminder.resolved ? `
+                                <button class="btn btn-success" onclick="markReminderAsResolved('${reminder.id}')" style="padding: 6px 12px; font-size: 12px;">
+                                    <i class="fas fa-check"></i> Mark Done
+                                </button>
+                            ` : `
+                                <button class="btn btn-warning" onclick="markReminderAsUnresolved('${reminder.id}')" style="padding: 6px 12px; font-size: 12px;">
+                                    <i class="fas fa-redo"></i> Reopen
+                                </button>
+                            `}
+                            <button class="btn btn-secondary" onclick="deleteReminder('${reminder.id}')" style="padding: 6px 12px; font-size: 12px;">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 0.8em; color: var(--gray);">
+                            <i class="fas fa-clock"></i> Created: ${formattedDate}
+                            ${reminder.resolved && reminder.resolvedAt ? 
+                                ` • <i class="fas fa-check-circle"></i> Resolved: ${new Date(reminder.resolvedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}` : 
+                                ''}
+                        </div>
+                    `;
+                    
+                    monthContent.appendChild(reminderCard);
+                });
+            });
+        }
+        
+        function filterReminders(filterType) {
+            currentReminderFilter = filterType;
+            
+            // 更新月份选择器显示状态
+            const monthSelector = document.getElementById('monthSelector');
+            if (filterType === 'byMonth') {
+                monthSelector.style.display = 'block';
+                // 重置月份过滤器为"all"
+                document.getElementById('enrolledMonthFilter').value = 'all';
+                currentEnrolledMonth = 'all';
+            } else {
+                monthSelector.style.display = 'none';
+            }
+            
+            // 更新过滤器按钮状态
+            document.querySelectorAll('.reminder-filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // 更新提醒列表
+            updateRemindersList();
+        }
+        
+        function filterByEnrolledMonth() {
+            const monthFilter = document.getElementById('enrolledMonthFilter');
+            currentEnrolledMonth = monthFilter.value;
+            updateRemindersList();
+        }
+        
+        // ========== 提醒操作函数 ==========
+        async function checkAllReminders() {
+            showLoading('Checking for new reminders...');
+            try {
+                await system.checkAllReminders();
+                updateRemindersUI();
+                showToast('Reminders checked successfully', 'success');
+            } catch (error) {
+                console.error('Error checking reminders:', error);
+                showToast('Error checking reminders: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        async function markReminderAsResolved(reminderId) {
+            try {
+                await system.markReminderAsResolved(reminderId);
+                updateRemindersUI();
+                showToast('Reminder marked as done', 'success');
+            } catch (error) {
+                console.error('Error marking reminder:', error);
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function markReminderAsUnresolved(reminderId) {
+            try {
+                await system.markReminderAsUnresolved(reminderId);
+                updateRemindersUI();
+                showToast('Reminder reopened', 'info');
+            } catch (error) {
+                console.error('Error reopening reminder:', error);
+                showToast('Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function deleteReminder(reminderId) {
+            if (confirm('Are you sure you want to delete this reminder?')) {
+                try {
+                    await system.deleteReminder(reminderId);
+                    updateRemindersUI();
+                    showToast('Reminder deleted', 'success');
+                } catch (error) {
+                    console.error('Error deleting reminder:', error);
+                    showToast('Error: ' + error.message, 'error');
+                }
+            }
+        }
+        
+        async function markAllAsResolved() {
+            const unresolved = system.getUnresolvedReminders();
+            if (unresolved.length === 0) {
+                showToast('No active reminders to mark as done', 'info');
+                return;
+            }
+            
+            if (confirm(`Mark all ${unresolved.length} active reminders as done?`)) {
+                showLoading('Marking reminders as done...');
+                try {
+                    for (const reminder of unresolved) {
+                        await system.markReminderAsResolved(reminder.id);
+                    }
+                    updateRemindersUI();
+                    showToast(`Marked ${unresolved.length} reminders as done`, 'success');
+                } catch (error) {
+                    console.error('Error marking reminders:', error);
+                    showToast('Error: ' + error.message, 'error');
+                } finally {
+                    hideLoading();
+                }
+            }
+        }
+        
+        async function clearResolvedReminders() {
+            const resolvedCount = system.getResolvedReminders().length;
+            if (resolvedCount === 0) {
+                showToast('No resolved reminders to clear', 'info');
+                return;
+            }
+            
+            if (confirm(`Clear all ${resolvedCount} resolved reminders? This action cannot be undone.`)) {
+                showLoading('Clearing resolved reminders...');
+                try {
+                    const clearedCount = await system.clearResolvedReminders();
+                    updateRemindersUI();
+                    showToast(`Cleared ${clearedCount} resolved reminders`, 'success');
+                } catch (error) {
+                    console.error('Error clearing resolved reminders:', error);
+                    showToast('Error: ' + error.message, 'error');
+                } finally {
+                    hideLoading();
+                }
+            }
+        }
+        
+        function exportReminders() {
+            const csv = system.exportRemindersToCSV();
+            downloadFile(csv, 'genius_mind_academy_reminders.csv', 'text/csv');
+            showToast('Reminders exported to CSV', 'success');
         }
         
         // ========== 时间槽相关函数 ==========
@@ -2626,6 +4217,11 @@
                 const card = document.createElement('div');
                 card.className = 'student-card-enhanced';
                 
+                // 检查是否有提醒
+                const hasReminder = Array.from(system.reminders.values()).some(
+                    r => r.studentId === student.id && !r.resolved
+                );
+                
                 // Determine progress bar color based on attendance rate
                 let progressClass = 'progress-fill';
                 let badgeClass = 'badge';
@@ -2653,6 +4249,7 @@
                 
                 card.innerHTML = `
                     <div style="position: absolute; top: 15px; right: 15px;">
+                        ${hasReminder ? '<div class="badge badge-warning" style="font-size: 10px; padding: 2px 6px;"><i class="fas fa-bell"></i></div>' : ''}
                         <input type="checkbox" class="student-select-checkbox" value="${student.id}" onclick="event.stopPropagation(); updateSelectedCount();">
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
@@ -2971,6 +4568,9 @@
                                                 lastAttended: date
                                             });
                                     }
+                                    
+                                    // 检查提醒
+                                    system.checkRemindersForStudent(studentId);
                                 }
                             }
                         }
@@ -3025,6 +4625,9 @@
                                             lastAttended: date
                                         });
                                 }
+                                
+                                // 检查提醒
+                                system.checkRemindersForStudent(studentId);
                             }
                         }
                     }
@@ -3083,13 +4686,19 @@
                     return student ? student.name : 'Unknown Student';
                 }).join(', ');
                 
+                // 限制显示的长度，如果太长则截断
+                const displayNames = presentStudentNames.length > 50 
+                    ? presentStudentNames.substring(0, 50) + '...' 
+                    : presentStudentNames;
+                
                 row.innerHTML = `
                     <td>${formattedDate}</td>
                     <td>${record.timeSlot}</td>
                     <td>${record.topic || 'No topic'}</td>
-                    <td>${presentStudentNames}</td>
+                    <td title="${presentStudentNames}">${displayNames}</td>
                     <td>
                         <button class="btn btn-info" onclick="viewClassAttendanceDetails('${record.id}')" style="padding: 6px 12px; font-size: 12px;">View</button>
+                        <button class="btn btn-warning" onclick="editClassAttendance('${record.id}')" style="padding: 6px 12px; font-size: 12px;">Edit</button>
                         <button class="btn btn-danger" onclick="deleteClassAttendanceRecord('${record.id}')" style="padding: 6px 12px; font-size: 12px;">Delete</button>
                     </td>
                 `;
@@ -3188,6 +4797,321 @@
             } else if (tabId === 'studentRecords') {
                 updateStudentAttendanceSummary();
             }
+        }
+        
+        // ========== 查看出勤记录详情 ==========
+        function viewClassAttendanceDetails(recordId) {
+            const record = system.getAttendanceRecord(recordId);
+            if (!record) {
+                showToast('Attendance record not found!', 'error');
+                return;
+            }
+            
+            currentEditingRecordId = recordId;
+            
+            // 格式化日期
+            const formattedDate = system.formatDateForDisplay(record.date);
+            
+            // 获取出席学生详情
+            const presentStudents = [];
+            const absentStudents = [];
+            
+            // 获取该时间槽的所有学生
+            const timeSlotStudents = system.getStudentsByTimeSlot(record.timeSlot);
+            
+            // 分类学生
+            for (const student of timeSlotStudents) {
+                if (record.presentStudents.includes(student.id)) {
+                    presentStudents.push(student);
+                } else {
+                    absentStudents.push(student);
+                }
+            }
+            
+            // 创建模态框内容
+            const content = document.getElementById('classAttendanceContent');
+            content.innerHTML = `
+                <div style="margin-bottom: 25px;">
+                    <h4 style="color: var(--dark); margin-bottom: 15px;">📅 Class Information</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <p><strong>Date:</strong> ${formattedDate}</p>
+                            <p><strong>Time Slot:</strong> ${record.timeSlot}</p>
+                        </div>
+                        <div>
+                            <p><strong>Topic:</strong> ${record.topic || 'No topic'}</p>
+                            <p><strong>Total Present:</strong> ${presentStudents.length} students</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <h4 style="color: var(--dark); margin-bottom: 15px;">✅ Present Students (${presentStudents.length})</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
+                        ${presentStudents.length > 0 ? 
+                            presentStudents.map(student => `
+                                <div style="background: #d4edda; border: 1px solid #c3e6cb; border-radius: 6px; padding: 10px; font-size: 14px;">
+                                    <strong>${student.name}</strong><br>
+                                    ${student.age || 'N/A'} years, ${student.gender || 'N/A'}
+                                </div>
+                            `).join('') : 
+                            '<p style="color: var(--gray);">No students marked present</p>'
+                        }
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 25px;">
+                    <h4 style="color: var(--dark); margin-bottom: 15px;">❌ Absent Students (${absentStudents.length})</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
+                        ${absentStudents.length > 0 ? 
+                            absentStudents.map(student => `
+                                <div style="background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 6px; padding: 10px; font-size: 14px;">
+                                    <strong>${student.name}</strong><br>
+                                    ${student.age || 'N/A'} years, ${student.gender || 'N/A'}
+                                </div>
+                            `).join('') : 
+                            '<p style="color: var(--gray);">All students in this time slot were present</p>'
+                        }
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end;">
+                    <button class="btn btn-warning" onclick="editClassAttendance('${recordId}')">
+                        <i class="fas fa-edit"></i> Edit Attendance
+                    </button>
+                    <button class="btn btn-secondary" onclick="closeClassAttendanceModal()">Close</button>
+                </div>
+            `;
+            
+            // 显示模态框
+            document.getElementById('classAttendanceModal').style.display = 'flex';
+        }
+        
+        // ========== 编辑出勤记录 ==========
+        function editClassAttendance(recordId) {
+            const record = system.getAttendanceRecord(recordId);
+            if (!record) {
+                showToast('Attendance record not found!', 'error');
+                return;
+            }
+            
+            currentEditingRecordId = recordId;
+            
+            // 关闭详情模态框（如果打开）
+            closeClassAttendanceModal();
+            
+            // 切换到出勤记录页面
+            showSection('attendance');
+            
+            // 填充表单
+            document.getElementById('timeSlotSelect').value = record.timeSlot;
+            document.getElementById('classDate').value = record.date;
+            document.getElementById('sessionTopic').value = record.topic || '';
+            
+            // 更新学生复选框
+            updateStudentsCheckboxes();
+            
+            // 选中已出席的学生
+            setTimeout(() => {
+                const checkboxes = document.querySelectorAll('#studentsCheckboxes input[type="checkbox"]');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = record.presentStudents.includes(checkbox.value);
+                });
+                
+                // 更改按钮文本
+                const btn = document.querySelector('button[onclick*="recordAttendance"]');
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-save"></i> Update Attendance';
+                    btn.onclick = function() { updateAttendanceRecord(recordId); };
+                }
+                
+                // 滚动到页面顶部
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                showToast('Editing attendance record. Make your changes and click "Update Attendance".', 'info');
+            }, 500);
+        }
+        
+        // ========== 更新出勤记录 ==========
+        async function updateAttendanceRecord(recordId) {
+            const record = system.getAttendanceRecord(recordId);
+            if (!record) {
+                showToast('Attendance record not found!', 'error');
+                return;
+            }
+            
+            // Get input fields
+            const dateInput = document.getElementById('classDate');
+            const timeSlotInput = document.getElementById('timeSlotSelect'); 
+            const topicInput = document.getElementById('sessionTopic');
+            
+            let date = dateInput.value;
+            const timeSlot = timeSlotInput.value;
+            const topic = topicInput.value || '';
+            
+            // Ensure date format is correct
+            date = system.getLocalDateString(date);
+            
+            // Get checked students
+            const selectedCheckboxes = document.querySelectorAll('#studentsCheckboxes input:checked');
+            const selectedStudentIds = Array.from(selectedCheckboxes).map(cb => cb.value);
+            
+            // Basic validation
+            if (!date || !timeSlot) {
+                showToast('Please select date and time slot', 'error');
+                return;
+            }
+            
+            if (selectedStudentIds.length === 0) {
+                showToast('Please select at least one student', 'error');
+                return;
+            }
+            
+            // Lock button
+            const btn = document.querySelector('button[onclick*="updateAttendanceRecord"]');
+            const originalBtnText = btn ? btn.innerHTML : 'Update Attendance';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+            }
+            
+            try {
+                // 检查是否需要创建新记录（如果时间槽或日期改变了）
+                let newRecordId = recordId;
+                
+                if (record.timeSlot !== timeSlot || record.date !== date) {
+                    // 时间槽或日期改变了，需要创建新记录
+                    newRecordId = `${timeSlot.replace(/\s+/g, '-')}-${date}`.replace(/[^a-zA-Z0-9\-]/g, '');
+                    
+                    // 检查新记录是否已存在
+                    const existingNewRecord = system.attendanceRecords.find(r => 
+                        r.timeSlot === timeSlot && r.date === date
+                    );
+                    
+                    if (existingNewRecord && existingNewRecord.id !== recordId) {
+                        showToast(`Attendance for ${timeSlot} on ${system.formatDateForDisplay(date)} already exists.`, 'error');
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = originalBtnText;
+                        }
+                        return;
+                    }
+                }
+                
+                // 准备更新数据
+                const updateData = {
+                    timeSlot: timeSlot,
+                    date: date,
+                    topic: topic,
+                    presentStudents: selectedStudentIds
+                };
+                
+                if (newRecordId !== recordId) {
+                    // 创建新记录，删除旧记录
+                    if (system.isOnline) {
+                        // 创建新记录
+                        await db.collection('users').doc(system.userId).collection('attendance')
+                            .doc(newRecordId).set({
+                                ...record,
+                                ...updateData,
+                                id: newRecordId
+                            });
+                        
+                        // 删除旧记录
+                        await db.collection('users').doc(system.userId).collection('attendance')
+                            .doc(recordId).delete();
+                    } else {
+                        // 更新本地数据
+                        const index = system.attendanceRecords.findIndex(r => r.id === recordId);
+                        if (index !== -1) {
+                            system.attendanceRecords.splice(index, 1);
+                            system.attendanceRecords.push({
+                                ...record,
+                                ...updateData,
+                                id: newRecordId
+                            });
+                        }
+                    }
+                } else {
+                    // 更新现有记录
+                    await system.updateAttendanceRecord(recordId, updateData);
+                }
+                
+                showToast('Attendance record updated successfully!', 'success');
+                
+                // 重置表单和按钮
+                resetAttendanceForm();
+                
+                // 刷新界面
+                updateClassAttendanceRecords();
+                updateStudentAttendanceSummary();
+                updateUI();
+                
+            } catch (error) {
+                console.error('Error updating attendance record:', error);
+                showToast('Error updating attendance: ' + error.message, 'error');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = originalBtnText;
+                    // 恢复原始功能
+                    btn.onclick = function() { recordAttendance(); };
+                    btn.innerHTML = '<i class="fas fa-check-circle"></i> Record Attendance';
+                }
+            }
+        }
+        
+        // ========== 删除出勤记录 ==========
+        async function deleteClassAttendanceRecord(recordId) {
+            if (!confirm('Are you sure you want to delete this attendance record? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                await system.deleteAttendanceRecord(recordId);
+                showToast('Attendance record deleted successfully', 'success');
+                
+                // 刷新界面
+                updateClassAttendanceRecords();
+                updateStudentAttendanceSummary();
+                updateUI();
+                
+            } catch (error) {
+                console.error('Error deleting attendance record:', error);
+                showToast('Error deleting attendance record: ' + error.message, 'error');
+            }
+        }
+        
+        // ========== 重置出勤表单 ==========
+        function resetAttendanceForm() {
+            const today = new Date();
+            const todayStr = system.getLocalDateString(today);
+            
+            document.getElementById('timeSlotSelect').value = '';
+            document.getElementById('classDate').value = todayStr;
+            document.getElementById('sessionTopic').value = '';
+            
+            // 清空复选框
+            const checkboxes = document.querySelectorAll('#studentsCheckboxes input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+            
+            // 更新学生复选框显示
+            updateStudentsCheckboxes();
+            
+            // 重置按钮
+            const btn = document.querySelector('button[onclick*="recordAttendance"]');
+            if (btn) {
+                btn.onclick = function() { recordAttendance(); };
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Record Attendance';
+            }
+            
+            currentEditingRecordId = null;
+        }
+        
+        // ========== 关闭出勤记录模态框 ==========
+        function closeClassAttendanceModal() {
+            document.getElementById('classAttendanceModal').style.display = 'none';
+            currentEditingRecordId = null;
         }
         
         // ========== 时间槽显示函数 ==========
@@ -3311,6 +5235,15 @@
                 ? system.formatDateForDisplay(student.attendanceDates[student.attendanceDates.length - 1])
                 : 'Never attended';
             
+            // Check for reminders
+            const studentReminders = Array.from(system.reminders.values()).filter(
+                r => r.studentId === studentId && !r.resolved
+            );
+            
+            // Sort attendance dates
+            const sortedAttendanceDates = student.attendanceDates ? 
+                [...student.attendanceDates].sort().reverse() : [];
+            
             // Create modal content
             const content = document.getElementById('studentDetailsContent');
             content.innerHTML = `
@@ -3329,18 +5262,45 @@
                         <p><strong>Sessions Attended:</strong> ${attendanceInfo.attendanceCount}</p>
                         <p><strong>Remaining Sessions:</strong> ${remainingSessions}</p>
                         <p><strong>Last Attended:</strong> ${lastAttended}</p>
+                        <p><strong>Active Reminders:</strong> ${studentReminders.length}</p>
                     </div>
                 </div>
                 
+                ${studentReminders.length > 0 ? `
+                    <div style="margin-top: 20px; margin-bottom: 20px;">
+                        <h4 style="color: var(--dark); margin-bottom: 15px;">🔔 Active Reminders (${studentReminders.length})</h4>
+                        <div style="background: #fff9f0; border: 1px solid #ffeaa7; border-radius: 8px; padding: 15px;">
+                            ${studentReminders.map(reminder => `
+                                <div style="margin-bottom: 10px; padding: 10px; background: white; border-radius: 6px; border-left: 4px solid ${reminder.priority === 'high' ? 'var(--danger)' : 'var(--warning)'};">
+                                    <div style="font-weight: bold; margin-bottom: 5px;">
+                                        <i class="fas ${reminder.type === 'progress' ? 'fa-chart-line' : 'fa-brain'}"></i>
+                                        ${reminder.type === 'progress' ? 'Progress Report' : 'Brain Test'}
+                                    </div>
+                                    <div style="font-size: 0.9em; color: var(--gray);">${reminder.message}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+                
                 <div style="margin-top: 20px;">
                     <h4 style="color: var(--dark); margin-bottom: 15px;">📅 All Attendance Dates (${attendanceInfo.attendanceCount} dates)</h4>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin-top: 10px;">
-                        ${student.attendanceDates && student.attendanceDates.length > 0 ? 
-                            [...student.attendanceDates].sort().map(date => `
-                                <div style="background: #f0f9ff; border: 1px solid #cfe2ff; border-radius: 6px; padding: 8px; text-align: center; font-size: 12px; color: #0d6efd;">
-                                    ${system.formatDateForDisplay(date)}
-                                </div>
-                            `).join('') : 
+                    <p style="color: var(--gray); font-size: 0.9em; margin-bottom: 10px;">
+                        <i class="fas fa-info-circle"></i> Click on any date to delete it if it was added accidentally.
+                    </p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; margin-top: 10px;">
+                        ${sortedAttendanceDates.length > 0 ? 
+                            sortedAttendanceDates.map(date => {
+                                const formattedDate = system.formatDateForDisplay(date);
+                                return `
+                                    <div class="attendance-date" style="background: #f0f9ff; border: 1px solid #cfe2ff; border-radius: 6px; padding: 8px; text-align: center; font-size: 12px; color: #0d6efd; position: relative;">
+                                        ${formattedDate}
+                                        <div class="date-delete-btn" onclick="showDeleteConfirmation('${studentId}', '${date}', this.parentElement)">
+                                            <i class="fas fa-times"></i>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('') : 
                             '<p style="color: var(--gray);">No attendance records found</p>'
                         }
                     </div>
@@ -3356,6 +5316,11 @@
                     <button class="btn" onclick="generateStudentPDF('${studentId}')">
                         <i class="fas fa-file-pdf"></i> Download PDF Report
                     </button>
+                    ${studentReminders.length > 0 ? `
+                        <button class="btn btn-warning" onclick="showSection('reminders'); closeStudentDetails();">
+                            <i class="fas fa-bell"></i> View All Reminders
+                        </button>
+                    ` : ''}
                     <button class="btn btn-secondary" onclick="closeStudentDetails()">Close</button>
                 </div>
             `;
@@ -3374,6 +5339,85 @@
                 editStudent(currentSelectedStudentId);
                 closeStudentDetails();
             }
+        }
+        
+        // ========== 删除出勤日期函数 ==========
+        function showDeleteConfirmation(studentId, date, element) {
+            // 阻止事件冒泡，防止触发其他点击事件
+            event.stopPropagation();
+            
+            const student = system.students.get(studentId);
+            if (!student) return;
+            
+            const formattedDate = system.formatDateForDisplay(date);
+            
+            // 存储待删除的信息
+            pendingDelete.studentId = studentId;
+            pendingDelete.date = date;
+            pendingDelete.element = element;
+            
+            // 显示确认对话框
+            document.getElementById('deleteConfirmationText').textContent = 
+                `Are you sure you want to delete the attendance date "${formattedDate}" for ${student.name}?`;
+            document.getElementById('deleteConfirmationModal').style.display = 'flex';
+            
+            // 添加删除动画效果
+            element.classList.add('deleting');
+        }
+        
+        async function confirmDeleteAttendanceDate() {
+            if (!pendingDelete.studentId || !pendingDelete.date) return;
+            
+            try {
+                showLoading('Deleting attendance date...');
+                
+                // 执行删除操作
+                const result = await system.deleteStudentAttendanceDate(
+                    pendingDelete.studentId, 
+                    pendingDelete.date
+                );
+                
+                if (result.success) {
+                    showToast('Attendance date deleted successfully', 'success');
+                    
+                    // 从UI中移除元素
+                    if (pendingDelete.element && pendingDelete.element.parentNode) {
+                        pendingDelete.element.remove();
+                        
+                        // 更新学生详情
+                        viewStudentDetails(pendingDelete.studentId);
+                    }
+                    
+                    // 更新UI
+                    updateUI();
+                }
+            } catch (error) {
+                console.error('Error deleting attendance date:', error);
+                showToast('Error: ' + error.message, 'error');
+                
+                // 移除删除动画效果
+                if (pendingDelete.element) {
+                    pendingDelete.element.classList.remove('deleting');
+                }
+            } finally {
+                hideLoading();
+                cancelDeleteAttendanceDate();
+            }
+        }
+        
+        function cancelDeleteAttendanceDate() {
+            // 移除删除动画效果
+            if (pendingDelete.element) {
+                pendingDelete.element.classList.remove('deleting');
+            }
+            
+            // 重置待删除信息
+            pendingDelete.studentId = '';
+            pendingDelete.date = '';
+            pendingDelete.element = null;
+            
+            // 隐藏确认对话框
+            document.getElementById('deleteConfirmationModal').style.display = 'none';
         }
         
         // ========== 日历功能函数 ==========
@@ -3696,6 +5740,9 @@
                                 });
                         }
                         
+                        // 检查提醒
+                        system.checkRemindersForStudent(dateSelectionStudentId);
+                        
                         processedCount++;
                         
                     } catch (error) {
@@ -3791,6 +5838,9 @@
                             attendanceCount: firebase.firestore.FieldValue.increment(1),
                             lastAttended: update.date
                         });
+                        
+                        // 检查提醒
+                        system.checkRemindersForStudent(update.studentId);
                     }
                 }
             }
@@ -3932,6 +5982,12 @@
                     issues.push(`Found ${noTimeSlotCount} student(s) without time slot assignment`);
                 }
                 
+                // Check 4: Unresolved reminders
+                const unresolvedReminders = system.getUnresolvedReminders();
+                if (unresolvedReminders.length > 0) {
+                    issues.push(`Found ${unresolvedReminders.length} unresolved reminders`);
+                }
+                
                 // Display results
                 if (issues.length === 0) {
                     resultElement.innerHTML = '<div style="color: var(--success);">✅ System health is good. No issues found.</div>';
@@ -3956,6 +6012,7 @@
                 students: Array.from(system.students.values()),
                 attendanceRecords: system.attendanceRecords,
                 timeSlots: system.timeSlots,
+                reminders: Array.from(system.reminders.values()),
                 backupDate: new Date().toISOString()
             };
             
@@ -4005,6 +6062,12 @@
                     
                     system.attendanceRecords = data.attendanceRecords || [];
                     system.timeSlots = data.timeSlots || [];
+                    system.reminders.clear();
+                    if (data.reminders) {
+                        data.reminders.forEach(reminder => {
+                            system.reminders.set(reminder.id, reminder);
+                        });
+                    }
                     
                     // 更新UI
                     updateUI();
@@ -4123,6 +6186,29 @@
                 doc.text(row[0], 25, 110 + (index * 7));
                 doc.text(row[1], 70, 110 + (index * 7));
             });
+            
+            // 添加提醒部分（如果有）
+            const studentReminders = Array.from(system.reminders.values()).filter(
+                r => r.studentId === studentId && !r.resolved
+            );
+            
+            if (studentReminders.length > 0) {
+                doc.setFont(undefined, 'bold');
+                doc.text("Active Reminders:", 20, 135);
+                doc.setFont(undefined, 'normal');
+                
+                let y = 145;
+                studentReminders.forEach((reminder, index) => {
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    
+                    const reminderType = reminder.type === 'progress' ? 'Progress Report' : 'Brain Test';
+                    const reminderText = `${reminderType}: ${reminder.message.substring(0, 50)}...`;
+                    doc.text(reminderText, 25, y + (index * 7));
+                });
+            }
             
             // 保存PDF
             const fileName = `Memoschool_${student.name.replace(/\s+/g, '_')}_Attendance_Report.pdf`;
@@ -4409,6 +6495,7 @@
             // Clear existing data
             system.students.clear();
             system.attendanceRecords = [];
+            system.reminders.clear();
             
             // Add some test data
             addSampleData();
@@ -4423,10 +6510,10 @@
         function addSampleData() {
             // Add some sample students
             const sampleStudents = [
-                { name: 'John Doe', age: 12, gender: 'Male', timeSlot: 'Friday 2pm-3:30pm' },
-                { name: 'Jane Smith', age: 13, gender: 'Female', timeSlot: 'Saturday 9am-10:30am' },
-                { name: 'Michael Brown', age: 11, gender: 'Male', timeSlot: 'Saturday 11am-12:30pm' },
-                { name: 'Emily Johnson', age: 14, gender: 'Female', timeSlot: 'Sunday 9am-10:30am' }
+                { name: 'John Doe', age: 12, gender: 'Male', timeSlot: 'Friday 2pm-3:30pm', totalSessions: 48 },
+                { name: 'Jane Smith', age: 13, gender: 'Female', timeSlot: 'Saturday 9am-10:30am', totalSessions: 48 },
+                { name: 'Michael Brown', age: 11, gender: 'Male', timeSlot: 'Saturday 11am-12:30pm', totalSessions: 48 },
+                { name: 'Emily Johnson', age: 14, gender: 'Female', timeSlot: 'Sunday 9am-10:30am', totalSessions: 48 }
             ];
             
             sampleStudents.forEach((student, index) => {
@@ -4438,7 +6525,7 @@
                     gender: student.gender,
                     timeSlot: student.timeSlot,
                     enrolledDate: '2024-01-01',
-                    totalSessions: 48,
+                    totalSessions: student.totalSessions,
                     attendanceCount: Math.floor(Math.random() * 30) + 10,
                     attendanceDates: generateSampleDates(30),
                     createdAt: new Date().toISOString()
@@ -4462,6 +6549,9 @@
                 };
                 system.attendanceRecords.push(record);
             }
+            
+            // 检查提醒
+            system.checkAllReminders();
         }
         
         // 生成示例出勤日期
@@ -4504,6 +6594,9 @@
                             console.log(`Automatically fixed ${fixedCount} duplicate attendance records`);
                         }
                     });
+                    
+                    // 检查提醒
+                    system.checkAllReminders();
                 }
             }, 3000);
             

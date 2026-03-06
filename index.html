@@ -683,6 +683,7 @@
             display: flex;
             gap: 15px;
             font-size: 0.85em;
+            margin-bottom: 12px;
         }
         
         .reminder-card .reminder-stat {
@@ -895,43 +896,6 @@
             border-color: var(--primary);
         }
         
-        /* ========== 月份分组样式 ========== */
-        .month-group-container {
-            margin-bottom: 25px;
-        }
-        
-        .month-group-header {
-            background: linear-gradient(135deg, var(--info), var(--secondary));
-            color: white;
-            padding: 12px 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow);
-        }
-        
-        .month-group-header h3 {
-            margin: 0;
-            font-size: 1.2em;
-        }
-        
-        .month-group-badge {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: bold;
-        }
-        
-        .month-group-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 15px;
-        }
-        
         /* ========== 提醒摘要样式 ========== */
         .reminder-summary {
             display: grid;
@@ -983,69 +947,6 @@
         .performance-optimized {
             will-change: transform;
             backface-visibility: hidden;
-        }
-        
-        /* ========== 暗色模式样式 ========== */
-        body.dark-mode {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #f0f0f0;
-        }
-        
-        body.dark-mode .container {
-            background: #2d3748;
-            color: #f0f0f0;
-        }
-        
-        body.dark-mode .header {
-            background: linear-gradient(135deg, #2d3748, #4a5568);
-        }
-        
-        body.dark-mode .nav button {
-            background: rgba(255,255,255,0.1);
-        }
-        
-        body.dark-mode .form-input {
-            background: #4a5568;
-            color: #f0f0f0;
-            border-color: #718096;
-        }
-        
-        body.dark-mode .table {
-            background: #2d3748;
-            color: #f0f0f0;
-        }
-        
-        body.dark-mode .table th {
-            background: #4a5568;
-        }
-        
-        body.dark-mode .table tr:hover {
-            background: rgba(255,255,255,0.05);
-        }
-        
-        body.dark-mode .feature-card,
-        body.dark-mode .stat-card,
-        body.dark-mode .quick-stat,
-        body.dark-mode .student-card-enhanced,
-        body.dark-mode .collapse-panel,
-        body.dark-mode .reminder-card,
-        body.dark-mode .reminder-summary-card {
-            background: #2d3748;
-            color: #f0f0f0;
-            border-color: #4a5568;
-        }
-        
-        body.dark-mode .collapse-header {
-            background: #4a5568;
-            border-color: #718096;
-        }
-        
-        body.dark-mode .reminder-card.priority {
-            background: linear-gradient(135deg, #4a3c2a 0%, #3d2e1a 100%);
-        }
-        
-        body.dark-mode .reminder-card.resolved {
-            background: linear-gradient(135deg, #2d3a2d 0%, #233123 100%);
         }
         
         /* ========== 移动端优化样式 ========== */
@@ -1125,10 +1026,6 @@
             }
             
             .reminder-summary {
-                grid-template-columns: 1fr;
-            }
-            
-            .month-group-content {
                 grid-template-columns: 1fr;
             }
         }
@@ -1285,6 +1182,98 @@
             gap: 10px;
             justify-content: center;
         }
+        
+        /* ========== 进度报告复选框样式 ========== */
+        .checkbox-cell {
+            text-align: center;
+        }
+        
+        .checkbox-cell input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .checkbox-cell.completed {
+            color: var(--success);
+        }
+        
+        .checkbox-cell.pending {
+            color: var(--warning);
+        }
+        
+        /* ========== 进度报告表格样式 ========== */
+        .progress-table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+        
+        .progress-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        .progress-table th {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 12px 8px;
+            font-weight: 600;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        
+        .progress-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+        
+        .progress-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .progress-table tr:hover {
+            background: rgba(230, 126, 34, 0.05);
+        }
+        
+        .intake-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            background: var(--info);
+            color: white;
+        }
+        
+        .intake-badge.july {
+            background: #e74c3c;
+        }
+        
+        .intake-badge.august {
+            background: #3498db;
+        }
+        
+        .intake-badge.september {
+            background: #9b59b6;
+        }
+        
+        .intake-badge.october {
+            background: #1abc9c;
+        }
+        
+        .intake-badge.november {
+            background: #f39c12;
+        }
+        
+        .intake-badge.december {
+            background: #34495e;
+        }
     </style>
 </head>
 <body>
@@ -1360,11 +1349,11 @@
                     <i class="fas fa-bell"></i><span class="mobile-hide"> Reminders</span>
                     <div id="reminderBadge" class="reminder-badge" style="display: none;"></div>
                 </button>
+                <button onclick="showSection('progressReport')" data-tooltip="Progress Reports">
+                    <i class="fas fa-chart-line"></i><span class="mobile-hide"> Progress Report</span>
+                </button>
                 <button onclick="showSection('tools')" data-tooltip="System Tools"><i class="fas fa-tools"></i><span class="mobile-hide"> Tools</span></button>
                 <button onclick="showSection('exports')" data-tooltip="Export Data"><i class="fas fa-download"></i><span class="mobile-hide"> Export</span></button>
-                <button onclick="toggleDarkMode()" data-tooltip="Toggle Dark Mode" style="margin-left: auto;">
-                    <i class="fas fa-moon"></i>
-                </button>
             </div>
             
             <div class="content">
@@ -1752,7 +1741,7 @@
                         <!-- Summary will be populated by JavaScript -->
                     </div>
                     
-                    <!-- Reminder Filters -->
+                    <!-- Reminder Filters (simplified) -->
                     <div class="reminder-filters">
                         <button class="reminder-filter-btn active" onclick="filterReminders('all')">
                             <i class="fas fa-list"></i> All Reminders
@@ -1760,38 +1749,12 @@
                         <button class="reminder-filter-btn" onclick="filterReminders('unresolved')">
                             <i class="fas fa-clock"></i> Unresolved
                         </button>
-                        <button class="reminder-filter-btn" onclick="filterReminders('progress')">
-                            <i class="fas fa-chart-line"></i> Progress Reports
-                        </button>
-                        <button class="reminder-filter-btn" onclick="filterReminders('brainTest')">
-                            <i class="fas fa-brain"></i> Brain Tests
+                        <button class="reminder-filter-btn" onclick="filterReminders('resolved')">
+                            <i class="fas fa-check-circle"></i> Resolved
                         </button>
                         <button class="reminder-filter-btn" onclick="filterReminders('priority')">
                             <i class="fas fa-exclamation-circle"></i> Priority
                         </button>
-                        <button class="reminder-filter-btn" onclick="filterReminders('byMonth')">
-                            <i class="fas fa-calendar-alt"></i> By Enrolled Month
-                        </button>
-                    </div>
-                    
-                    <!-- 月份选择器 (默认隐藏) -->
-                    <div id="monthSelector" class="form-group" style="display: none; margin-bottom: 20px;">
-                        <label class="form-label"><i class="fas fa-filter"></i> Filter by Enrollment Month</label>
-                        <select id="enrolledMonthFilter" class="form-input" onchange="filterByEnrolledMonth()">
-                            <option value="all">All Months</option>
-                            <option value="1">January</option>
-                            <option value="2">February</option>
-                            <option value="3">March</option>
-                            <option value="4">April</option>
-                            <option value="5">May</option>
-                            <option value="6">June</option>
-                            <option value="7">July</option>
-                            <option value="8">August</option>
-                            <option value="9">September</option>
-                            <option value="10">October</option>
-                            <option value="11">November</option>
-                            <option value="12">December</option>
-                        </select>
                     </div>
                     
                     <!-- Active (Unresolved) Reminders Container -->
@@ -1828,6 +1791,100 @@
                         </button>
                         <button class="btn btn-warning" onclick="clearResolvedReminders()">
                             <i class="fas fa-trash"></i> Clear Resolved
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Progress Report Section -->
+                <div id="progressReport" class="section">
+                    <h2><i class="fas fa-chart-line"></i> Memohack Progress Report & Consultation Checklist</h2>
+                    <p>Track student progress reports, brain tests, and final consultation status</p>
+                    
+                    <!-- 过滤器 -->
+                    <div class="reminder-filters" style="margin-bottom: 20px;">
+                        <button class="reminder-filter-btn active" onclick="filterProgressTable('all')">
+                            <i class="fas fa-list"></i> All Students
+                        </button>
+                        <button class="reminder-filter-btn" onclick="filterProgressTable('incomplete')">
+                            <i class="fas fa-clock"></i> Incomplete
+                        </button>
+                        <button class="reminder-filter-btn" onclick="filterProgressTable('pendingReports')">
+                            <i class="fas fa-file-alt"></i> Pending Reports
+                        </button>
+                        <button class="reminder-filter-btn" onclick="filterProgressTable('pendingTests')">
+                            <i class="fas fa-brain"></i> Pending Tests
+                        </button>
+                        <button class="reminder-filter-btn" onclick="filterProgressTable('pendingConsultation')">
+                            <i class="fas fa-calendar-check"></i> Pending Consultation
+                        </button>
+                        <button class="reminder-filter-btn" onclick="filterProgressTable('completed')">
+                            <i class="fas fa-check-circle"></i> Completed
+                        </button>
+                    </div>
+                    
+                    <!-- 学期选择器 -->
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label class="form-label"><i class="fas fa-filter"></i> Filter by Intake</label>
+                        <select id="intakeFilter" class="form-input" onchange="filterByIntake()" style="max-width: 300px;">
+                            <option value="all">All Intakes</option>
+                            <option value="July">July Intake</option>
+                            <option value="August">August Intake</option>
+                            <option value="September">September Intake</option>
+                            <option value="October">October Intake</option>
+                            <option value="November">November Intake</option>
+                            <option value="December">December Intake</option>
+                        </select>
+                    </div>
+                    
+                    <!-- 进度报告表格 -->
+                    <div class="feature-card">
+                        <div class="progress-table-container">
+                            <table class="progress-table" id="progressReportTable">
+                                <thead>
+                                    <tr>
+                                        <th>Student's Name</th>
+                                        <th>Intake</th>
+                                        <th>Class Attended</th>
+                                        <th>Progress Report 1</th>
+                                        <th>Progress Report 2</th>
+                                        <th>Brain Test 1</th>
+                                        <th>Brain Test 2</th>
+                                        <th>Final Consultation</th>
+                                        <th>Remarks</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="progressReportTableBody">
+                                    <!-- 表格内容将通过JavaScript动态生成 -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="empty-state" id="noProgressData" style="display: none;">
+                            <i class="fas fa-clipboard-list"></i>
+                            <p style="font-size: 1.2em; margin-bottom: 10px;">No progress data found</p>
+                            <p>Generate progress reports for students to see data here</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 进度摘要 -->
+                    <div class="reminder-summary" id="progressSummary" style="margin-top: 25px;">
+                        <!-- 摘要将通过JavaScript动态生成 -->
+                    </div>
+                    
+                    <!-- 操作按钮 -->
+                    <div class="batch-actions" style="margin-top: 25px;">
+                        <button class="btn btn-info" onclick="generateAllProgressReports()">
+                            <i class="fas fa-sync-alt"></i> Generate All Progress Reports
+                        </button>
+                        <button class="btn btn-success" onclick="markAllAsComplete()">
+                            <i class="fas fa-check-double"></i> Mark All as Complete
+                        </button>
+                        <button class="btn" onclick="exportProgressReport()">
+                            <i class="fas fa-file-excel"></i> Export to Excel
+                        </button>
+                        <button class="btn btn-warning" onclick="showSection('reminders')">
+                            <i class="fas fa-arrow-left"></i> Back to Reminders
                         </button>
                     </div>
                 </div>
@@ -1989,6 +2046,26 @@
         </div>
     </div>
 
+    <!-- Edit Progress Report Modal -->
+    <div id="editProgressModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div style="padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin: 0; font-size: 1.3em; color: var(--dark);">
+                        <i class="fas fa-edit"></i> Edit Progress Report
+                    </h3>
+                    <button class="btn" onclick="closeEditProgressModal()" style="padding: 8px 12px; background: var(--gray);">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div id="editProgressContent">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Loading Overlay -->
     <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; color: white; font-size: 18px;">
         <div style="text-align: center;">
@@ -2015,7 +2092,6 @@
 
     <script>
         // ========== 性能优化函数 ==========
-        // 防抖函数
         function debounce(func, wait) {
             let timeout;
             return function executedFunction(...args) {
@@ -2028,7 +2104,6 @@
             };
         }
         
-        // 节流函数
         function throttle(func, limit) {
             let inThrottle;
             return function(...args) {
@@ -2040,10 +2115,8 @@
             };
         }
         
-        // DOM缓存
         const domCache = {};
         
-        // 显示加载动画
         function showLoading(message = 'Loading...') {
             const overlay = document.getElementById('loadingOverlay');
             const messageEl = document.getElementById('loadingMessage');
@@ -2051,16 +2124,9 @@
             overlay.style.display = 'flex';
         }
         
-        // 隐藏加载动画
         function hideLoading() {
             const overlay = document.getElementById('loadingOverlay');
             overlay.style.display = 'none';
-        }
-        
-        // 切换暗色模式
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
         }
         
         // ========== Firebase 配置 ==========
@@ -2074,7 +2140,6 @@
             measurementId: "G-KM0MJ80MN9"
         };
 
-        // 初始化 Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
@@ -2092,7 +2157,7 @@
 
         const PROGRESS_REPORT_THRESHOLDS = [12, 24, 26, 48];
         const BRAIN_TEST_THRESHOLD = 24;
-        const FINAL_BRAIN_TEST_THRESHOLD = 3; // Last 3 sessions
+        const FINAL_BRAIN_TEST_THRESHOLD = 3;
 
         let currentSearchTerm = '';
         let currentSelectedStudentId = '';
@@ -2102,10 +2167,11 @@
         let dateSelectionStudentId = '';
         let dateSelectionStudentIds = [];
         let currentReminderFilter = 'all';
-        let currentEnrolledMonth = 'all';
         let currentEditingRecordId = null;
+        let currentProgressFilter = 'all';
+        let currentIntakeFilter = 'all';
+        let currentEditingProgressStudentId = null;
         
-        // 删除相关变量
         let pendingDelete = {
             studentId: '',
             date: '',
@@ -2119,6 +2185,7 @@
                 this.attendanceRecords = [];
                 this.timeSlots = [];
                 this.reminders = new Map();
+                this.progressReports = new Map();
                 this.userId = null;
                 this.isOnline = false;
             }
@@ -2127,8 +2194,8 @@
                 this.userId = userId;
                 await this.loadFromFirestore();
                 this.startRealtimeSync();
-                // 检查提醒
                 this.checkAllReminders();
+                this.generateAllProgressReports();
             }
             
             async loadFromFirestore() {
@@ -2137,7 +2204,6 @@
                 try {
                     updateSyncStatus('🔄 Loading data from cloud...', 'syncing');
                     
-                    // Load students data
                     const studentsSnapshot = await db.collection('users').doc(this.userId)
                         .collection('students').get();
                     
@@ -2146,7 +2212,6 @@
                         this.students.set(doc.id, doc.data());
                     });
                     
-                    // Load attendance records
                     const attendanceSnapshot = await db.collection('users').doc(this.userId)
                         .collection('attendance').get();
                     
@@ -2155,29 +2220,33 @@
                         this.attendanceRecords.push(doc.data());
                     });
                     
-                    // Load time slots
                     const timeSlotsSnapshot = await db.collection('users').doc(this.userId)
                         .collection('timeSlots').get();
                     
                     this.timeSlots = [];
                     if (timeSlotsSnapshot.empty) {
-                        // If no time slots, create default ones
                         await this.initializeDefaultTimeSlots();
                     } else {
                         timeSlotsSnapshot.forEach(doc => {
                             this.timeSlots.push(doc.data());
                         });
-                        // Sort immediately after loading
                         this.sortTimeSlots();
                     }
                     
-                    // Load reminders
                     const remindersSnapshot = await db.collection('users').doc(this.userId)
                         .collection('reminders').get();
                     
                     this.reminders.clear();
                     remindersSnapshot.forEach(doc => {
                         this.reminders.set(doc.id, doc.data());
+                    });
+                    
+                    const progressSnapshot = await db.collection('users').doc(this.userId)
+                        .collection('progressReports').get();
+                    
+                    this.progressReports.clear();
+                    progressSnapshot.forEach(doc => {
+                        this.progressReports.set(doc.id, doc.data());
                     });
                     
                     updateSyncStatus('✅ Data loaded from cloud', 'synced');
@@ -2190,16 +2259,13 @@
                 }
             }
             
-            // Time slot sorting method
             sortTimeSlots() {
                 this.timeSlots.sort((a, b) => {
                     return this.getTimeSlotOrder(a.name) - this.getTimeSlotOrder(b.name);
                 });
             }
             
-            // Get time slot order value
             getTimeSlotOrder(timeSlotName) {
-                // Define day order
                 const dayOrder = {
                     'Monday': 1,
                     'Tuesday': 2,
@@ -2210,18 +2276,14 @@
                     'Sunday': 7
                 };
                 
-                // Extract day of week
                 const dayMatch = timeSlotName.match(/(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)/i);
                 const day = dayMatch ? dayMatch[0] : '';
                 
-                // Extract start time
                 const timeMatch = timeSlotName.match(/(\d{1,2}(?::\d{2})?(?:am|pm))/i);
                 let time = timeMatch ? timeMatch[0] : '';
                 
-                // Convert time to 24-hour format for sorting
                 let timeValue = 0;
                 if (time) {
-                    // Process time format
                     time = time.toLowerCase();
                     let [hour, minute = '0'] = time.replace(/[ap]m/, '').split(':');
                     hour = parseInt(hour);
@@ -2237,11 +2299,9 @@
                     timeValue = hour * 60 + minute;
                 }
                 
-                // Calculate sort value: day * 10000 + time (minutes)
                 return (dayOrder[day] || 99) * 10000 + timeValue;
             }
             
-            // Format date to local string
             formatLocalDate(date) {
                 if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
                     const today = new Date();
@@ -2251,16 +2311,13 @@
                     return `${year}-${month}-${day}`;
                 }
                 
-                // Use local time, not UTC
                 const year = date.getFullYear();
                 const month = String(date.getMonth() + 1).padStart(2, '0');
                 const day = String(date.getDate()).padStart(2, '0');
                 return `${year}-${month}-${day}`;
             }
             
-            // Convert various inputs to local date string
             getLocalDateString(dateInput) {
-                // Handle various date input formats
                 if (!dateInput) {
                     return this.formatLocalDate(new Date());
                 }
@@ -2269,47 +2326,38 @@
                     return this.formatLocalDate(dateInput);
                 }
                 
-                // If string, try to parse
                 if (typeof dateInput === 'string') {
-                    // If YYYY-MM-DD format, return directly
                     if (/^\d{4}-\d{2}-\d{2}$/.test(dateInput)) {
                         return dateInput;
                     }
                     
-                    // If DD/MM/YYYY format, convert
                     if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateInput)) {
                         const [day, month, year] = dateInput.split('/');
                         return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
                     }
                     
-                    // Try to parse other formats
                     const date = new Date(dateInput);
                     if (!isNaN(date.getTime())) {
                         return this.formatLocalDate(date);
                     }
                 }
                 
-                // If can't parse, return today
                 return this.formatLocalDate(new Date());
             }
             
-            // Format stored date string (YYYY-MM-DD) to DD/MM/YYYY for display
             formatDateForDisplay(dateString) {
                 if (!dateString) return 'N/A';
                 
-                // Ensure date is local time
                 const localDateStr = this.getLocalDateString(dateString);
                 const [year, month, day] = localDateStr.split('-');
                 
                 return `${day}/${month}/${year}`;
             }
             
-            // Compatibility with existing formatDate method
             formatDate(dateString) {
                 return this.formatDateForDisplay(dateString);
             }
             
-            // Parse DD/MM/YYYY format date to YYYY-MM-DD
             parseDate(dateString) {
                 return this.getLocalDateString(dateString);
             }
@@ -2329,14 +2377,12 @@
                     
                     this.timeSlots.push(timeSlotData);
                 }
-                // Sort after initialization
                 this.sortTimeSlots();
             }
             
             startRealtimeSync() {
                 if (!this.userId) return;
                 
-                // Real-time listener for students data
                 db.collection('users').doc(this.userId).collection('students')
                     .onSnapshot((snapshot) => {
                         snapshot.docChanges().forEach((change) => {
@@ -2348,34 +2394,30 @@
                         });
                         updateUI();
                         updateSyncStatus('✅ Real-time sync active', 'synced');
-                        // 检查提醒
                         this.checkAllReminders();
+                        this.updateAllProgressReports();
                     });
                 
-                // Real-time listener for attendance records
                 db.collection('users').doc(this.userId).collection('attendance')
                     .onSnapshot((snapshot) => {
                         this.attendanceRecords = snapshot.docs.map(doc => doc.data());
                         updateUI();
                         updateSyncStatus('✅ Real-time sync active', 'synced');
-                        // 检查提醒
                         this.checkAllReminders();
+                        this.updateAllProgressReports();
                     });
                 
-                // Real-time listener for time slots
                 db.collection('users').doc(this.userId).collection('timeSlots')
                     .onSnapshot((snapshot) => {
                         this.timeSlots = [];
                         snapshot.forEach(doc => {
                             this.timeSlots.push(doc.data());
                         });
-                        // Sort after each update
                         this.sortTimeSlots();
                         updateUI();
                         updateSyncStatus('✅ Real-time sync active', 'synced');
                     });
                 
-                // Real-time listener for reminders
                 db.collection('users').doc(this.userId).collection('reminders')
                     .onSnapshot((snapshot) => {
                         this.reminders.clear();
@@ -2383,6 +2425,16 @@
                             this.reminders.set(doc.id, doc.data());
                         });
                         updateRemindersUI();
+                        updateSyncStatus('✅ Real-time sync active', 'synced');
+                    });
+                
+                db.collection('users').doc(this.userId).collection('progressReports')
+                    .onSnapshot((snapshot) => {
+                        this.progressReports.clear();
+                        snapshot.forEach(doc => {
+                            this.progressReports.set(doc.id, doc.data());
+                        });
+                        updateProgressReportUI();
                         updateSyncStatus('✅ Real-time sync active', 'synced');
                     });
             }
@@ -2413,8 +2465,8 @@
                     this.students.set(studentId, student);
                 }
                 
-                // 检查提醒
                 this.checkRemindersForStudent(studentId);
+                this.generateProgressReport(studentId);
                 
                 return student;
             }
@@ -2437,8 +2489,8 @@
                     this.students.set(studentId, updatedStudent);
                 }
                 
-                // 检查提醒
                 this.checkRemindersForStudent(studentId);
+                this.generateProgressReport(studentId);
                 
                 return updatedStudent;
             }
@@ -2448,11 +2500,9 @@
                     throw new Error('Time slot and date are required');
                 }
                 
-                // Use local date string
                 const localDate = this.getLocalDateString(date);
                 const recordId = `${timeSlot}-${localDate}`.replace(/[^a-zA-Z0-9]/g, '-');
                 
-                // Check if attendance for this day has already been recorded
                 const existingRecord = this.attendanceRecords.find(record => 
                     record.timeSlot === timeSlot && record.date === localDate
                 );
@@ -2470,25 +2520,20 @@
                     recordedAt: new Date().toISOString()
                 };
                 
-                // Update student attendance data with duplicate prevention
                 for (const studentId of presentStudentIds) {
                     const student = this.students.get(studentId);
                     if (student && localDate >= student.enrolledDate) {
                         
-                        // Check if attendance for this day has already been recorded
                         const alreadyRecorded = student.attendanceDates && 
                                               student.attendanceDates.includes(localDate);
                         
                         if (!alreadyRecorded) {
-                            // Initialize array if it doesn't exist
                             if (!student.attendanceDates) {
                                 student.attendanceDates = [];
                             }
                             
-                            // Add date and remove duplicates
                             student.attendanceDates.push(localDate);
                             
-                            // Remove duplicates
                             const uniqueDates = [...new Set(student.attendanceDates)];
                             student.attendanceDates = uniqueDates;
                             student.attendanceCount = uniqueDates.length;
@@ -2501,13 +2546,12 @@
                                     });
                             }
                             
-                            // 检查提醒
                             this.checkRemindersForStudent(studentId);
+                            this.generateProgressReport(studentId);
                         }
                     }
                 }
                 
-                // Save attendance record
                 if (this.isOnline) {
                     await db.collection('users').doc(this.userId).collection('attendance')
                         .doc(recordId).set(record);
@@ -2522,23 +2566,17 @@
                 const student = this.students.get(studentId);
                 if (!student) return null;
                 
-                // Ensure attendance data exists
                 const attendanceDates = student.attendanceDates || [];
-                
-                // Remove duplicates if any
                 const uniqueDates = [...new Set(attendanceDates)];
                 
-                // Only count attendance after enrollment date
                 const validAttendanceDates = uniqueDates.filter(date => 
                     date >= student.enrolledDate
                 );
                 
-                // Fix: Automatically clean duplicates and update database
                 if (uniqueDates.length !== attendanceDates.length) {
                     student.attendanceDates = uniqueDates;
                     student.attendanceCount = uniqueDates.length;
                     
-                    // Async update to database
                     if (this.isOnline) {
                         db.collection('users').doc(system.userId).collection('students')
                             .doc(studentId).update({
@@ -2548,17 +2586,12 @@
                     }
                 }
                 
-                // Fix: Use validAttendanceDates instead of uniqueDates for actual attendance
                 const validAttendanceCount = validAttendanceDates.length;
-                
-                // Use student's custom total sessions, default to 48
                 const totalSessions = student.totalSessions || 48;
                 
-                // Fix: Ensure attendanceCount matches actual attendance dates
                 if (student.attendanceCount !== validAttendanceCount) {
                     student.attendanceCount = validAttendanceCount;
                     
-                    // Async update to database
                     if (this.isOnline) {
                         db.collection('users').doc(this.userId).collection('students')
                             .doc(studentId).update({
@@ -2581,7 +2614,6 @@
                     if (timeSlot === 'all' || student.timeSlot === timeSlot) {
                         const studentWithAttendance = this.getStudentAttendance(student.id);
                         
-                        // Include student if no search term or if matches search
                         if (!searchTerm || this.doesStudentMatchSearch(studentWithAttendance, searchTerm)) {
                             students.push(studentWithAttendance);
                         }
@@ -2590,7 +2622,6 @@
                 return students;
             }
 
-            // Add search matching method
             doesStudentMatchSearch(student, searchTerm) {
                 if (!searchTerm) return true;
                 
@@ -2655,12 +2686,12 @@
                     },
                     students: Array.from(this.students.values()),
                     attendanceRecords: this.attendanceRecords,
-                    reminders: Array.from(this.reminders.values())
+                    reminders: Array.from(this.reminders.values()),
+                    progressReports: Array.from(this.progressReports.values())
                 };
                 return JSON.stringify(data, null, 2);
             }
             
-            // Time slot management methods
             async addTimeSlot(name) {
                 if (!name) {
                     throw new Error('Time slot name is required');
@@ -2686,7 +2717,6 @@
             }
             
             async deleteTimeSlot(timeSlotId) {
-                // Check if any students are using this time slot
                 const studentsInTimeSlot = Array.from(this.students.values()).filter(
                     student => student.timeSlot === this.getTimeSlotNameById(timeSlotId)
                 );
@@ -2710,7 +2740,6 @@
                 return timeSlot ? timeSlot.name : '';
             }
             
-            // Fix duplicate attendance dates for all students
             async fixDuplicateAttendance() {
                 let fixedCount = 0;
                 
@@ -2719,16 +2748,12 @@
                         continue;
                     }
                     
-                    // Remove duplicates
                     const uniqueDates = [...new Set(student.attendanceDates)];
                     
-                    // If duplicates were found
                     if (uniqueDates.length !== student.attendanceDates.length) {
-                        // Update student data
                         student.attendanceDates = uniqueDates;
                         student.attendanceCount = uniqueDates.length;
                         
-                        // Update database
                         if (this.isOnline) {
                             try {
                                 await db.collection('users').doc(this.userId).collection('students')
@@ -2747,14 +2772,11 @@
                 return fixedCount;
             }
             
-            // Recalculate attendance based on actual records
             async recalculateAllAttendance() {
                 let recalculatedCount = 0;
                 
-                // Create a map of attendance by student
                 const attendanceByStudent = new Map();
                 
-                // Group attendance by student
                 for (const record of this.attendanceRecords) {
                     for (const studentId of record.presentStudents) {
                         if (!attendanceByStudent.has(studentId)) {
@@ -2764,16 +2786,13 @@
                     }
                 }
                 
-                // Update each student
                 for (const [studentId, student] of this.students.entries()) {
                     const attendedDates = attendanceByStudent.get(studentId) || new Set();
                     const uniqueDates = [...attendedDates];
                     
-                    // Update student data
                     student.attendanceDates = uniqueDates;
                     student.attendanceCount = uniqueDates.length;
                     
-                    // Update database
                     if (this.isOnline) {
                         try {
                             await db.collection('users').doc(this.userId).collection('students')
@@ -2791,11 +2810,9 @@
                 return recalculatedCount;
             }
             
-            // Clean orphaned data
             async cleanOrphanedData() {
                 let cleanedCount = 0;
                 
-                // Find and remove attendance records with no corresponding students
                 for (let i = this.attendanceRecords.length - 1; i >= 0; i--) {
                     const record = this.attendanceRecords[i];
                     let hasValidStudents = false;
@@ -2807,7 +2824,6 @@
                         }
                     }
                     
-                    // If no valid students, remove the record
                     if (!hasValidStudents) {
                         if (this.isOnline) {
                             await db.collection('users').doc(this.userId).collection('attendance')
@@ -2824,7 +2840,6 @@
             
             // ========== 提醒系统方法 ==========
             
-            // 检查所有学生的提醒
             async checkAllReminders() {
                 console.log('🔔 Checking all reminders...');
                 
@@ -2835,7 +2850,6 @@
                 updateRemindersUI();
             }
             
-            // 检查单个学生的提醒
             async checkRemindersForStudent(studentId) {
                 const student = this.students.get(studentId);
                 if (!student) return;
@@ -2844,10 +2858,9 @@
                 const attendedSessions = attendanceInfo.attendanceCount;
                 const totalSessions = student.totalSessions || 48;
                 
-                // 检查进度报告提醒
                 for (const threshold of PROGRESS_REPORT_THRESHOLDS) {
                     if (attendedSessions >= threshold) {
-                        await this.createReminderIfNotExists({
+                        await this.createOrUpdateReminder({
                             studentId: studentId,
                             studentName: student.name,
                             timeSlot: student.timeSlot,
@@ -2861,9 +2874,8 @@
                     }
                 }
                 
-                // 检查大脑测试提醒 (24节课)
                 if (attendedSessions >= BRAIN_TEST_THRESHOLD) {
-                    await this.createReminderIfNotExists({
+                    await this.createOrUpdateReminder({
                         studentId: studentId,
                         studentName: student.name,
                         timeSlot: student.timeSlot,
@@ -2876,10 +2888,9 @@
                     });
                 }
                 
-                // 检查最后3节课的大脑测试提醒
                 const remainingSessions = totalSessions - attendedSessions;
                 if (remainingSessions <= FINAL_BRAIN_TEST_THRESHOLD && remainingSessions > 0) {
-                    await this.createReminderIfNotExists({
+                    await this.createOrUpdateReminder({
                         studentId: studentId,
                         studentName: student.name,
                         timeSlot: student.timeSlot,
@@ -2893,23 +2904,18 @@
                 }
             }
             
-            // 创建提醒（如果不存在）
-            async createReminderIfNotExists(reminderData) {
+            // Updated method: always update currentSessions and message for existing reminders
+            async createOrUpdateReminder(reminderData) {
                 const reminderId = `${reminderData.studentId}-${reminderData.type}-${reminderData.threshold}`;
                 
-                // 检查提醒是否已存在
                 const existingReminder = this.reminders.get(reminderId);
                 if (existingReminder) {
-                    // 如果已存在但已解决，且学生已达到新的里程碑，重新激活提醒
-                    if (existingReminder.resolved && 
-                        reminderData.currentSessions > existingReminder.currentSessions) {
-                        await this.updateReminder(reminderId, {
-                            currentSessions: reminderData.currentSessions,
-                            resolved: false,
-                            resolvedAt: null,
-                            lastChecked: new Date().toISOString()
-                        });
-                    }
+                    // Always update the currentSessions and message (attended count may have changed)
+                    await this.updateReminder(reminderId, {
+                        currentSessions: reminderData.currentSessions,
+                        message: reminderData.message,
+                        lastChecked: new Date().toISOString()
+                    });
                     return;
                 }
                 
@@ -2930,7 +2936,6 @@
                 }
             }
             
-            // 更新提醒
             async updateReminder(reminderId, updateData) {
                 const reminder = this.reminders.get(reminderId);
                 if (!reminder) return;
@@ -2951,7 +2956,6 @@
                 return updatedReminder;
             }
             
-            // 标记提醒为已解决
             async markReminderAsResolved(reminderId) {
                 return await this.updateReminder(reminderId, {
                     resolved: true,
@@ -2959,7 +2963,6 @@
                 });
             }
             
-            // 标记提醒为未解决
             async markReminderAsUnresolved(reminderId) {
                 return await this.updateReminder(reminderId, {
                     resolved: false,
@@ -2967,7 +2970,6 @@
                 });
             }
             
-            // 删除提醒
             async deleteReminder(reminderId) {
                 if (this.isOnline) {
                     await db.collection('users').doc(this.userId).collection('reminders')
@@ -2976,38 +2978,32 @@
                 this.reminders.delete(reminderId);
             }
             
-            // 获取未解决的提醒
             getUnresolvedReminders() {
                 return Array.from(this.reminders.values()).filter(reminder => !reminder.resolved);
             }
             
-            // 获取已解决的提醒
             getResolvedReminders() {
                 return Array.from(this.reminders.values()).filter(reminder => reminder.resolved);
             }
             
-            // 获取优先提醒
             getPriorityReminders() {
                 return Array.from(this.reminders.values()).filter(reminder => 
                     !reminder.resolved && reminder.priority === 'high'
                 );
             }
             
-            // 获取进度报告提醒
             getProgressReminders() {
                 return Array.from(this.reminders.values()).filter(reminder => 
                     !reminder.resolved && reminder.type === 'progress'
                 );
             }
             
-            // 获取大脑测试提醒
             getBrainTestReminders() {
                 return Array.from(this.reminders.values()).filter(reminder => 
                     !reminder.resolved && reminder.type === 'brainTest'
                 );
             }
             
-            // 获取提醒摘要
             getReminderSummary() {
                 const allReminders = Array.from(this.reminders.values());
                 const unresolved = allReminders.filter(r => !r.resolved);
@@ -3026,74 +3022,6 @@
                 };
             }
             
-            // 获取按入学月份分组的提醒
-            getRemindersByEnrollmentMonth() {
-                const monthGroups = {};
-                
-                for (const reminder of this.reminders.values()) {
-                    const student = this.students.get(reminder.studentId);
-                    if (!student || !student.enrolledDate) {
-                        // 如果没有入学日期，放在"未知"组
-                        if (!monthGroups.unknown) {
-                            monthGroups.unknown = [];
-                        }
-                        monthGroups.unknown.push(reminder);
-                        continue;
-                    }
-                    
-                    // 从入学日期提取月份
-                    const enrolledDate = new Date(student.enrolledDate);
-                    if (isNaN(enrolledDate.getTime())) {
-                        // 如果日期无效，放在"未知"组
-                        if (!monthGroups.unknown) {
-                            monthGroups.unknown = [];
-                        }
-                        monthGroups.unknown.push(reminder);
-                        continue;
-                    }
-                    
-                    const month = enrolledDate.getMonth() + 1; // 月份从0开始，加1得到1-12
-                    const year = enrolledDate.getFullYear();
-                    const key = `${year}-${month}`;
-                    
-                    if (!monthGroups[key]) {
-                        monthGroups[key] = [];
-                    }
-                    monthGroups[key].push(reminder);
-                }
-                
-                return monthGroups;
-            }
-            
-            // 获取特定月份的提醒
-            getRemindersByMonth(month) {
-                if (month === 'all') {
-                    return Array.from(this.reminders.values());
-                }
-                
-                const monthNum = parseInt(month);
-                const filteredReminders = [];
-                
-                for (const reminder of this.reminders.values()) {
-                    const student = this.students.get(reminder.studentId);
-                    if (!student || !student.enrolledDate) {
-                        continue;
-                    }
-                    
-                    const enrolledDate = new Date(student.enrolledDate);
-                    if (isNaN(enrolledDate.getTime())) {
-                        continue;
-                    }
-                    
-                    if (enrolledDate.getMonth() + 1 === monthNum) {
-                        filteredReminders.push(reminder);
-                    }
-                }
-                
-                return filteredReminders;
-            }
-            
-            // 导出提醒数据
             exportRemindersToCSV() {
                 let csv = 'Type,Student Name,Time Slot,Threshold,Current Sessions,Total Sessions,Message,Priority,Status,Created At,Resolved At\n';
                 for (const reminder of this.reminders.values()) {
@@ -3105,7 +3033,6 @@
                 return csv;
             }
             
-            // 清除所有已解决的提醒
             async clearResolvedReminders() {
                 let clearedCount = 0;
                 const resolvedReminders = this.getResolvedReminders();
@@ -3124,30 +3051,25 @@
             
             // ========== 记录管理方法 ==========
             
-            // 获取特定的出勤记录
             getAttendanceRecord(recordId) {
                 return this.attendanceRecords.find(record => record.id === recordId);
             }
             
-            // 更新出勤记录
             async updateAttendanceRecord(recordId, updatedData) {
                 const record = this.getAttendanceRecord(recordId);
                 if (!record) {
                     throw new Error('Attendance record not found');
                 }
                 
-                // 保存旧的学生列表
                 const oldPresentStudents = [...record.presentStudents];
                 const newPresentStudents = updatedData.presentStudents || oldPresentStudents;
                 
-                // 更新记录
                 const updatedRecord = {
                     ...record,
                     ...updatedData,
                     presentStudents: newPresentStudents
                 };
                 
-                // 更新数据库
                 if (this.isOnline) {
                     await db.collection('users').doc(this.userId).collection('attendance')
                         .doc(recordId).update(updatedData);
@@ -3158,35 +3080,28 @@
                     }
                 }
                 
-                // 更新学生出勤数据
                 await this.updateStudentAttendanceFromRecord(oldPresentStudents, newPresentStudents, record.date);
                 
                 return updatedRecord;
             }
             
-            // 更新学生出勤数据（基于记录变化）
             async updateStudentAttendanceFromRecord(oldPresentStudents, newPresentStudents, date) {
-                // 找出被移除的学生
                 const removedStudents = oldPresentStudents.filter(
                     studentId => !newPresentStudents.includes(studentId)
                 );
                 
-                // 找出新增的学生
                 const addedStudents = newPresentStudents.filter(
                     studentId => !oldPresentStudents.includes(studentId)
                 );
                 
-                // 为新增的学生添加出勤日期
                 for (const studentId of addedStudents) {
                     const student = this.students.get(studentId);
                     if (student && date >= student.enrolledDate) {
                         if (!student.attendanceDates) student.attendanceDates = [];
                         
-                        // 检查该日期是否已存在
                         if (!student.attendanceDates.includes(date)) {
                             student.attendanceDates.push(date);
                             
-                            // 移除重复项
                             const uniqueDates = [...new Set(student.attendanceDates)];
                             student.attendanceDates = uniqueDates;
                             student.attendanceCount = uniqueDates.length;
@@ -3199,20 +3114,17 @@
                                     });
                             }
                             
-                            // 检查提醒
                             this.checkRemindersForStudent(studentId);
+                            this.generateProgressReport(studentId);
                         }
                     }
                 }
                 
-                // 为被移除的学生删除出勤日期
                 for (const studentId of removedStudents) {
                     const student = this.students.get(studentId);
                     if (student && student.attendanceDates) {
-                        // 移除该日期
                         const filteredDates = student.attendanceDates.filter(d => d !== date);
                         
-                        // 只有当日期确实存在时才更新
                         if (filteredDates.length !== student.attendanceDates.length) {
                             student.attendanceDates = filteredDates;
                             student.attendanceCount = filteredDates.length;
@@ -3225,21 +3137,19 @@
                                     });
                             }
                             
-                            // 检查提醒
                             this.checkRemindersForStudent(studentId);
+                            this.generateProgressReport(studentId);
                         }
                     }
                 }
             }
             
-            // 删除出勤记录
             async deleteAttendanceRecord(recordId) {
                 const record = this.getAttendanceRecord(recordId);
                 if (!record) {
                     throw new Error('Attendance record not found');
                 }
                 
-                // 从学生出勤数据中移除该日期
                 for (const studentId of record.presentStudents) {
                     const student = this.students.get(studentId);
                     if (student && student.attendanceDates) {
@@ -3257,13 +3167,12 @@
                                     });
                             }
                             
-                            // 检查提醒
                             this.checkRemindersForStudent(studentId);
+                            this.generateProgressReport(studentId);
                         }
                     }
                 }
                 
-                // 删除记录
                 if (this.isOnline) {
                     await db.collection('users').doc(this.userId).collection('attendance')
                         .doc(recordId).delete();
@@ -3274,7 +3183,6 @@
                 return true;
             }
             
-            // ========== 删除学生出勤日期方法 ==========
             async deleteStudentAttendanceDate(studentId, dateToDelete) {
                 const student = this.students.get(studentId);
                 if (!student) {
@@ -3286,26 +3194,21 @@
                 }
                 
                 try {
-                    // 从学生的出勤日期中移除
                     const updatedDates = student.attendanceDates.filter(date => date !== dateToDelete);
                     student.attendanceDates = updatedDates;
                     student.attendanceCount = updatedDates.length;
                     
-                    // 从相关的出勤记录中移除该学生
                     const attendanceRecord = this.attendanceRecords.find(record => 
                         record.timeSlot === student.timeSlot && 
                         record.date === dateToDelete
                     );
                     
                     if (attendanceRecord) {
-                        // 从记录中移除该学生
                         const updatedPresentStudents = attendanceRecord.presentStudents.filter(id => id !== studentId);
                         
                         if (updatedPresentStudents.length === 0) {
-                            // 如果没有学生出席，删除整个记录
                             await this.deleteAttendanceRecord(attendanceRecord.id);
                         } else {
-                            // 更新记录中的学生列表
                             attendanceRecord.presentStudents = updatedPresentStudents;
                             
                             if (this.isOnline) {
@@ -3318,7 +3221,6 @@
                         }
                     }
                     
-                    // 更新学生数据
                     if (this.isOnline) {
                         await db.collection('users').doc(this.userId).collection('students')
                             .doc(studentId).update({
@@ -3327,8 +3229,8 @@
                             });
                     }
                     
-                    // 刷新提醒
                     this.checkRemindersForStudent(studentId);
+                    this.generateProgressReport(studentId);
                     
                     return { success: true, message: 'Attendance date deleted successfully' };
                     
@@ -3337,9 +3239,292 @@
                     throw error;
                 }
             }
+            
+            // ========== 进度报告系统方法 ==========
+            
+            determineIntake(enrolledDate) {
+                if (!enrolledDate) return 'Unknown';
+                
+                const date = new Date(enrolledDate);
+                if (isNaN(date.getTime())) return 'Unknown';
+                
+                const month = date.getMonth();
+                const year = date.getFullYear();
+                
+                const monthNames = [
+                    'January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'
+                ];
+                
+                return `${monthNames[month]} ${year}`;
+            }
+            
+            async generateProgressReport(studentId) {
+                const student = this.students.get(studentId);
+                if (!student) return null;
+                
+                const attendanceInfo = this.getStudentAttendance(studentId);
+                const attendedSessions = attendanceInfo.attendanceCount;
+                const totalSessions = student.totalSessions || 48;
+                
+                let progressReport = this.progressReports.get(studentId);
+                
+                if (!progressReport) {
+                    progressReport = {
+                        studentId: studentId,
+                        studentName: student.name,
+                        intake: this.determineIntake(student.enrolledDate),
+                        classAttended: attendedSessions,
+                        progressReport1: attendedSessions >= 12,
+                        progressReport1Date: attendedSessions >= 12 ? new Date().toISOString() : null,
+                        progressReport2: attendedSessions >= 26,
+                        progressReport2Date: attendedSessions >= 26 ? new Date().toISOString() : null,
+                        brainTest1: attendedSessions >= 24,
+                        brainTest1Date: attendedSessions >= 24 ? new Date().toISOString() : null,
+                        brainTest2: attendedSessions >= 46,
+                        brainTest2Date: attendedSessions >= 46 ? new Date().toISOString() : null,
+                        finalConsultationDate: attendedSessions >= 48 ? new Date().toISOString() : null,
+                        finalConsultationCompleted: attendedSessions >= 48,
+                        remarks: '',
+                        lastUpdated: new Date().toISOString(),
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    if (this.isOnline) {
+                        await db.collection('users').doc(this.userId).collection('progressReports')
+                            .doc(studentId).set(progressReport);
+                    } else {
+                        this.progressReports.set(studentId, progressReport);
+                    }
+                } else {
+                    const updatedReport = {
+                        ...progressReport,
+                        classAttended: attendedSessions,
+                        lastUpdated: new Date().toISOString()
+                    };
+                    
+                    if (attendedSessions >= 12 && !progressReport.progressReport1) {
+                        updatedReport.progressReport1 = true;
+                        updatedReport.progressReport1Date = new Date().toISOString();
+                    }
+                    
+                    if (attendedSessions >= 26 && !progressReport.progressReport2) {
+                        updatedReport.progressReport2 = true;
+                        updatedReport.progressReport2Date = new Date().toISOString();
+                    }
+                    
+                    if (attendedSessions >= 24 && !progressReport.brainTest1) {
+                        updatedReport.brainTest1 = true;
+                        updatedReport.brainTest1Date = new Date().toISOString();
+                    }
+                    
+                    if (attendedSessions >= 46 && !progressReport.brainTest2) {
+                        updatedReport.brainTest2 = true;
+                        updatedReport.brainTest2Date = new Date().toISOString();
+                    }
+                    
+                    if (attendedSessions >= 48 && !progressReport.finalConsultationCompleted) {
+                        updatedReport.finalConsultationCompleted = true;
+                        if (!progressReport.finalConsultationDate) {
+                            updatedReport.finalConsultationDate = new Date().toISOString();
+                        }
+                    }
+                    
+                    if (this.isOnline) {
+                        await db.collection('users').doc(this.userId).collection('progressReports')
+                            .doc(studentId).update(updatedReport);
+                    } else {
+                        this.progressReports.set(studentId, updatedReport);
+                    }
+                    
+                    progressReport = updatedReport;
+                }
+                
+                return progressReport;
+            }
+            
+            async generateAllProgressReports() {
+                let generatedCount = 0;
+                
+                for (const studentId of this.students.keys()) {
+                    try {
+                        await this.generateProgressReport(studentId);
+                        generatedCount++;
+                    } catch (error) {
+                        console.error(`Error generating progress report for student ${studentId}:`, error);
+                    }
+                }
+                
+                return generatedCount;
+            }
+            
+            async updateAllProgressReports() {
+                let updatedCount = 0;
+                
+                for (const studentId of this.students.keys()) {
+                    const progressReport = this.progressReports.get(studentId);
+                    if (progressReport) {
+                        try {
+                            await this.generateProgressReport(studentId);
+                            updatedCount++;
+                        } catch (error) {
+                            console.error(`Error updating progress report for student ${studentId}:`, error);
+                        }
+                    }
+                }
+                
+                return updatedCount;
+            }
+            
+            async updateProgressReport(studentId, updates) {
+                const progressReport = this.progressReports.get(studentId);
+                if (!progressReport) return null;
+                
+                const updatedReport = {
+                    ...progressReport,
+                    ...updates,
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                if (this.isOnline) {
+                    await db.collection('users').doc(this.userId).collection('progressReports')
+                        .doc(studentId).update(updates);
+                } else {
+                    this.progressReports.set(studentId, updatedReport);
+                }
+                
+                return updatedReport;
+            }
+            
+            async deleteProgressReport(studentId) {
+                if (this.isOnline) {
+                    await db.collection('users').doc(this.userId).collection('progressReports')
+                        .doc(studentId).delete();
+                }
+                this.progressReports.delete(studentId);
+            }
+            
+            getProgressReportSummary() {
+                const allReports = Array.from(this.progressReports.values());
+                const total = allReports.length;
+                
+                const completedReports = allReports.filter(report => 
+                    report.progressReport1 && report.progressReport2 && 
+                    report.brainTest1 && report.brainTest2 && 
+                    report.finalConsultationCompleted
+                ).length;
+                
+                const pendingReports = allReports.filter(report => 
+                    !report.progressReport1 || !report.progressReport2
+                ).length;
+                
+                const pendingTests = allReports.filter(report => 
+                    !report.brainTest1 || !report.brainTest2
+                ).length;
+                
+                const pendingConsultation = allReports.filter(report => 
+                    !report.finalConsultationCompleted
+                ).length;
+                
+                const completionRate = total > 0 ? Math.round((completedReports / total) * 100) : 0;
+                
+                return {
+                    total,
+                    completed: completedReports,
+                    pendingReports,
+                    pendingTests,
+                    pendingConsultation,
+                    completionRate
+                };
+            }
+            
+            getProgressReportsByIntake(intake) {
+                if (intake === 'all') {
+                    return Array.from(this.progressReports.values());
+                }
+                
+                return Array.from(this.progressReports.values()).filter(report => 
+                    report.intake.includes(intake)
+                );
+            }
+            
+            getProgressReportsByStatus(filter) {
+                const allReports = Array.from(this.progressReports.values());
+                
+                switch (filter) {
+                    case 'incomplete':
+                        return allReports.filter(report => 
+                            !report.progressReport1 || !report.progressReport2 || 
+                            !report.brainTest1 || !report.brainTest2 || 
+                            !report.finalConsultationCompleted
+                        );
+                    case 'pendingReports':
+                        return allReports.filter(report => 
+                            !report.progressReport1 || !report.progressReport2
+                        );
+                    case 'pendingTests':
+                        return allReports.filter(report => 
+                            !report.brainTest1 || !report.brainTest2
+                        );
+                    case 'pendingConsultation':
+                        return allReports.filter(report => 
+                            !report.finalConsultationCompleted
+                        );
+                    case 'completed':
+                        return allReports.filter(report => 
+                            report.progressReport1 && report.progressReport2 && 
+                            report.brainTest1 && report.brainTest2 && 
+                            report.finalConsultationCompleted
+                        );
+                    default:
+                        return allReports;
+                }
+            }
+            
+            exportProgressReportsToCSV() {
+                let csv = 'Student Name,Intake,Class Attended,Progress Report 1,Progress Report 1 Date,Progress Report 2,Progress Report 2 Date,Brain Test 1,Brain Test 1 Date,Brain Test 2,Brain Test 2 Date,Final Consultation Date,Final Consultation Completed,Remarks\n';
+                
+                for (const report of this.progressReports.values()) {
+                    csv += `"${report.studentName}","${report.intake}",${report.classAttended},${report.progressReport1 ? 'Yes' : 'No'},"${report.progressReport1Date || ''}",${report.progressReport2 ? 'Yes' : 'No'},"${report.progressReport2Date || ''}",${report.brainTest1 ? 'Yes' : 'No'},"${report.brainTest1Date || ''}",${report.brainTest2 ? 'Yes' : 'No'},"${report.brainTest2Date || ''}","${report.finalConsultationDate || ''}",${report.finalConsultationCompleted ? 'Yes' : 'No'},"${report.remarks || ''}"\n`;
+                }
+                return csv;
+            }
+            
+            async markAllProgressReportsAsComplete() {
+                let markedCount = 0;
+                
+                for (const [studentId, report] of this.progressReports.entries()) {
+                    const updatedReport = {
+                        progressReport1: true,
+                        progressReport1Date: report.progressReport1Date || new Date().toISOString(),
+                        progressReport2: true,
+                        progressReport2Date: report.progressReport2Date || new Date().toISOString(),
+                        brainTest1: true,
+                        brainTest1Date: report.brainTest1Date || new Date().toISOString(),
+                        brainTest2: true,
+                        brainTest2Date: report.brainTest2Date || new Date().toISOString(),
+                        finalConsultationCompleted: true,
+                        finalConsultationDate: report.finalConsultationDate || new Date().toISOString(),
+                        lastUpdated: new Date().toISOString()
+                    };
+                    
+                    if (this.isOnline) {
+                        await db.collection('users').doc(this.userId).collection('progressReports')
+                            .doc(studentId).update(updatedReport);
+                    } else {
+                        this.progressReports.set(studentId, {
+                            ...report,
+                            ...updatedReport
+                        });
+                    }
+                    
+                    markedCount++;
+                }
+                
+                return markedCount;
+            }
         }
 
-        // 创建系统实例
         const system = new MemoschoolAttendanceSystem();
         
         // ========== 日期修复工具类 ==========
@@ -3349,19 +3534,16 @@
                 
                 let fixedCount = 0;
                 
-                // 修复学生出勤日期
                 for (const [studentId, student] of system.students.entries()) {
                     if (student.attendanceDates && student.attendanceDates.length > 0) {
                         const fixedDates = student.attendanceDates.map(date => 
                             system.getLocalDateString(date)
                         );
                         
-                        // 检查是否有变化
                         if (JSON.stringify(fixedDates) !== JSON.stringify(student.attendanceDates)) {
                             student.attendanceDates = fixedDates;
                             fixedCount++;
                             
-                            // 更新数据库
                             if (system.isOnline) {
                                 db.collection('users').doc(system.userId).collection('students')
                                     .doc(studentId).update({
@@ -3372,14 +3554,12 @@
                     }
                 }
                 
-                // 修复考勤记录日期
                 for (const record of system.attendanceRecords) {
                     const fixedDate = system.getLocalDateString(record.date);
                     if (fixedDate !== record.date) {
                         record.date = fixedDate;
                         fixedCount++;
                         
-                        // 更新数据库
                         if (system.isOnline) {
                             const recordId = record.id;
                             db.collection('users').doc(system.userId).collection('attendance')
@@ -3393,14 +3573,12 @@
                 console.log(`✅ 修复了 ${fixedCount} 个日期时区问题`);
                 showToast(`修复了 ${fixedCount} 个日期时区问题`, 'success');
                 
-                // 刷新UI
                 updateUI();
             }
         }
         
         // ========== 初始化函数 ==========
         function init() {
-            // 初始化DOM缓存
             domCache.syncStatus = document.getElementById('syncStatus');
             domCache.userEmail = document.getElementById('userEmail');
             domCache.loginSection = document.getElementById('loginSection');
@@ -3408,14 +3586,12 @@
             domCache.fabButton = document.getElementById('fabButton');
             domCache.reminderBadge = document.getElementById('reminderBadge');
             
-            // 设置默认日期
             const today = new Date();
             const todayStr = system.getLocalDateString(today);
             
             document.getElementById('classDate').value = todayStr;
             document.getElementById('studentEnrolledDate').value = todayStr;
             
-            // 添加搜索防抖
             const searchInput = document.getElementById('searchStudents');
             if (searchInput) {
                 const debouncedSearch = debounce(function(e) {
@@ -3425,7 +3601,6 @@
                 searchInput.addEventListener('input', debouncedSearch);
             }
             
-            // 监听滚动事件，显示/隐藏FAB
             window.addEventListener('scroll', throttle(() => {
                 const fab = domCache.fabButton;
                 if (window.scrollY > 300) {
@@ -3435,13 +3610,6 @@
                 }
             }, 200));
             
-            // 检查暗色模式偏好
-            if (localStorage.getItem('darkMode') === 'true' || 
-                (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.body.classList.add('dark-mode');
-            }
-            
-            // 检查网络状态
             window.addEventListener('online', updateOnlineStatus);
             window.addEventListener('offline', updateOnlineStatus);
             updateOnlineStatus();
@@ -3465,14 +3633,12 @@
             }
         }
         
-        // ========== 同步状态更新 ==========
         function updateSyncStatus(message, type = 'syncing') {
             const statusElement = document.getElementById('syncStatus');
             statusElement.textContent = message;
             statusElement.className = `sync-status ${type}`;
         }
         
-        // ========== UI更新函数 ==========
         function updateUI() {
             updateDashboard();
             updateTimeSlotSelects();
@@ -3484,8 +3650,7 @@
             updateFilterStudent();
             updateSelectedCount();
             updateRemindersUI();
-            
-            // 更新时区信息
+            updateProgressReportUI();
             updateTimezoneInfo();
         }
         
@@ -3495,9 +3660,12 @@
             });
             document.getElementById(sectionId).classList.add('active');
             
-            // 如果显示提醒页面，更新提醒UI
             if (sectionId === 'reminders') {
                 updateRemindersUI();
+            }
+            
+            if (sectionId === 'progressReport') {
+                updateProgressReportUI();
             }
         }
         
@@ -3509,7 +3677,6 @@
             document.getElementById('avgAttendance').textContent = summary.averageAttendanceRate + '%';
             document.getElementById('timeSlotsCountDashboard').textContent = summary.timeSlots;
             
-            // Detailed stats
             document.getElementById('totalStudentsDetailed').textContent = summary.totalStudents;
             document.getElementById('sessionsRecordedDetailed').textContent = summary.totalSessions;
             document.getElementById('avgAttendanceDetailed').textContent = summary.averageAttendanceRate + '%';
@@ -3520,7 +3687,6 @@
         function updateRemindersUI() {
             const summary = system.getReminderSummary();
             
-            // 更新提醒徽章（只显示未解决的数量）
             if (domCache.reminderBadge) {
                 if (summary.unresolved > 0) {
                     domCache.reminderBadge.textContent = summary.unresolved;
@@ -3530,14 +3696,10 @@
                 }
             }
             
-            // 更新数量显示
             document.getElementById('activeRemindersCount').textContent = summary.unresolved;
             document.getElementById('resolvedRemindersCount').textContent = summary.resolved;
             
-            // 更新提醒摘要
             updateReminderSummary(summary);
-            
-            // 更新提醒列表
             updateRemindersList();
         }
         
@@ -3575,403 +3737,111 @@
         }
         
         function updateRemindersList() {
-            // 更新活动提醒列表
-            updateActiveRemindersList();
-            
-            // 更新已解决提醒列表
-            updateResolvedRemindersList();
-        }
-        
-        function updateActiveRemindersList() {
-            const container = document.getElementById('activeRemindersContainer');
-            if (!container) return;
-            
             let reminders = [];
             
-            // 根据当前过滤器获取提醒
-            if (currentReminderFilter === 'byMonth') {
-                if (currentEnrolledMonth === 'all') {
-                    // 显示按月份分组的提醒
-                    displayRemindersByMonthGroup();
-                    return;
-                } else {
-                    // 显示特定月份的提醒
-                    reminders = system.getRemindersByMonth(currentEnrolledMonth);
-                }
-            } else {
-                // 获取未解决的提醒
+            if (currentReminderFilter === 'all') {
+                reminders = Array.from(system.reminders.values());
+            } else if (currentReminderFilter === 'unresolved') {
                 reminders = system.getUnresolvedReminders();
-                
-                // 应用过滤器
-                switch (currentReminderFilter) {
-                    case 'progress':
-                        reminders = reminders.filter(r => r.type === 'progress');
-                        break;
-                    case 'brainTest':
-                        reminders = reminders.filter(r => r.type === 'brainTest');
-                        break;
-                    case 'priority':
-                        reminders = reminders.filter(r => r.priority === 'high');
-                        break;
-                    case 'unresolved':
-                        // 已经是未解决的提醒，不需要过滤
-                        break;
-                    // 'all' 显示所有未解决的提醒
-                }
+            } else if (currentReminderFilter === 'resolved') {
+                reminders = system.getResolvedReminders();
+            } else if (currentReminderFilter === 'priority') {
+                reminders = system.getPriorityReminders();
             }
             
-            // 按创建时间排序（最新的在前）
             reminders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             
-            if (reminders.length === 0) {
-                container.innerHTML = `
+            const activeContainer = document.getElementById('activeRemindersContainer');
+            const resolvedContainer = document.getElementById('resolvedRemindersContainer');
+            
+            if (!activeContainer || !resolvedContainer) return;
+            
+            const activeReminders = reminders.filter(r => !r.resolved);
+            const resolvedReminders = reminders.filter(r => r.resolved);
+            
+            document.getElementById('activeRemindersCount').textContent = activeReminders.length;
+            document.getElementById('resolvedRemindersCount').textContent = resolvedReminders.length;
+            
+            if (activeReminders.length === 0) {
+                activeContainer.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-bell-slash"></i>
-                        <p style="font-size: 1.2em; margin-bottom: 10px;">No active reminders</p>
-                        <p>${currentReminderFilter === 'all' ? 'All reminders are resolved!' : 'No reminders match the selected filter'}</p>
+                        <p>No active reminders</p>
                     </div>
                 `;
-                return;
+            } else {
+                activeContainer.innerHTML = '';
+                activeReminders.forEach(reminder => renderReminderCard(reminder, activeContainer));
             }
-            
-            container.innerHTML = '';
-            
-            reminders.forEach(reminder => {
-                const reminderCard = document.createElement('div');
-                reminderCard.className = `reminder-card ${reminder.priority === 'high' ? 'priority' : ''}`;
-                
-                // 格式化日期
-                const createdAt = new Date(reminder.createdAt);
-                const formattedDate = createdAt.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-                
-                // 获取图标和颜色
-                const icon = reminder.type === 'progress' ? 'fa-chart-line' : 'fa-brain';
-                const typeLabel = reminder.type === 'progress' ? 'Progress Report' : 'Brain Test';
-                
-                // 计算剩余课程
-                const remainingSessions = reminder.totalSessions - reminder.currentSessions;
-                
-                reminderCard.innerHTML = `
-                    <div class="reminder-title">
-                        <i class="fas ${icon}"></i>
-                        <span>${typeLabel} - ${reminder.studentName}</span>
-                        ${reminder.priority === 'high' ? '<span class="badge badge-danger" style="margin-left: auto;">PRIORITY</span>' : ''}
-                    </div>
-                    <div class="reminder-details">
-                        ${reminder.message}
-                    </div>
-                    <div class="reminder-stats">
-                        <div class="reminder-stat">
-                            <div class="label">Time Slot</div>
-                            <div class="value">${reminder.timeSlot}</div>
-                        </div>
-                        <div class="reminder-stat">
-                            <div class="label">Attended</div>
-                            <div class="value">${reminder.currentSessions}</div>
-                        </div>
-                        <div class="reminder-stat">
-                            <div class="label">Total</div>
-                            <div class="value">${reminder.totalSessions}</div>
-                        </div>
-                        <div class="reminder-stat">
-                            <div class="label">Remaining</div>
-                            <div class="value">${remainingSessions}</div>
-                        </div>
-                    </div>
-                    <div class="reminder-actions">
-                        <button class="btn btn-info" onclick="viewStudentDetails('${reminder.studentId}')" style="padding: 6px 12px; font-size: 12px;">
-                            <i class="fas fa-user"></i> View Student
-                        </button>
-                        <button class="btn btn-success" onclick="markReminderAsResolved('${reminder.id}')" style="padding: 6px 12px; font-size: 12px;">
-                            <i class="fas fa-check"></i> Mark Done
-                        </button>
-                        <button class="btn btn-secondary" onclick="deleteReminder('${reminder.id}')" style="padding: 6px 12px; font-size: 12px;">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </div>
-                    <div style="margin-top: 10px; font-size: 0.8em; color: var(--gray);">
-                        <i class="fas fa-clock"></i> Created: ${formattedDate}
-                    </div>
-                `;
-                
-                container.appendChild(reminderCard);
-            });
-        }
-        
-        function updateResolvedRemindersList() {
-            const container = document.getElementById('resolvedRemindersContainer');
-            if (!container) return;
-            
-            const resolvedReminders = system.getResolvedReminders();
-            
-            // 按解决时间排序（最新的在前）
-            resolvedReminders.sort((a, b) => {
-                const dateA = a.resolvedAt ? new Date(a.resolvedAt) : new Date(0);
-                const dateB = b.resolvedAt ? new Date(b.resolvedAt) : new Date(0);
-                return dateB - dateA;
-            });
             
             if (resolvedReminders.length === 0) {
-                container.innerHTML = `
+                resolvedContainer.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-check-circle"></i>
-                        <p style="font-size: 1.2em; margin-bottom: 10px;">No resolved reminders</p>
-                        <p>Mark reminders as done to see them here</p>
+                        <p>No resolved reminders</p>
                     </div>
                 `;
-                return;
+            } else {
+                resolvedContainer.innerHTML = '';
+                resolvedReminders.forEach(reminder => renderReminderCard(reminder, resolvedContainer));
             }
-            
-            container.innerHTML = '';
-            
-            resolvedReminders.forEach(reminder => {
-                const reminderCard = document.createElement('div');
-                reminderCard.className = `reminder-card resolved`;
-                
-                // 格式化日期
-                const createdAt = new Date(reminder.createdAt);
-                const resolvedAt = new Date(reminder.resolvedAt);
-                const formattedCreatedDate = createdAt.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-                const formattedResolvedDate = resolvedAt.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                });
-                
-                // 获取图标和颜色
-                const icon = reminder.type === 'progress' ? 'fa-chart-line' : 'fa-brain';
-                const typeLabel = reminder.type === 'progress' ? 'Progress Report' : 'Brain Test';
-                
-                reminderCard.innerHTML = `
-                    <div class="reminder-title">
-                        <i class="fas ${icon}"></i>
-                        <span>${typeLabel} - ${reminder.studentName}</span>
-                        <span class="badge badge-success" style="margin-left: auto;">RESOLVED</span>
-                    </div>
-                    <div class="reminder-details">
-                        ${reminder.message}
-                    </div>
-                    <div class="reminder-stats">
-                        <div class="reminder-stat">
-                            <div class="label">Time Slot</div>
-                            <div class="value">${reminder.timeSlot}</div>
-                        </div>
-                        <div class="reminder-stat">
-                            <div class="label">Attended</div>
-                            <div class="value">${reminder.currentSessions}</div>
-                        </div>
-                        <div class="reminder-stat">
-                            <div class="label">Total</div>
-                            <div class="value">${reminder.totalSessions}</div>
-                        </div>
-                    </div>
-                    <div class="reminder-actions">
-                        <button class="btn btn-info" onclick="viewStudentDetails('${reminder.studentId}')" style="padding: 6px 12px; font-size: 12px;">
-                            <i class="fas fa-user"></i> View Student
-                        </button>
-                        <button class="btn btn-warning" onclick="markReminderAsUnresolved('${reminder.id}')" style="padding: 6px 12px; font-size: 12px;">
-                            <i class="fas fa-redo"></i> Reopen
-                        </button>
-                        <button class="btn btn-secondary" onclick="deleteReminder('${reminder.id}')" style="padding: 6px 12px; font-size: 12px;">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </div>
-                    <div style="margin-top: 10px; font-size: 0.8em; color: var(--gray);">
-                        <i class="fas fa-clock"></i> Created: ${formattedCreatedDate}
-                        <i class="fas fa-check-circle" style="margin-left: 15px;"></i> Resolved: ${formattedResolvedDate}
-                    </div>
-                `;
-                
-                container.appendChild(reminderCard);
-            });
         }
         
-        // 显示按月份分组的提醒
-        function displayRemindersByMonthGroup() {
-            const container = document.getElementById('activeRemindersContainer');
-            if (!container) return;
+        function renderReminderCard(reminder, container) {
+            const card = document.createElement('div');
+            card.className = `reminder-card ${reminder.priority === 'high' ? 'priority' : ''} ${reminder.resolved ? 'resolved' : ''}`;
             
-            const monthGroups = system.getRemindersByEnrollmentMonth();
-            const monthNames = [
-                'January', 'February', 'March', 'April', 'May', 'June',
-                'July', 'August', 'September', 'October', 'November', 'December'
-            ];
+            const icon = reminder.type === 'progress' ? 'fa-chart-line' : 'fa-brain';
+            const typeLabel = reminder.type === 'progress' ? 'Progress Report' : 'Brain Test';
+            const remainingSessions = reminder.totalSessions - reminder.currentSessions;
             
-            // 如果没有提醒
-            if (Object.keys(monthGroups).length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-bell-slash"></i>
-                        <p style="font-size: 1.2em; margin-bottom: 10px;">No reminders found</p>
-                        <p>No reminders have been generated yet</p>
+            card.innerHTML = `
+                <div class="reminder-title">
+                    <i class="fas ${icon}"></i>
+                    <span>${reminder.studentName}</span>
+                    ${reminder.priority === 'high' && !reminder.resolved ? '<span class="badge badge-danger">PRIORITY</span>' : ''}
+                </div>
+                <div class="reminder-details">${reminder.message}</div>
+                <div class="reminder-stats">
+                    <div class="reminder-stat">
+                        <div class="label">Attended</div>
+                        <div class="value">${reminder.currentSessions}</div>
                     </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = '';
-            
-            // 对月份组进行排序（最新的月份在前）
-            const sortedGroups = Object.entries(monthGroups).sort((a, b) => {
-                // 未知组放在最后
-                if (a[0] === 'unknown') return 1;
-                if (b[0] === 'unknown') return -1;
-                
-                // 按年份和月份排序
-                const [yearA, monthA] = a[0].split('-').map(Number);
-                const [yearB, monthB] = b[0].split('-').map(Number);
-                
-                if (yearB !== yearA) return yearB - yearA;
-                return monthB - monthA;
-            });
-            
-            sortedGroups.forEach(([monthKey, reminders]) => {
-                const monthGroupContainer = document.createElement('div');
-                monthGroupContainer.className = 'month-group-container';
-                
-                // 创建月份标题
-                let monthTitle = '';
-                if (monthKey === 'unknown') {
-                    monthTitle = 'Unknown Enrollment Date';
-                } else {
-                    const [year, month] = monthKey.split('-').map(Number);
-                    monthTitle = `${monthNames[month - 1]} ${year}`;
-                }
-                
-                // 只统计未解决的提醒
-                const unresolvedCount = reminders.filter(r => !r.resolved).length;
-                const totalCount = reminders.length;
-                
-                monthGroupContainer.innerHTML = `
-                    <div class="month-group-header">
-                        <h3>${monthTitle}</h3>
-                        <div class="month-group-badge">
-                            ${unresolvedCount}/${totalCount} unresolved
-                        </div>
+                    <div class="reminder-stat">
+                        <div class="label">Remaining</div>
+                        <div class="value">${remainingSessions}</div>
                     </div>
-                    <div class="month-group-content" id="month-group-${monthKey.replace(/[^a-zA-Z0-9]/g, '-')}"></div>
-                `;
-                
-                container.appendChild(monthGroupContainer);
-                
-                // 添加提醒卡片到月份组
-                const monthContent = document.getElementById(`month-group-${monthKey.replace(/[^a-zA-Z0-9]/g, '-')}`);
-                
-                // 按创建时间排序（最新的在前）
-                reminders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                
-                reminders.forEach(reminder => {
-                    const reminderCard = document.createElement('div');
-                    reminderCard.className = `reminder-card ${reminder.priority === 'high' ? 'priority' : ''} ${reminder.resolved ? 'resolved' : ''}`;
-                    
-                    // 格式化日期
-                    const createdAt = new Date(reminder.createdAt);
-                    const formattedDate = createdAt.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                    });
-                    
-                    // 获取图标和颜色
-                    const icon = reminder.type === 'progress' ? 'fa-chart-line' : 'fa-brain';
-                    const typeLabel = reminder.type === 'progress' ? 'Progress Report' : 'Brain Test';
-                    
-                    // 计算剩余课程
-                    const remainingSessions = reminder.totalSessions - reminder.currentSessions;
-                    
-                    reminderCard.innerHTML = `
-                        <div class="reminder-title">
-                            <i class="fas ${icon}"></i>
-                            <span>${typeLabel} - ${reminder.studentName}</span>
-                            ${reminder.priority === 'high' && !reminder.resolved ? '<span class="badge badge-danger" style="margin-left: auto;">PRIORITY</span>' : ''}
-                            ${reminder.resolved ? '<span class="badge badge-success" style="margin-left: auto;">RESOLVED</span>' : ''}
-                        </div>
-                        <div class="reminder-details">
-                            ${reminder.message}
-                        </div>
-                        <div class="reminder-stats">
-                            <div class="reminder-stat">
-                                <div class="label">Time Slot</div>
-                                <div class="value">${reminder.timeSlot}</div>
-                            </div>
-                            <div class="reminder-stat">
-                                <div class="label">Attended</div>
-                                <div class="value">${reminder.currentSessions}</div>
-                            </div>
-                            <div class="reminder-stat">
-                                <div class="label">Total</div>
-                                <div class="value">${reminder.totalSessions}</div>
-                            </div>
-                            <div class="reminder-stat">
-                                <div class="label">Remaining</div>
-                                <div class="value">${remainingSessions}</div>
-                            </div>
-                        </div>
-                        <div class="reminder-actions">
-                            <button class="btn btn-info" onclick="viewStudentDetails('${reminder.studentId}')" style="padding: 6px 12px; font-size: 12px;">
-                                <i class="fas fa-user"></i> View Student
-                            </button>
-                            ${!reminder.resolved ? `
-                                <button class="btn btn-success" onclick="markReminderAsResolved('${reminder.id}')" style="padding: 6px 12px; font-size: 12px;">
-                                    <i class="fas fa-check"></i> Mark Done
-                                </button>
-                            ` : `
-                                <button class="btn btn-warning" onclick="markReminderAsUnresolved('${reminder.id}')" style="padding: 6px 12px; font-size: 12px;">
-                                    <i class="fas fa-redo"></i> Reopen
-                                </button>
-                            `}
-                            <button class="btn btn-secondary" onclick="deleteReminder('${reminder.id}')" style="padding: 6px 12px; font-size: 12px;">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
-                        </div>
-                        <div style="margin-top: 10px; font-size: 0.8em; color: var(--gray);">
-                            <i class="fas fa-clock"></i> Created: ${formattedDate}
-                            ${reminder.resolved && reminder.resolvedAt ? 
-                                ` • <i class="fas fa-check-circle"></i> Resolved: ${new Date(reminder.resolvedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}` : 
-                                ''}
-                        </div>
-                    `;
-                    
-                    monthContent.appendChild(reminderCard);
-                });
-            });
+                </div>
+                <div class="reminder-actions">
+                    <button class="btn btn-info" onclick="viewStudentDetails('${reminder.studentId}')" style="padding:6px 12px; font-size:12px;">
+                        <i class="fas fa-user"></i> View
+                    </button>
+                    ${!reminder.resolved ? `
+                        <button class="btn btn-success" onclick="markReminderAsResolved('${reminder.id}')" style="padding:6px 12px; font-size:12px;">
+                            <i class="fas fa-check"></i> Done
+                        </button>
+                    ` : `
+                        <button class="btn btn-warning" onclick="markReminderAsUnresolved('${reminder.id}')" style="padding:6px 12px; font-size:12px;">
+                            <i class="fas fa-redo"></i> Reopen
+                        </button>
+                    `}
+                    <button class="btn btn-secondary" onclick="deleteReminder('${reminder.id}')" style="padding:6px 12px; font-size:12px;">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+                <div style="margin-top:8px; font-size:0.8em; color:var(--gray);">
+                    <i class="fas fa-clock"></i> ${new Date(reminder.createdAt).toLocaleDateString()}
+                </div>
+            `;
+            container.appendChild(card);
         }
         
         function filterReminders(filterType) {
             currentReminderFilter = filterType;
-            
-            // 更新月份选择器显示状态
-            const monthSelector = document.getElementById('monthSelector');
-            if (filterType === 'byMonth') {
-                monthSelector.style.display = 'block';
-                // 重置月份过滤器为"all"
-                document.getElementById('enrolledMonthFilter').value = 'all';
-                currentEnrolledMonth = 'all';
-            } else {
-                monthSelector.style.display = 'none';
-            }
-            
-            // 更新过滤器按钮状态
             document.querySelectorAll('.reminder-filter-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
-            
-            // 更新提醒列表
-            updateRemindersList();
-        }
-        
-        function filterByEnrolledMonth() {
-            const monthFilter = document.getElementById('enrolledMonthFilter');
-            currentEnrolledMonth = monthFilter.value;
             updateRemindersList();
         }
         
@@ -4077,9 +3947,350 @@
             showToast('Reminders exported to CSV', 'success');
         }
         
+        // ========== 进度报告UI更新函数 ==========
+        function updateProgressReportUI() {
+            updateProgressReportTable();
+            updateProgressReportSummary();
+        }
+        
+        function updateProgressReportTable() {
+            const tbody = document.getElementById('progressReportTableBody');
+            const noDataElement = document.getElementById('noProgressData');
+            
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            let progressReports = system.getProgressReportsByStatus(currentProgressFilter);
+            
+            if (currentIntakeFilter !== 'all') {
+                progressReports = progressReports.filter(report => 
+                    report.intake.includes(currentIntakeFilter)
+                );
+            }
+            
+            progressReports.sort((a, b) => a.studentName.localeCompare(b.studentName));
+            
+            if (progressReports.length === 0) {
+                tbody.innerHTML = '';
+                if (noDataElement) {
+                    noDataElement.style.display = 'block';
+                }
+                return;
+            }
+            
+            if (noDataElement) {
+                noDataElement.style.display = 'none';
+            }
+            
+            progressReports.forEach(report => {
+                const row = document.createElement('tr');
+                
+                const intakeClass = getIntakeClass(report.intake);
+                
+                const formatDateForDisplay = (dateString) => {
+                    if (!dateString) return '';
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                };
+                
+                row.innerHTML = `
+                    <td>${report.studentName}</td>
+                    <td><span class="intake-badge ${intakeClass}">${report.intake}</span></td>
+                    <td>${report.classAttended}</td>
+                    <td class="checkbox-cell ${report.progressReport1 ? 'completed' : 'pending'}">
+                        <input type="checkbox" ${report.progressReport1 ? 'checked' : ''} 
+                               onchange="toggleProgressReportCheckbox('${report.studentId}', 'progressReport1', this.checked)">
+                        ${report.progressReport1Date ? `<br><small>${formatDateForDisplay(report.progressReport1Date)}</small>` : ''}
+                    </td>
+                    <td class="checkbox-cell ${report.progressReport2 ? 'completed' : 'pending'}">
+                        <input type="checkbox" ${report.progressReport2 ? 'checked' : ''}
+                               onchange="toggleProgressReportCheckbox('${report.studentId}', 'progressReport2', this.checked)">
+                        ${report.progressReport2Date ? `<br><small>${formatDateForDisplay(report.progressReport2Date)}</small>` : ''}
+                    </td>
+                    <td class="checkbox-cell ${report.brainTest1 ? 'completed' : 'pending'}">
+                        <input type="checkbox" ${report.brainTest1 ? 'checked' : ''}
+                               onchange="toggleProgressReportCheckbox('${report.studentId}', 'brainTest1', this.checked)">
+                        ${report.brainTest1Date ? `<br><small>${formatDateForDisplay(report.brainTest1Date)}</small>` : ''}
+                    </td>
+                    <td class="checkbox-cell ${report.brainTest2 ? 'completed' : 'pending'}">
+                        <input type="checkbox" ${report.brainTest2 ? 'checked' : ''}
+                               onchange="toggleProgressReportCheckbox('${report.studentId}', 'brainTest2', this.checked)">
+                        ${report.brainTest2Date ? `<br><small>${formatDateForDisplay(report.brainTest2Date)}</small>` : ''}
+                    </td>
+                    <td class="checkbox-cell ${report.finalConsultationCompleted ? 'completed' : 'pending'}">
+                        <input type="checkbox" ${report.finalConsultationCompleted ? 'checked' : ''}
+                               onchange="toggleProgressReportCheckbox('${report.studentId}', 'finalConsultationCompleted', this.checked)">
+                        ${report.finalConsultationDate ? `<br><small>${formatDateForDisplay(report.finalConsultationDate)}</small>` : ''}
+                    </td>
+                    <td>${report.remarks || ''}</td>
+                    <td>
+                        <button class="btn btn-info" onclick="editProgressReport('${report.studentId}')" style="padding: 6px 12px; font-size: 12px;">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-secondary" onclick="deleteProgressReport('${report.studentId}')" style="padding: 6px 12px; font-size: 12px; margin-top: 5px;">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function updateProgressReportSummary() {
+            const container = document.getElementById('progressSummary');
+            if (!container) return;
+            
+            const summary = system.getProgressReportSummary();
+            
+            container.innerHTML = `
+                <div class="reminder-summary-card">
+                    <div class="count">${summary.total}</div>
+                    <div class="label">Total Students</div>
+                    <div class="sub-label">With progress reports</div>
+                </div>
+                <div class="reminder-summary-card success">
+                    <div class="count">${summary.completed}</div>
+                    <div class="label">Completed</div>
+                    <div class="sub-label">All requirements met</div>
+                </div>
+                <div class="reminder-summary-card warning">
+                    <div class="count">${summary.pendingReports}</div>
+                    <div class="label">Pending Reports</div>
+                    <div class="sub-label">Progress reports needed</div>
+                </div>
+                <div class="reminder-summary-card warning">
+                    <div class="count">${summary.pendingTests}</div>
+                    <div class="label">Pending Tests</div>
+                    <div class="sub-label">Brain tests needed</div>
+                </div>
+                <div class="reminder-summary-card warning">
+                    <div class="count">${summary.pendingConsultation}</div>
+                    <div class="label">Pending Consultation</div>
+                    <div class="sub-label">Final consultation needed</div>
+                </div>
+                <div class="reminder-summary-card">
+                    <div class="count">${summary.completionRate}%</div>
+                    <div class="label">Completion Rate</div>
+                    <div class="sub-label">Overall progress</div>
+                </div>
+            `;
+        }
+        
+        function getIntakeClass(intake) {
+            if (!intake) return '';
+            
+            const intakeLower = intake.toLowerCase();
+            if (intakeLower.includes('july')) return 'july';
+            if (intakeLower.includes('august')) return 'august';
+            if (intakeLower.includes('september')) return 'september';
+            if (intakeLower.includes('october')) return 'october';
+            if (intakeLower.includes('november')) return 'november';
+            if (intakeLower.includes('december')) return 'december';
+            return '';
+        }
+        
+        function filterProgressTable(filterType) {
+            currentProgressFilter = filterType;
+            
+            document.querySelectorAll('#progressReport .reminder-filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            updateProgressReportTable();
+        }
+        
+        function filterByIntake() {
+            const intakeFilter = document.getElementById('intakeFilter');
+            currentIntakeFilter = intakeFilter.value;
+            updateProgressReportTable();
+        }
+        
+        // ========== 进度报告操作函数 ==========
+        async function generateAllProgressReports() {
+            showLoading('Generating progress reports...');
+            try {
+                const generatedCount = await system.generateAllProgressReports();
+                updateProgressReportUI();
+                showToast(`Generated ${generatedCount} progress reports`, 'success');
+            } catch (error) {
+                console.error('Error generating progress reports:', error);
+                showToast('Error generating progress reports: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        async function toggleProgressReportCheckbox(studentId, field, checked) {
+            try {
+                const updates = { [field]: checked };
+                
+                if (checked) {
+                    updates[`${field}Date`] = new Date().toISOString();
+                }
+                
+                await system.updateProgressReport(studentId, updates);
+                updateProgressReportUI();
+                showToast('Progress report updated', 'success');
+            } catch (error) {
+                console.error('Error updating progress report:', error);
+                showToast('Error updating progress report: ' + error.message, 'error');
+                event.target.checked = !checked;
+            }
+        }
+        
+        function editProgressReport(studentId) {
+            const progressReport = system.progressReports.get(studentId);
+            if (!progressReport) {
+                showToast('Progress report not found', 'error');
+                return;
+            }
+            
+            currentEditingProgressStudentId = studentId;
+            
+            const formatDateForInput = (dateString) => {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                return date.toISOString().split('T')[0];
+            };
+            
+            const content = document.getElementById('editProgressContent');
+            content.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Student Name</label>
+                    <input type="text" id="editProgressStudentName" class="form-input" value="${progressReport.studentName}" disabled>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Intake</label>
+                    <input type="text" id="editProgressIntake" class="form-input" value="${progressReport.intake}">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Class Attended</label>
+                    <input type="number" id="editProgressClassAttended" class="form-input" value="${progressReport.classAttended}" min="0" max="200">
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label class="form-label">Progress Report 1 Date</label>
+                        <input type="date" id="editProgressReport1Date" class="form-input" value="${formatDateForInput(progressReport.progressReport1Date)}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Progress Report 2 Date</label>
+                        <input type="date" id="editProgressReport2Date" class="form-input" value="${formatDateForInput(progressReport.progressReport2Date)}">
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label class="form-label">Brain Test 1 Date</label>
+                        <input type="date" id="editBrainTest1Date" class="form-input" value="${formatDateForInput(progressReport.brainTest1Date)}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Brain Test 2 Date</label>
+                        <input type="date" id="editBrainTest2Date" class="form-input" value="${formatDateForInput(progressReport.brainTest2Date)}">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Final Consultation Date</label>
+                    <input type="date" id="editFinalConsultationDate" class="form-input" value="${formatDateForInput(progressReport.finalConsultationDate)}">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Remarks</label>
+                    <textarea id="editProgressRemarks" class="form-input" rows="3" placeholder="Enter any remarks...">${progressReport.remarks || ''}</textarea>
+                </div>
+                
+                <div class="batch-actions" style="margin-top: 25px;">
+                    <button class="btn btn-success" onclick="saveProgressReport()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <button class="btn btn-secondary" onclick="closeEditProgressModal()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('editProgressModal').style.display = 'flex';
+        }
+        
+        async function saveProgressReport() {
+            if (!currentEditingProgressStudentId) return;
+            
+            try {
+                const updates = {
+                    intake: document.getElementById('editProgressIntake').value,
+                    classAttended: parseInt(document.getElementById('editProgressClassAttended').value) || 0,
+                    progressReport1Date: document.getElementById('editProgressReport1Date').value || null,
+                    progressReport2Date: document.getElementById('editProgressReport2Date').value || null,
+                    brainTest1Date: document.getElementById('editBrainTest1Date').value || null,
+                    brainTest2Date: document.getElementById('editBrainTest2Date').value || null,
+                    finalConsultationDate: document.getElementById('editFinalConsultationDate').value || null,
+                    remarks: document.getElementById('editProgressRemarks').value || ''
+                };
+                
+                if (updates.progressReport1Date) updates.progressReport1 = true;
+                if (updates.progressReport2Date) updates.progressReport2 = true;
+                if (updates.brainTest1Date) updates.brainTest1 = true;
+                if (updates.brainTest2Date) updates.brainTest2 = true;
+                if (updates.finalConsultationDate) updates.finalConsultationCompleted = true;
+                
+                await system.updateProgressReport(currentEditingProgressStudentId, updates);
+                
+                closeEditProgressModal();
+                updateProgressReportUI();
+                showToast('Progress report updated successfully', 'success');
+            } catch (error) {
+                console.error('Error saving progress report:', error);
+                showToast('Error saving progress report: ' + error.message, 'error');
+            }
+        }
+        
+        function closeEditProgressModal() {
+            document.getElementById('editProgressModal').style.display = 'none';
+            currentEditingProgressStudentId = null;
+        }
+        
+        async function deleteProgressReport(studentId) {
+            if (confirm('Are you sure you want to delete this progress report?')) {
+                try {
+                    await system.deleteProgressReport(studentId);
+                    updateProgressReportUI();
+                    showToast('Progress report deleted', 'success');
+                } catch (error) {
+                    console.error('Error deleting progress report:', error);
+                    showToast('Error deleting progress report: ' + error.message, 'error');
+                }
+            }
+        }
+        
+        async function markAllAsComplete() {
+            if (confirm('Mark all progress reports as complete? This will set all checkboxes to checked.')) {
+                showLoading('Marking all as complete...');
+                try {
+                    const markedCount = await system.markAllProgressReportsAsComplete();
+                    updateProgressReportUI();
+                    showToast(`Marked ${markedCount} progress reports as complete`, 'success');
+                } catch (error) {
+                    console.error('Error marking progress reports:', error);
+                    showToast('Error marking progress reports: ' + error.message, 'error');
+                } finally {
+                    hideLoading();
+                }
+            }
+        }
+        
+        function exportProgressReport() {
+            const csv = system.exportProgressReportsToCSV();
+            downloadFile(csv, 'genius_mind_academy_progress_reports.csv', 'text/csv');
+            showToast('Progress reports exported to CSV', 'success');
+        }
+        
         // ========== 时间槽相关函数 ==========
         function updateTimeSlotSelects() {
-            // Update all time slot dropdowns
             const selectors = [
                 'studentTimeSlot',
                 'editStudentTimeSlot', 
@@ -4092,10 +4303,8 @@
                 const select = document.getElementById(selector);
                 if (!select) return;
                 
-                // Clear existing options
                 select.innerHTML = selector.includes('Filter') ? '<option value="all">All Time Slots</option>' : '<option value="">Select Time Slot</option>';
                 
-                // Add time slots
                 system.timeSlots.forEach(timeSlot => {
                     const option = document.createElement('option');
                     option.value = timeSlot.name;
@@ -4114,7 +4323,6 @@
             tabsContainer.innerHTML = '';
             contentsContainer.innerHTML = '';
             
-            // Add "All Students" tab
             const allTab = document.createElement('div');
             allTab.className = `tab active`;
             allTab.textContent = 'All Students';
@@ -4133,32 +4341,25 @@
             
             let firstTab = true;
             
-            // Create tabs for each time slot
             for (const timeSlot of system.timeSlots) {
-                // Create tab
                 const tab = document.createElement('div');
                 tab.className = `tab ${firstTab ? '' : ''}`;
                 tab.textContent = timeSlot.name;
                 tab.dataset.timeSlot = timeSlot.name;
                 tab.addEventListener('click', function() {
-                    // Remove active class from all tabs
                     document.querySelectorAll('.tab').forEach(t => {
                         t.classList.remove('active');
                     });
-                    // Add active class to clicked tab
                     this.classList.add('active');
                     
-                    // Hide all content
                     document.querySelectorAll('.tab-content').forEach(c => {
                         c.classList.remove('active');
                     });
-                    // Show corresponding content
                     document.getElementById(`content-${timeSlot.id}`).classList.add('active');
                 });
                 
                 tabsContainer.appendChild(tab);
                 
-                // Create content
                 const content = document.createElement('div');
                 content.id = `content-${timeSlot.id}`;
                 content.className = `tab-content ${firstTab ? '' : ''}`;
@@ -4180,7 +4381,6 @@
                 firstTab = false;
             }
             
-            // Create "All Students" content
             const allContent = document.createElement('div');
             allContent.id = 'content-all';
             allContent.className = 'tab-content active';
@@ -4206,7 +4406,6 @@
             const grid = document.createElement('div');
             grid.className = 'card-grid';
             
-            // Add search results statistics
             const infoDiv = document.createElement('div');
             infoDiv.className = 'search-info';
             infoDiv.style.gridColumn = '1 / -1';
@@ -4217,16 +4416,15 @@
                 const card = document.createElement('div');
                 card.className = 'student-card-enhanced';
                 
-                // 检查是否有提醒
                 const hasReminder = Array.from(system.reminders.values()).some(
                     r => r.studentId === student.id && !r.resolved
                 );
                 
-                // Determine progress bar color based on attendance rate
+                const hasProgressReport = system.progressReports.has(student.id);
+                
                 let progressClass = 'progress-fill';
                 let badgeClass = 'badge';
                 
-                // 计算出席率用于进度条颜色
                 const attendanceRate = (student.attendanceCount / student.totalSessions * 100);
                 if (attendanceRate < 60) {
                     progressClass += ' low';
@@ -4238,18 +4436,16 @@
                     badgeClass += ' badge-success';
                 }
                 
-                // Use new date formatting function
                 const enrolledDate = system.formatDateForDisplay(student.enrolledDate);
                 
-                // Calculate remaining sessions
                 const remainingSessions = student.totalSessions - student.attendanceCount;
                 
-                // 计算进度条宽度
                 const progressWidth = Math.min((student.attendanceCount / student.totalSessions) * 100, 100);
                 
                 card.innerHTML = `
                     <div style="position: absolute; top: 15px; right: 15px;">
                         ${hasReminder ? '<div class="badge badge-warning" style="font-size: 10px; padding: 2px 6px;"><i class="fas fa-bell"></i></div>' : ''}
+                        ${hasProgressReport ? '<div class="badge badge-info" style="font-size: 10px; padding: 2px 6px; margin-left: 5px;"><i class="fas fa-chart-line"></i></div>' : ''}
                         <input type="checkbox" class="student-select-checkbox" value="${student.id}" onclick="event.stopPropagation(); updateSelectedCount();">
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
@@ -4278,9 +4474,7 @@
                     </div>
                 `;
                 
-                // Add click event to view details
                 card.addEventListener('click', function(e) {
-                    // If checkbox is clicked, don't trigger detail view
                     if (e.target.type === 'checkbox') return;
                     viewStudentDetails(student.id);
                 });
@@ -4314,7 +4508,6 @@
                 return;
             }
             
-            // If no enrollment date selected, default to today
             const finalEnrolledDate = system.getLocalDateString(enrolledDate);
             
             try {
@@ -4339,7 +4532,6 @@
                 return;
             }
             
-            // Fill edit form
             document.getElementById('editStudentName').value = student.name;
             document.getElementById('editStudentAge').value = student.age || '';
             document.getElementById('editStudentGender').value = student.gender || '';
@@ -4348,10 +4540,8 @@
             document.getElementById('editStudentTotalSessions').value = student.totalSessions || 48;
             document.getElementById('editStudentId').value = studentId;
             
-            // Show edit form, hide add form
             document.getElementById('editStudentForm').style.display = 'block';
             
-            // Scroll to edit form
             document.getElementById('editStudentForm').scrollIntoView({ behavior: 'smooth' });
         }
         
@@ -4381,7 +4571,6 @@
                 
                 await system.updateStudent(studentId, updatedData);
                 
-                // Hide edit form
                 document.getElementById('editStudentForm').style.display = 'none';
                 
                 showToast('Student updated successfully!', 'success');
@@ -4393,7 +4582,6 @@
         
         function cancelEdit() {
             document.getElementById('editStudentForm').style.display = 'none';
-            // Clear form
             document.getElementById('editStudentName').value = '';
             document.getElementById('editStudentAge').value = '';
             document.getElementById('editStudentGender').value = '';
@@ -4463,12 +4651,10 @@
         async function recordAttendance() {
             console.log("🚀 Starting attendance recording..."); 
         
-            // Get input fields
             const dateInput = document.getElementById('classDate');
             const timeSlotInput = document.getElementById('timeSlotSelect'); 
             const topicInput = document.getElementById('sessionTopic');
         
-            // Safety check
             if (!dateInput || !timeSlotInput) {
                 alert("❌ System error: Missing required input fields");
                 return;
@@ -4478,20 +4664,16 @@
             const timeSlot = timeSlotInput.value;
             const topic = topicInput.value || '';
             
-            // 如果日期为空，使用今天
             if (!date) {
                 date = system.getLocalDateString(new Date());
                 dateInput.value = date;
             }
             
-            // 确保日期格式正确（本地日期）
             date = system.getLocalDateString(date);
             
-            // Get checked students
             const selectedCheckboxes = document.querySelectorAll('#studentsCheckboxes input:checked');
             const selectedStudentIds = Array.from(selectedCheckboxes).map(cb => cb.value);
         
-            // Basic validation
             if (!date || !timeSlot) {
                 showToast('Please select date and time slot', 'error');
                 return;
@@ -4502,7 +4684,6 @@
                 return;
             }
         
-            // Lock button
             const btn = document.querySelector('button[onclick*="recordAttendance"]');
             const originalBtnText = btn ? btn.innerHTML : 'Record Attendance';
             if (btn) {
@@ -4511,17 +4692,14 @@
             }
         
             try {
-                // Create record ID
-                const recordId = `${timeSlot.replace(/\s+/g, '-')}-${date}`.replace(/[^a-zA-Z0-9\-]/g, '');
+                const recordId = `${timeSlot.replace(/\s+/g, '-')}-${date}`.replace(/[^a-zA-Z0-9\-]/g, '-');
                 
-                // Check if record already exists in system
                 const existingRecord = system.attendanceRecords.find(record => 
                     record.timeSlot === timeSlot && record.date === date
                 );
                 
                 if (existingRecord) {
                     if (confirm(`Attendance for ${timeSlot} on ${system.formatDateForDisplay(date)} already exists. Update it?`)) {
-                        // 修复：更新现有记录时，只添加新的学生，不重复添加已存在的学生
                         const existingStudents = new Set(existingRecord.presentStudents);
                         const newStudents = selectedStudentIds.filter(id => !existingStudents.has(id));
                         
@@ -4547,7 +4725,6 @@
                             existingRecord.topic = topic || existingRecord.topic;
                         }
                         
-                        // 修复：只更新新添加的学生出勤数据
                         for (const studentId of newStudents) {
                             const student = system.students.get(studentId);
                             if (student && student.enrolledDate <= date) {
@@ -4555,7 +4732,6 @@
                                 if (!student.attendanceDates.includes(date)) {
                                     student.attendanceDates.push(date);
                                     
-                                    // Remove duplicates
                                     const uniqueDates = [...new Set(student.attendanceDates)];
                                     student.attendanceDates = uniqueDates;
                                     student.attendanceCount = uniqueDates.length;
@@ -4569,8 +4745,8 @@
                                             });
                                     }
                                     
-                                    // 检查提醒
                                     system.checkRemindersForStudent(studentId);
+                                    system.generateProgressReport(studentId);
                                 }
                             }
                         }
@@ -4585,7 +4761,6 @@
                         return;
                     }
                 } else {
-                    // Create new record
                     const record = {
                         id: recordId,
                         timeSlot: timeSlot,
@@ -4602,17 +4777,14 @@
                         system.attendanceRecords.push(record);
                     }
                     
-                    // 修复：更新学生出勤数据，确保没有重复
                     for (const studentId of selectedStudentIds) {
                         const student = system.students.get(studentId);
                         if (student && student.enrolledDate <= date) {
                             if (!student.attendanceDates) student.attendanceDates = [];
                             
-                            // 修复：检查该日期是否已存在
                             if (!student.attendanceDates.includes(date)) {
                                 student.attendanceDates.push(date);
                                 
-                                // Remove duplicates
                                 const uniqueDates = [...new Set(student.attendanceDates)];
                                 student.attendanceDates = uniqueDates;
                                 student.attendanceCount = uniqueDates.length;
@@ -4626,8 +4798,8 @@
                                         });
                                 }
                                 
-                                // 检查提醒
                                 system.checkRemindersForStudent(studentId);
+                                system.generateProgressReport(studentId);
                             }
                         }
                     }
@@ -4635,12 +4807,10 @@
                     showToast(`✅ Attendance recorded for ${selectedStudentIds.length} student(s)`, 'success');
                 }
         
-                // Refresh interface
                 updateClassAttendanceRecords();
                 updateStudentAttendanceSummary();
                 updateUI();
         
-                // Clear checkboxes
                 selectedCheckboxes.forEach(cb => cb.checked = false);
                 document.getElementById('sessionTopic').value = '';
         
@@ -4664,29 +4834,24 @@
             
             const timeSlotFilter = document.getElementById('classFilterTimeSlot').value;
             
-            // Copy and sort attendance records (by date descending)
             const sortedRecords = [...system.attendanceRecords].sort((a, b) => 
                 new Date(b.date) - new Date(a.date)
             );
             
             sortedRecords.forEach(record => {
-                // Apply time slot filter
                 if (timeSlotFilter !== 'all' && record.timeSlot !== timeSlotFilter) {
                     return;
                 }
                 
                 const row = document.createElement('tr');
                 
-                // Format date
                 const formattedDate = system.formatDateForDisplay(record.date);
                 
-                // Get present student names
                 const presentStudentNames = record.presentStudents.map(studentId => {
                     const student = system.students.get(studentId);
                     return student ? student.name : 'Unknown Student';
                 }).join(', ');
                 
-                // 限制显示的长度，如果太长则截断
                 const displayNames = presentStudentNames.length > 50 
                     ? presentStudentNames.substring(0, 50) + '...' 
                     : presentStudentNames;
@@ -4721,7 +4886,6 @@
             const allAttendance = system.getAllAttendance();
             
             allAttendance.forEach(student => {
-                // Apply filters if needed
                 if (timeSlotFilter !== 'all' && student.timeSlot !== timeSlotFilter) {
                     return;
                 }
@@ -4732,10 +4896,8 @@
                 
                 const row = document.createElement('tr');
                 
-                // Use new date formatting function
                 const enrolledDate = system.formatDateForDisplay(student.enrolledDate);
                 
-                // Calculate remaining sessions
                 const remainingSessions = student.totalSessions - student.attendanceCount;
                 
                 row.innerHTML = `
@@ -4775,23 +4937,18 @@
         }
         
         function showRecordTab(tabId) {
-            // 隐藏所有标签内容
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.style.display = 'none';
             });
             
-            // 移除所有标签的激活状态
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
             
-            // 显示选中的标签内容
             document.getElementById(tabId).style.display = 'block';
             
-            // 激活选中的标签
             event.target.classList.add('active');
             
-            // 根据标签更新内容
             if (tabId === 'classRecords') {
                 updateClassAttendanceRecords();
             } else if (tabId === 'studentRecords') {
@@ -4809,17 +4966,13 @@
             
             currentEditingRecordId = recordId;
             
-            // 格式化日期
             const formattedDate = system.formatDateForDisplay(record.date);
             
-            // 获取出席学生详情
             const presentStudents = [];
             const absentStudents = [];
             
-            // 获取该时间槽的所有学生
             const timeSlotStudents = system.getStudentsByTimeSlot(record.timeSlot);
             
-            // 分类学生
             for (const student of timeSlotStudents) {
                 if (record.presentStudents.includes(student.id)) {
                     presentStudents.push(student);
@@ -4828,7 +4981,6 @@
                 }
             }
             
-            // 创建模态框内容
             const content = document.getElementById('classAttendanceContent');
             content.innerHTML = `
                 <div style="margin-bottom: 25px;">
@@ -4883,7 +5035,6 @@
                 </div>
             `;
             
-            // 显示模态框
             document.getElementById('classAttendanceModal').style.display = 'flex';
         }
         
@@ -4897,35 +5048,28 @@
             
             currentEditingRecordId = recordId;
             
-            // 关闭详情模态框（如果打开）
             closeClassAttendanceModal();
             
-            // 切换到出勤记录页面
             showSection('attendance');
             
-            // 填充表单
             document.getElementById('timeSlotSelect').value = record.timeSlot;
             document.getElementById('classDate').value = record.date;
             document.getElementById('sessionTopic').value = record.topic || '';
             
-            // 更新学生复选框
             updateStudentsCheckboxes();
             
-            // 选中已出席的学生
             setTimeout(() => {
                 const checkboxes = document.querySelectorAll('#studentsCheckboxes input[type="checkbox"]');
                 checkboxes.forEach(checkbox => {
                     checkbox.checked = record.presentStudents.includes(checkbox.value);
                 });
                 
-                // 更改按钮文本
                 const btn = document.querySelector('button[onclick*="recordAttendance"]');
                 if (btn) {
                     btn.innerHTML = '<i class="fas fa-save"></i> Update Attendance';
                     btn.onclick = function() { updateAttendanceRecord(recordId); };
                 }
                 
-                // 滚动到页面顶部
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 
                 showToast('Editing attendance record. Make your changes and click "Update Attendance".', 'info');
@@ -4940,7 +5084,6 @@
                 return;
             }
             
-            // Get input fields
             const dateInput = document.getElementById('classDate');
             const timeSlotInput = document.getElementById('timeSlotSelect'); 
             const topicInput = document.getElementById('sessionTopic');
@@ -4949,14 +5092,11 @@
             const timeSlot = timeSlotInput.value;
             const topic = topicInput.value || '';
             
-            // Ensure date format is correct
             date = system.getLocalDateString(date);
             
-            // Get checked students
             const selectedCheckboxes = document.querySelectorAll('#studentsCheckboxes input:checked');
             const selectedStudentIds = Array.from(selectedCheckboxes).map(cb => cb.value);
             
-            // Basic validation
             if (!date || !timeSlot) {
                 showToast('Please select date and time slot', 'error');
                 return;
@@ -4967,7 +5107,6 @@
                 return;
             }
             
-            // Lock button
             const btn = document.querySelector('button[onclick*="updateAttendanceRecord"]');
             const originalBtnText = btn ? btn.innerHTML : 'Update Attendance';
             if (btn) {
@@ -4976,14 +5115,11 @@
             }
             
             try {
-                // 检查是否需要创建新记录（如果时间槽或日期改变了）
                 let newRecordId = recordId;
                 
                 if (record.timeSlot !== timeSlot || record.date !== date) {
-                    // 时间槽或日期改变了，需要创建新记录
                     newRecordId = `${timeSlot.replace(/\s+/g, '-')}-${date}`.replace(/[^a-zA-Z0-9\-]/g, '');
                     
-                    // 检查新记录是否已存在
                     const existingNewRecord = system.attendanceRecords.find(r => 
                         r.timeSlot === timeSlot && r.date === date
                     );
@@ -4998,7 +5134,6 @@
                     }
                 }
                 
-                // 准备更新数据
                 const updateData = {
                     timeSlot: timeSlot,
                     date: date,
@@ -5007,9 +5142,7 @@
                 };
                 
                 if (newRecordId !== recordId) {
-                    // 创建新记录，删除旧记录
                     if (system.isOnline) {
-                        // 创建新记录
                         await db.collection('users').doc(system.userId).collection('attendance')
                             .doc(newRecordId).set({
                                 ...record,
@@ -5017,11 +5150,9 @@
                                 id: newRecordId
                             });
                         
-                        // 删除旧记录
                         await db.collection('users').doc(system.userId).collection('attendance')
                             .doc(recordId).delete();
                     } else {
-                        // 更新本地数据
                         const index = system.attendanceRecords.findIndex(r => r.id === recordId);
                         if (index !== -1) {
                             system.attendanceRecords.splice(index, 1);
@@ -5033,16 +5164,13 @@
                         }
                     }
                 } else {
-                    // 更新现有记录
                     await system.updateAttendanceRecord(recordId, updateData);
                 }
                 
                 showToast('Attendance record updated successfully!', 'success');
                 
-                // 重置表单和按钮
                 resetAttendanceForm();
                 
-                // 刷新界面
                 updateClassAttendanceRecords();
                 updateStudentAttendanceSummary();
                 updateUI();
@@ -5054,7 +5182,6 @@
                 if (btn) {
                     btn.disabled = false;
                     btn.innerHTML = originalBtnText;
-                    // 恢复原始功能
                     btn.onclick = function() { recordAttendance(); };
                     btn.innerHTML = '<i class="fas fa-check-circle"></i> Record Attendance';
                 }
@@ -5071,7 +5198,6 @@
                 await system.deleteAttendanceRecord(recordId);
                 showToast('Attendance record deleted successfully', 'success');
                 
-                // 刷新界面
                 updateClassAttendanceRecords();
                 updateStudentAttendanceSummary();
                 updateUI();
@@ -5091,14 +5217,11 @@
             document.getElementById('classDate').value = todayStr;
             document.getElementById('sessionTopic').value = '';
             
-            // 清空复选框
             const checkboxes = document.querySelectorAll('#studentsCheckboxes input[type="checkbox"]');
             checkboxes.forEach(cb => cb.checked = false);
             
-            // 更新学生复选框显示
             updateStudentsCheckboxes();
             
-            // 重置按钮
             const btn = document.querySelector('button[onclick*="recordAttendance"]');
             if (btn) {
                 btn.onclick = function() { recordAttendance(); };
@@ -5121,7 +5244,6 @@
             
             container.innerHTML = '';
             
-            // System has already sorted time slots, use directly
             for (const timeSlot of system.timeSlots) {
                 const students = system.getStudentsByTimeSlot(timeSlot.name);
                 
@@ -5152,10 +5274,8 @@
                         const studentCard = document.createElement('div');
                         studentCard.className = 'student-card-enhanced';
                         
-                        // Use new date formatting function
                         const enrolledDate = system.formatDateForDisplay(student.enrolledDate);
                         
-                        // Calculate remaining sessions
                         const remainingSessions = student.totalSessions - student.attendanceCount;
                         
                         studentCard.innerHTML = `
@@ -5224,27 +5344,23 @@
             
             currentSelectedStudentId = studentId;
             
-            // Get student attendance information
             const attendanceInfo = system.getStudentAttendance(studentId);
             
-            // Calculate remaining sessions
             const remainingSessions = student.totalSessions - attendanceInfo.attendanceCount;
             
-            // Get last attended date
             const lastAttended = student.attendanceDates && student.attendanceDates.length > 0 
                 ? system.formatDateForDisplay(student.attendanceDates[student.attendanceDates.length - 1])
                 : 'Never attended';
             
-            // Check for reminders
             const studentReminders = Array.from(system.reminders.values()).filter(
                 r => r.studentId === studentId && !r.resolved
             );
             
-            // Sort attendance dates
+            const progressReport = system.progressReports.get(studentId);
+            
             const sortedAttendanceDates = student.attendanceDates ? 
                 [...student.attendanceDates].sort().reverse() : [];
             
-            // Create modal content
             const content = document.getElementById('studentDetailsContent');
             content.innerHTML = `
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
@@ -5263,6 +5379,7 @@
                         <p><strong>Remaining Sessions:</strong> ${remainingSessions}</p>
                         <p><strong>Last Attended:</strong> ${lastAttended}</p>
                         <p><strong>Active Reminders:</strong> ${studentReminders.length}</p>
+                        <p><strong>Progress Report:</strong> ${progressReport ? 'Available' : 'Not generated'}</p>
                     </div>
                 </div>
                 
@@ -5316,6 +5433,11 @@
                     <button class="btn" onclick="generateStudentPDF('${studentId}')">
                         <i class="fas fa-file-pdf"></i> Download PDF Report
                     </button>
+                    ${progressReport ? `
+                        <button class="btn btn-warning" onclick="showSection('progressReport'); closeStudentDetails();">
+                            <i class="fas fa-chart-line"></i> View Progress Report
+                        </button>
+                    ` : ''}
                     ${studentReminders.length > 0 ? `
                         <button class="btn btn-warning" onclick="showSection('reminders'); closeStudentDetails();">
                             <i class="fas fa-bell"></i> View All Reminders
@@ -5325,7 +5447,6 @@
                 </div>
             `;
             
-            // Show modal
             document.getElementById('studentDetailsModal').style.display = 'flex';
         }
         
@@ -5343,7 +5464,6 @@
         
         // ========== 删除出勤日期函数 ==========
         function showDeleteConfirmation(studentId, date, element) {
-            // 阻止事件冒泡，防止触发其他点击事件
             event.stopPropagation();
             
             const student = system.students.get(studentId);
@@ -5351,17 +5471,14 @@
             
             const formattedDate = system.formatDateForDisplay(date);
             
-            // 存储待删除的信息
             pendingDelete.studentId = studentId;
             pendingDelete.date = date;
             pendingDelete.element = element;
             
-            // 显示确认对话框
             document.getElementById('deleteConfirmationText').textContent = 
                 `Are you sure you want to delete the attendance date "${formattedDate}" for ${student.name}?`;
             document.getElementById('deleteConfirmationModal').style.display = 'flex';
             
-            // 添加删除动画效果
             element.classList.add('deleting');
         }
         
@@ -5371,7 +5488,6 @@
             try {
                 showLoading('Deleting attendance date...');
                 
-                // 执行删除操作
                 const result = await system.deleteStudentAttendanceDate(
                     pendingDelete.studentId, 
                     pendingDelete.date
@@ -5380,22 +5496,18 @@
                 if (result.success) {
                     showToast('Attendance date deleted successfully', 'success');
                     
-                    // 从UI中移除元素
                     if (pendingDelete.element && pendingDelete.element.parentNode) {
                         pendingDelete.element.remove();
                         
-                        // 更新学生详情
                         viewStudentDetails(pendingDelete.studentId);
                     }
                     
-                    // 更新UI
                     updateUI();
                 }
             } catch (error) {
                 console.error('Error deleting attendance date:', error);
                 showToast('Error: ' + error.message, 'error');
                 
-                // 移除删除动画效果
                 if (pendingDelete.element) {
                     pendingDelete.element.classList.remove('deleting');
                 }
@@ -5406,17 +5518,14 @@
         }
         
         function cancelDeleteAttendanceDate() {
-            // 移除删除动画效果
             if (pendingDelete.element) {
                 pendingDelete.element.classList.remove('deleting');
             }
             
-            // 重置待删除信息
             pendingDelete.studentId = '';
             pendingDelete.date = '';
             pendingDelete.element = null;
             
-            // 隐藏确认对话框
             document.getElementById('deleteConfirmationModal').style.display = 'none';
         }
         
@@ -5437,7 +5546,6 @@
             dateSelectionStudentId = currentSelectedStudentId;
             selectedDates.clear();
             
-            // Pre-select student's existing attendance dates
             if (student.attendanceDates && student.attendanceDates.length > 0) {
                 student.attendanceDates.forEach(date => {
                     selectedDates.add(date);
@@ -5482,7 +5590,6 @@
             const year = currentCalendarDate.getFullYear();
             const month = currentCalendarDate.getMonth();
             
-            // Create calendar header with month navigation
             const header = document.createElement('div');
             header.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;';
             
@@ -5516,11 +5623,9 @@
             
             header.appendChild(monthNav);
             
-            // Create calendar grid
             const grid = document.createElement('div');
             grid.style.cssText = 'display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 20px;';
             
-            // Add day headers
             const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             days.forEach(day => {
                 const dayElement = document.createElement('div');
@@ -5529,21 +5634,17 @@
                 grid.appendChild(dayElement);
             });
             
-            // Get first and last day of month
             const firstDay = new Date(year, month, 1);
             const lastDay = new Date(year, month + 1, 0);
             
-            // Calculate which day of week the first day is (0 = Sunday, 1 = Monday, ...)
             const firstDayIndex = firstDay.getDay();
             
-            // Add empty cells (previous month dates)
             for (let i = 0; i < firstDayIndex; i++) {
                 const emptyDay = document.createElement('div');
                 emptyDay.style.cssText = 'aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #ccc;';
                 grid.appendChild(emptyDay);
             }
             
-            // Add dates for current month
             const today = new Date();
             const todayStr = system.getLocalDateString(today);
             
@@ -5556,19 +5657,16 @@
                 dayElement.textContent = day;
                 dayElement.dataset.date = dateStr;
                 
-                // If today
                 if (dateStr === todayStr) {
                     dayElement.style.borderColor = 'var(--primary)';
                     dayElement.style.color = 'var(--primary)';
                 }
                 
-                // If already selected
                 if (selectedDates.has(dateStr)) {
                     dayElement.style.backgroundColor = 'var(--primary)';
                     dayElement.style.color = 'white';
                 }
                 
-                // Click event
                 dayElement.addEventListener('click', () => {
                     if (selectedDates.has(dateStr)) {
                         selectedDates.delete(dateStr);
@@ -5585,7 +5683,6 @@
                 grid.appendChild(dayElement);
             }
             
-            // Create selected dates summary
             const summary = document.createElement('div');
             summary.style.cssText = 'margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid var(--info);';
             
@@ -5599,7 +5696,6 @@
             summary.appendChild(summaryTitle);
             summary.appendChild(datesList);
             
-            // Create action buttons
             const actions = document.createElement('div');
             actions.style.cssText = 'margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;';
             
@@ -5616,13 +5712,11 @@
             actions.appendChild(cancelBtn);
             actions.appendChild(saveBtn);
             
-            // Assemble calendar
             container.appendChild(header);
             container.appendChild(grid);
             container.appendChild(summary);
             container.appendChild(actions);
             
-            // Update selected dates list
             updateSelectedDatesList();
         }
         
@@ -5667,7 +5761,6 @@
                 closeDateSelectionModal();
                 showToast(result, 'success');
                 
-                // Refresh interface
                 updateUI();
                 
             } catch (error) {
@@ -5685,20 +5778,16 @@
             const timeSlot = student.timeSlot;
             let processedCount = 0;
             
-            // Create attendance records for each selected date
             for (const dateStr of selectedDates) {
-                // Check if after enrollment date
                 if (dateStr < student.enrolledDate) {
                     console.log(`Skip date ${dateStr}, before enrollment date ${student.enrolledDate}`);
                     continue;
                 }
                 
-                // Check if student already has attendance for this date
                 const alreadyAttended = student.attendanceDates && 
                                       student.attendanceDates.includes(dateStr);
                 
                 if (!alreadyAttended) {
-                    // Create attendance record
                     const recordId = `${timeSlot.replace(/\s+/g, '-')}-${dateStr}`.replace(/[^a-zA-Z0-9\-]/g, '');
                     const recordRef = db.collection('users').doc(system.userId).collection('attendance').doc(recordId);
                     
@@ -5706,12 +5795,10 @@
                         const doc = await recordRef.get();
                         
                         if (doc.exists) {
-                            // If record exists, add student to presentStudents array
                             await recordRef.update({
                                 presentStudents: firebase.firestore.FieldValue.arrayUnion(dateSelectionStudentId)
                             });
                         } else {
-                            // Create new record
                             await recordRef.set({
                                 id: recordId,
                                 timeSlot: timeSlot,
@@ -5722,11 +5809,9 @@
                             });
                         }
                         
-                        // Update student attendance data
                         if (!student.attendanceDates) student.attendanceDates = [];
                         student.attendanceDates.push(dateStr);
                         
-                        // Remove duplicates
                         const uniqueDates = [...new Set(student.attendanceDates)];
                         student.attendanceDates = uniqueDates;
                         student.attendanceCount = uniqueDates.length;
@@ -5740,8 +5825,8 @@
                                 });
                         }
                         
-                        // 检查提醒
                         system.checkRemindersForStudent(dateSelectionStudentId);
+                        system.generateProgressReport(dateSelectionStudentId);
                         
                         processedCount++;
                         
@@ -5757,25 +5842,21 @@
         async function saveDatesForBatchStudents() {
             const batch = db.batch();
             const studentUpdates = [];
-            const attendanceRecords = new Map(); // Group records by date and time slot
+            const attendanceRecords = new Map();
             
-            // Prepare student updates
             for (const studentId of dateSelectionStudentIds) {
                 const student = system.students.get(studentId);
                 if (!student) continue;
                 
                 for (const dateStr of selectedDates) {
-                    // Check if after enrollment date
                     if (dateStr < student.enrolledDate) {
                         continue;
                     }
                     
-                    // Check if student already has attendance for this date
                     const alreadyAttended = student.attendanceDates && 
                                           student.attendanceDates.includes(dateStr);
                     
                     if (!alreadyAttended) {
-                        // Record attendance to be added
                         const key = `${student.timeSlot}-${dateStr}`;
                         if (!attendanceRecords.has(key)) {
                             attendanceRecords.set(key, {
@@ -5786,7 +5867,6 @@
                         }
                         attendanceRecords.get(key).studentIds.push(studentId);
                         
-                        // Record student updates
                         studentUpdates.push({
                             studentId: studentId,
                             date: dateStr
@@ -5795,21 +5875,17 @@
                 }
             }
             
-            // Create/update attendance records
             for (const [key, recordData] of attendanceRecords) {
                 const recordId = `${recordData.timeSlot.replace(/\s+/g, '-')}-${recordData.date}`.replace(/[^a-zA-Z0-9\-]/g, '');
                 const recordRef = db.collection('users').doc(system.userId).collection('attendance').doc(recordId);
                 
-                // Check if record exists
                 const doc = await recordRef.get();
                 
                 if (doc.exists) {
-                    // Update existing record
                     batch.update(recordRef, {
                         presentStudents: firebase.firestore.FieldValue.arrayUnion(...recordData.studentIds)
                     });
                 } else {
-                    // Create new record
                     batch.set(recordRef, {
                         id: recordId,
                         timeSlot: recordData.timeSlot,
@@ -5821,13 +5897,11 @@
                 }
             }
             
-            // Update student data
             for (const update of studentUpdates) {
                 const student = system.students.get(update.studentId);
                 if (student) {
                     const studentRef = db.collection('users').doc(system.userId).collection('students').doc(update.studentId);
                     
-                    // Get current data to calculate new array
                     const studentDoc = await studentRef.get();
                     const currentData = studentDoc.data();
                     const currentDates = currentData.attendanceDates || [];
@@ -5839,13 +5913,12 @@
                             lastAttended: update.date
                         });
                         
-                        // 检查提醒
                         system.checkRemindersForStudent(update.studentId);
+                        system.generateProgressReport(update.studentId);
                     }
                 }
             }
             
-            // Commit all changes
             await batch.commit();
             
             return {
@@ -5866,14 +5939,12 @@
                 
                 const fixedCount = await system.fixDuplicateAttendance();
                 
-                // Update last checked time
                 const now = new Date();
                 document.getElementById('lastDuplicateCheck').textContent = now.toLocaleString();
                 
                 updateSyncStatus('✅ System synchronized', 'synced');
                 showToast(`Fixed duplicate attendance for ${fixedCount} student(s)`, 'success');
                 
-                // Refresh UI
                 updateUI();
                 
             } catch (error) {
@@ -5896,7 +5967,6 @@
                 updateSyncStatus('✅ System synchronized', 'synced');
                 showToast(`Recalculated attendance for ${recalculatedCount} student(s)`, 'success');
                 
-                // Refresh UI
                 updateUI();
                 
             } catch (error) {
@@ -5919,7 +5989,6 @@
                 updateSyncStatus('✅ System synchronized', 'synced');
                 showToast(`Cleaned ${cleanedCount} orphaned attendance records`, 'success');
                 
-                // Refresh UI
                 updateUI();
                 
             } catch (error) {
@@ -5936,7 +6005,6 @@
             try {
                 let issues = [];
                 
-                // Check 1: Duplicate attendance dates
                 let duplicateCount = 0;
                 for (const student of system.students.values()) {
                     if (student.attendanceDates) {
@@ -5951,7 +6019,6 @@
                     issues.push(`Found ${duplicateCount} student(s) with duplicate attendance dates`);
                 }
                 
-                // Check 2: Orphaned attendance records
                 let orphanedCount = 0;
                 for (const record of system.attendanceRecords) {
                     let hasValidStudents = false;
@@ -5970,7 +6037,6 @@
                     issues.push(`Found ${orphanedCount} orphaned attendance records`);
                 }
                 
-                // Check 3: Students without time slots
                 let noTimeSlotCount = 0;
                 for (const student of system.students.values()) {
                     if (!student.timeSlot || student.timeSlot.trim() === '') {
@@ -5982,13 +6048,19 @@
                     issues.push(`Found ${noTimeSlotCount} student(s) without time slot assignment`);
                 }
                 
-                // Check 4: Unresolved reminders
                 const unresolvedReminders = system.getUnresolvedReminders();
                 if (unresolvedReminders.length > 0) {
                     issues.push(`Found ${unresolvedReminders.length} unresolved reminders`);
                 }
                 
-                // Display results
+                const studentsWithoutProgressReports = Array.from(system.students.keys()).filter(
+                    studentId => !system.progressReports.has(studentId)
+                ).length;
+                
+                if (studentsWithoutProgressReports > 0) {
+                    issues.push(`Found ${studentsWithoutProgressReports} student(s) without progress reports`);
+                }
+                
                 if (issues.length === 0) {
                     resultElement.innerHTML = '<div style="color: var(--success);">✅ System health is good. No issues found.</div>';
                 } else {
@@ -6013,6 +6085,7 @@
                 attendanceRecords: system.attendanceRecords,
                 timeSlots: system.timeSlots,
                 reminders: Array.from(system.reminders.values()),
+                progressReports: Array.from(system.progressReports.values()),
                 backupDate: new Date().toISOString()
             };
             
@@ -6049,12 +6122,10 @@
                     const text = await file.text();
                     const data = JSON.parse(text);
                     
-                    // 验证数据格式
                     if (!data.students || !data.attendanceRecords) {
                         throw new Error('Invalid backup file format');
                     }
                     
-                    // 恢复数据
                     system.students.clear();
                     data.students.forEach(student => {
                         system.students.set(student.id, student);
@@ -6069,7 +6140,13 @@
                         });
                     }
                     
-                    // 更新UI
+                    system.progressReports.clear();
+                    if (data.progressReports) {
+                        data.progressReports.forEach(report => {
+                            system.progressReports.set(report.studentId, report);
+                        });
+                    }
+                    
                     updateUI();
                     
                     showToast('Data restored successfully', 'success');
@@ -6120,43 +6197,36 @@
                 return;
             }
             
-            // 获取出勤信息
             const attendanceInfo = system.getStudentAttendance(studentId);
             
-            // 计算剩余课程
+            const progressReport = system.progressReports.get(studentId);
+            
             const remainingSessions = student.totalSessions - attendanceInfo.attendanceCount;
             
-            // 格式化日期
             const enrolledDate = system.formatDateForDisplay(student.enrolledDate);
             const today = new Date();
             const reportDate = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
             
-            // 创建PDF
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            // 设置标题
             doc.setFontSize(24);
             doc.setTextColor(40, 40, 40);
             doc.text("Memoschool Kuching", 105, 20, null, null, 'center');
             
-            // 添加分隔线
             doc.setLineWidth(0.5);
             doc.line(20, 25, 190, 25);
             
-            // 添加报告标题
             doc.setFontSize(18);
             doc.setTextColor(230, 126, 34);
             doc.text("Student Attendance Report", 105, 35, null, null, 'center');
             
-            // 学生信息部分
             doc.setFontSize(12);
             doc.setTextColor(0, 0, 0);
             doc.setFont(undefined, 'bold');
             doc.text("Student Information:", 20, 50);
             doc.setFont(undefined, 'normal');
             
-            // 学生详细信息表格
             const studentData = [
                 ["Name:", student.name],
                 ["Age:", student.age || "N/A"],
@@ -6170,12 +6240,10 @@
                 doc.text(row[1], 70, 60 + (index * 7));
             });
             
-            // 出勤摘要部分
             doc.setFont(undefined, 'bold');
             doc.text("Attendance Summary:", 20, 100);
             doc.setFont(undefined, 'normal');
             
-            // 出勤详情表格
             const attendanceData = [
                 ["Total Sessions:", student.totalSessions.toString()],
                 ["Sessions Attended:", attendanceInfo.attendanceCount.toString()],
@@ -6187,30 +6255,52 @@
                 doc.text(row[1], 70, 110 + (index * 7));
             });
             
-            // 添加提醒部分（如果有）
+            let yPosition = 135;
+            
+            if (progressReport) {
+                doc.setFont(undefined, 'bold');
+                doc.text("Progress Report:", 20, yPosition);
+                doc.setFont(undefined, 'normal');
+                
+                const progressData = [
+                    ["Intake:", progressReport.intake],
+                    ["Class Attended:", progressReport.classAttended.toString()],
+                    ["Progress Report 1:", progressReport.progressReport1 ? "✓ Completed" : "✗ Pending"],
+                    ["Progress Report 2:", progressReport.progressReport2 ? "✓ Completed" : "✗ Pending"],
+                    ["Brain Test 1:", progressReport.brainTest1 ? "✓ Completed" : "✗ Pending"],
+                    ["Brain Test 2:", progressReport.brainTest2 ? "✓ Completed" : "✗ Pending"],
+                    ["Final Consultation:", progressReport.finalConsultationCompleted ? "✓ Completed" : "✗ Pending"]
+                ];
+                
+                progressData.forEach((row, index) => {
+                    doc.text(row[0], 25, yPosition + 15 + (index * 7));
+                    doc.text(row[1], 70, yPosition + 15 + (index * 7));
+                });
+                
+                yPosition += 70;
+            }
+            
             const studentReminders = Array.from(system.reminders.values()).filter(
                 r => r.studentId === studentId && !r.resolved
             );
             
             if (studentReminders.length > 0) {
                 doc.setFont(undefined, 'bold');
-                doc.text("Active Reminders:", 20, 135);
+                doc.text("Active Reminders:", 20, yPosition);
                 doc.setFont(undefined, 'normal');
                 
-                let y = 145;
                 studentReminders.forEach((reminder, index) => {
-                    if (y > 270) {
+                    if (yPosition > 270) {
                         doc.addPage();
-                        y = 20;
+                        yPosition = 20;
                     }
                     
                     const reminderType = reminder.type === 'progress' ? 'Progress Report' : 'Brain Test';
                     const reminderText = `${reminderType}: ${reminder.message.substring(0, 50)}...`;
-                    doc.text(reminderText, 25, y + (index * 7));
+                    doc.text(reminderText, 25, yPosition + 15 + (index * 7));
                 });
             }
             
-            // 保存PDF
             const fileName = `Memoschool_${student.name.replace(/\s+/g, '_')}_Attendance_Report.pdf`;
             doc.save(fileName);
             
@@ -6227,21 +6317,17 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            // Set title
             doc.setFontSize(24);
             doc.setTextColor(40, 40, 40);
             doc.text("Memoschool Kuching", 105, 20, null, null, 'center');
             
-            // Add line separator
             doc.setLineWidth(0.5);
             doc.line(20, 25, 190, 25);
             
-            // Add report title
             doc.setFontSize(18);
             doc.setTextColor(230, 126, 34);
             doc.text("Batch Attendance Report", 105, 35, null, null, 'center');
             
-            // Add report date
             const today = new Date();
             const reportDate = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
             doc.setFontSize(12);
@@ -6249,7 +6335,6 @@
             doc.text(`Report Date: ${reportDate}`, 20, 45);
             doc.text(`Total Students: ${selectedCheckboxes.length}`, 150, 45);
             
-            // Student table headers
             doc.setFontSize(12);
             doc.setTextColor(0, 0, 0);
             doc.setFont(undefined, 'bold');
@@ -6267,11 +6352,9 @@
                 doc.text(header.text, header.x, 55);
             });
             
-            // Add line under headers
             doc.setLineWidth(0.2);
             doc.line(20, 57, 190, 57);
             
-            // Student data rows
             doc.setFont(undefined, 'normal');
             let y = 65;
             let studentNumber = 1;
@@ -6284,12 +6367,10 @@
                     const attendanceInfo = system.getStudentAttendance(studentId);
                     const remainingSessions = student.totalSessions - attendanceInfo.attendanceCount;
                     
-                    // Check if we need a new page
                     if (y > 270) {
                         doc.addPage();
                         y = 20;
                         
-                        // Add headers on new page
                         doc.setFont(undefined, 'bold');
                         headers.forEach(header => {
                             doc.text(header.text, header.x, y);
@@ -6311,13 +6392,11 @@
                 }
             });
             
-            // Add footer
             doc.setFontSize(10);
             doc.setTextColor(100, 100, 100);
             const footerY = doc.internal.pageSize.height - 10;
             doc.text("Generated by Genius Mind Academy Attendance System", 105, footerY, null, null, 'center');
             
-            // Save PDF
             const fileName = `Memoschool_Batch_Report_${reportDate.replace(/\//g, '_')}.pdf`;
             doc.save(fileName);
             
@@ -6328,7 +6407,6 @@
         function quickRecordAttendance() {
             showSection('attendance');
             
-            // 自动选择今天和第一个时间槽
             const today = new Date();
             const todayStr = system.getLocalDateString(today);
             
@@ -6341,7 +6419,6 @@
                 updateStudentsCheckboxes();
             }
             
-            // 滚动到页面顶部
             window.scrollTo({ top: 0, behavior: 'smooth' });
             
             showToast('Quick attendance mode activated', 'info');
@@ -6354,7 +6431,6 @@
             if (timezoneElement) {
                 timezoneElement.textContent = timezoneOffset;
                 
-                // 添加时区说明
                 const timezoneNote = timezoneOffset < 0 ? 
                     `(UTC+${Math.abs(timezoneOffset)/60})` : 
                     `(UTC-${timezoneOffset/60})`;
@@ -6365,7 +6441,6 @@
         
         // ========== Toast通知函数 ==========
         function showToast(message, type = 'success') {
-            // 移除现有toast
             const existingToasts = document.querySelectorAll('.toast');
             existingToasts.forEach(toast => {
                 toast.style.animation = 'slideInRight 0.3s ease reverse';
@@ -6391,7 +6466,6 @@
             
             document.body.appendChild(toast);
             
-            // 自动移除
             setTimeout(() => {
                 if (toast.parentElement) {
                     toast.style.animation = 'slideInRight 0.3s ease reverse';
@@ -6461,30 +6535,24 @@
             document.getElementById('appSection').style.display = 'block';
             document.getElementById('userEmail').textContent = user.email;
             
-            // Initialize system with user ID
             system.initialize(user.uid);
         }
 
-        // Test Mode: Skip login and enter system directly
         function skipLoginForTesting() {
             console.log("⚠️ Entering test mode (skip login)");
             
-            // Mock user object
             const mockUser = {
                 uid: 'test-user-' + Date.now(),
                 email: 'test@example.com'
             };
             
-            // Show main interface
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('appSection').style.display = 'block';
             document.getElementById('userEmail').textContent = 'Test User (Offline Mode)';
             
-            // Initialize system (offline mode)
             system.userId = mockUser.uid;
             system.isOnline = false;
             
-            // Load default time slots
             system.timeSlots = DEFAULT_TIME_SLOTS.map(slot => ({
                 id: slot.replace(/\s+/g, '-').toLowerCase(),
                 name: slot,
@@ -6492,28 +6560,26 @@
                 createdAt: new Date().toISOString()
             }));
             
-            // Clear existing data
             system.students.clear();
             system.attendanceRecords = [];
             system.reminders.clear();
+            system.progressReports.clear();
             
-            // Add some test data
             addSampleData();
             
-            // Update UI
             updateUI();
             updateSyncStatus('✅ Entered test mode (offline)', 'synced');
             showToast('Entered test mode, all data saved locally only', 'info');
         }
         
-        // 添加示例数据
         function addSampleData() {
-            // Add some sample students
             const sampleStudents = [
-                { name: 'John Doe', age: 12, gender: 'Male', timeSlot: 'Friday 2pm-3:30pm', totalSessions: 48 },
-                { name: 'Jane Smith', age: 13, gender: 'Female', timeSlot: 'Saturday 9am-10:30am', totalSessions: 48 },
-                { name: 'Michael Brown', age: 11, gender: 'Male', timeSlot: 'Saturday 11am-12:30pm', totalSessions: 48 },
-                { name: 'Emily Johnson', age: 14, gender: 'Female', timeSlot: 'Sunday 9am-10:30am', totalSessions: 48 }
+                { name: 'Ryan Teo', age: 12, gender: 'Male', timeSlot: 'Friday 2pm-3:30pm', totalSessions: 48, enrolledDate: '2025-07-01' },
+                { name: 'Alvin Chai', age: 13, gender: 'Male', timeSlot: 'Saturday 9am-10:30am', totalSessions: 48, enrolledDate: '2025-07-01' },
+                { name: 'Jedd Ng', age: 11, gender: 'Male', timeSlot: 'Saturday 11am-12:30pm', totalSessions: 48, enrolledDate: '2025-07-01' },
+                { name: 'Chai Tian Yu', age: 14, gender: 'Male', timeSlot: 'Sunday 9am-10:30am', totalSessions: 48, enrolledDate: '2025-08-01' },
+                { name: 'Ting Qin Hoow', age: 13, gender: 'Male', timeSlot: 'Saturday 2pm-4pm', totalSessions: 48, enrolledDate: '2025-07-01' },
+                { name: 'Miya', age: 12, gender: 'Female', timeSlot: 'Sunday 4pm-5:30pm', totalSessions: 48, enrolledDate: '2025-09-06' }
             ];
             
             sampleStudents.forEach((student, index) => {
@@ -6524,20 +6590,21 @@
                     age: student.age,
                     gender: student.gender,
                     timeSlot: student.timeSlot,
-                    enrolledDate: '2024-01-01',
+                    enrolledDate: student.enrolledDate,
                     totalSessions: student.totalSessions,
                     attendanceCount: Math.floor(Math.random() * 30) + 10,
                     attendanceDates: generateSampleDates(30),
                     createdAt: new Date().toISOString()
                 };
                 system.students.set(studentId, studentData);
+                
+                system.generateProgressReport(studentId);
             });
             
-            // Add sample attendance records
             const today = new Date();
             for (let i = 0; i < 5; i++) {
                 const date = new Date(today);
-                date.setDate(today.getDate() - i * 7); // Past few weeks
+                date.setDate(today.getDate() - i * 7);
                 
                 const record = {
                     id: `record-${i}`,
@@ -6550,17 +6617,15 @@
                 system.attendanceRecords.push(record);
             }
             
-            // 检查提醒
             system.checkAllReminders();
         }
         
-        // 生成示例出勤日期
         function generateSampleDates(count) {
             const dates = [];
             const today = new Date();
             for (let i = 0; i < count; i++) {
                 const date = new Date(today);
-                date.setDate(today.getDate() - i * 2); // Every two days
+                date.setDate(today.getDate() - i * 2);
                 dates.push(system.getLocalDateString(date));
             }
             return dates;
@@ -6570,7 +6635,6 @@
         window.onload = function() {
             init();
             
-            // 监听认证状态变化
             auth.onAuthStateChanged((user) => {
                 if (user) {
                     showApp(user);
@@ -6580,12 +6644,10 @@
                 }
             });
             
-            // 延迟加载非关键资源
             setTimeout(() => {
                 document.body.classList.add('loaded');
             }, 100);
             
-            // 检查并修复数据一致性
             setTimeout(() => {
                 if (system.isOnline) {
                     console.log('Running initial data consistency check...');
@@ -6595,12 +6657,11 @@
                         }
                     });
                     
-                    // 检查提醒
                     system.checkAllReminders();
+                    system.generateAllProgressReports();
                 }
             }, 3000);
             
-            // 显示FAB按钮
             const fab = document.getElementById('fabButton');
             if (fab) {
                 fab.style.display = 'flex';

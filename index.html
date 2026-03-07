@@ -32,6 +32,7 @@
             --gray: #6c757d;
             --border: #e9ecef;
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-hover: 0 10px 25px rgba(0,0,0,0.15);
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
@@ -116,7 +117,7 @@
         }
         
         .school-logo:hover {
-            transform: scale(1.05);
+            transform: scale(1.05) rotate(5deg);
         }
         
         /* ========== 导航样式 ========== */
@@ -153,7 +154,7 @@
         
         .nav button:hover {
             background: rgba(255,255,255,0.25);
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         
@@ -227,8 +228,12 @@
         
         .btn:hover {
             background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .btn:active {
+            transform: translateY(0) scale(0.98);
         }
         
         .btn-secondary {
@@ -297,6 +302,10 @@
             letter-spacing: 0.5px;
         }
         
+        .table tr {
+            transition: background 0.2s;
+        }
+        
         .table tr:hover {
             background: rgba(230, 126, 34, 0.05);
         }
@@ -322,8 +331,8 @@
         }
         
         .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--shadow-hover);
         }
         
         .stat-card .number {
@@ -364,8 +373,8 @@
         }
         
         .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--shadow-hover);
         }
         
         .feature-card .icon {
@@ -387,8 +396,8 @@
         }
         
         .student-card-enhanced:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--shadow-hover);
         }
         
         /* ========== 进度条样式 ========== */
@@ -423,6 +432,7 @@
             align-items: center;
             gap: 10px;
             max-width: 320px;
+            overflow: hidden;
         }
         
         .toast.error {
@@ -437,6 +447,26 @@
             border-left-color: var(--info);
         }
         
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: rgba(0,0,0,0.1);
+            width: 100%;
+        }
+        
+        .toast-progress-bar {
+            height: 100%;
+            background: var(--primary);
+            animation: toastProgress 4s linear forwards;
+        }
+        
+        @keyframes toastProgress {
+            0% { width: 100%; }
+            100% { width: 0%; }
+        }
+        
         @keyframes slideInRight {
             from {
                 opacity: 0;
@@ -449,11 +479,11 @@
         }
         
         /* ========== 加载动画 ========== */
-        .loading {
+        .loading-spinner {
             display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 2px solid rgba(255,255,255,.3);
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
             border-radius: 50%;
             border-top-color: #fff;
             animation: spin 1s ease-in-out infinite;
@@ -485,7 +515,7 @@
         }
         
         .fab:hover {
-            transform: scale(1.1);
+            transform: scale(1.1) rotate(90deg);
             background: var(--primary-dark);
         }
         
@@ -534,6 +564,7 @@
         .tab:hover {
             background: rgba(230, 126, 34, 0.1);
             border-color: var(--primary);
+            transform: translateY(-2px);
         }
         
         .tab.active {
@@ -658,8 +689,8 @@
         }
         
         .reminder-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: var(--shadow-hover);
         }
         
         .reminder-card .reminder-title {
@@ -816,7 +847,8 @@
         }
         
         .quick-stat:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: var(--shadow-hover);
         }
         
         .quick-stat .value {
@@ -888,6 +920,7 @@
         
         .reminder-filter-btn:hover {
             background: #f8f9fa;
+            transform: translateY(-2px);
         }
         
         .reminder-filter-btn.active {
@@ -911,6 +944,13 @@
             text-align: center;
             box-shadow: var(--shadow);
             border-top: 4px solid var(--primary);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .reminder-summary-card:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: var(--shadow-hover);
         }
         
         .reminder-summary-card.priority {
@@ -1028,6 +1068,10 @@
             .reminder-summary {
                 grid-template-columns: 1fr;
             }
+            
+            .quick-stats {
+                grid-template-columns: 1fr 1fr;
+            }
         }
         
         @media (max-width: 480px) {
@@ -1055,6 +1099,11 @@
             
             .reminder-filters {
                 flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .quick-stats {
+                grid-template-columns: 1fr;
             }
         }
         
@@ -1066,12 +1115,21 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
             z-index: 2000;
             justify-content: center;
             align-items: center;
             color: white;
             font-size: 18px;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        #loadingOverlay .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border-width: 5px;
         }
         
         /* ========== 打印优化样式 ========== */
@@ -1099,7 +1157,7 @@
         }
         
         .attendance-date:hover {
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
@@ -2067,11 +2125,9 @@
     </div>
 
     <!-- Loading Overlay -->
-    <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; color: white; font-size: 18px;">
-        <div style="text-align: center;">
-            <div class="loading" style="width: 40px; height: 40px; border-width: 4px; margin: 0 auto 15px;"></div>
-            <div id="loadingMessage">Loading...</div>
-        </div>
+    <div id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <div id="loadingMessage">Loading...</div>
     </div>
 
     <!-- Delete Confirmation Modal -->
@@ -2904,13 +2960,11 @@
                 }
             }
             
-            // Updated method: always update currentSessions and message for existing reminders
             async createOrUpdateReminder(reminderData) {
                 const reminderId = `${reminderData.studentId}-${reminderData.type}-${reminderData.threshold}`;
                 
                 const existingReminder = this.reminders.get(reminderId);
                 if (existingReminder) {
-                    // Always update the currentSessions and message (attended count may have changed)
                     await this.updateReminder(reminderId, {
                         currentSessions: reminderData.currentSessions,
                         message: reminderData.message,
@@ -3708,27 +3762,27 @@
             if (!container) return;
             
             container.innerHTML = `
-                <div class="reminder-summary-card priority">
+                <div class="reminder-summary-card priority" onclick="filterReminders('priority')">
                     <div class="count">${summary.priority}</div>
                     <div class="label">Priority Reminders</div>
                     <div class="sub-label">Final brain tests</div>
                 </div>
-                <div class="reminder-summary-card warning">
+                <div class="reminder-summary-card warning" onclick="filterReminders('progress')">
                     <div class="count">${summary.progress}</div>
                     <div class="label">Progress Reports</div>
                     <div class="sub-label">12, 24, 26, 48 sessions</div>
                 </div>
-                <div class="reminder-summary-card success">
+                <div class="reminder-summary-card success" onclick="filterReminders('brainTest')">
                     <div class="count">${summary.brainTest}</div>
                     <div class="label">Brain Tests</div>
                     <div class="sub-label">24 sessions milestone</div>
                 </div>
-                <div class="reminder-summary-card">
+                <div class="reminder-summary-card" onclick="filterReminders('unresolved')">
                     <div class="count">${summary.unresolved}</div>
                     <div class="label">Active Reminders</div>
                     <div class="sub-label">of ${summary.total} total</div>
                 </div>
-                <div class="reminder-summary-card">
+                <div class="reminder-summary-card" onclick="filterReminders('resolved')">
                     <div class="count">${summary.resolved}</div>
                     <div class="label">Resolved</div>
                     <div class="sub-label">Completed reminders</div>
@@ -3747,6 +3801,10 @@
                 reminders = system.getResolvedReminders();
             } else if (currentReminderFilter === 'priority') {
                 reminders = system.getPriorityReminders();
+            } else if (currentReminderFilter === 'progress') {
+                reminders = system.getProgressReminders();
+            } else if (currentReminderFilter === 'brainTest') {
+                reminders = system.getBrainTestReminders();
             }
             
             reminders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -3841,7 +3899,15 @@
             document.querySelectorAll('.reminder-filter-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            event.target.classList.add('active');
+            // Find button by text or set active manually
+            const buttons = document.querySelectorAll('.reminder-filter-btn');
+            for (let btn of buttons) {
+                if (btn.textContent.toLowerCase().includes(filterType) || 
+                    (filterType === 'progress' && btn.textContent.includes('Progress')) ||
+                    (filterType === 'brainTest' && btn.textContent.includes('Brain'))) {
+                    btn.classList.add('active');
+                }
+            }
             updateRemindersList();
         }
         
@@ -4671,8 +4737,24 @@
             
             date = system.getLocalDateString(date);
             
+            // Check if date is before enrollment for any selected student
             const selectedCheckboxes = document.querySelectorAll('#studentsCheckboxes input:checked');
             const selectedStudentIds = Array.from(selectedCheckboxes).map(cb => cb.value);
+            
+            // Validate enrollment dates
+            const invalidStudents = [];
+            for (const studentId of selectedStudentIds) {
+                const student = system.students.get(studentId);
+                if (student && date < student.enrolledDate) {
+                    invalidStudents.push(student.name);
+                }
+            }
+            if (invalidStudents.length > 0) {
+                showToast(`Warning: ${invalidStudents.join(', ')} enrolled after this date.`, 'warning');
+                if (!confirm('Some students were not enrolled on this date. Continue anyway?')) {
+                    return;
+                }
+            }
         
             if (!date || !timeSlot) {
                 showToast('Please select date and time slot', 'error');
@@ -6462,6 +6544,9 @@
                 <button class="btn" onclick="this.parentElement.remove()" style="padding: 4px; background: transparent; color: inherit;">
                     <i class="fas fa-times"></i>
                 </button>
+                <div class="toast-progress">
+                    <div class="toast-progress-bar"></div>
+                </div>
             `;
             
             document.body.appendChild(toast);
